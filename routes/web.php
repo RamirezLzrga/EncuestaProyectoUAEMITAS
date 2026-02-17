@@ -1,0 +1,77 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminApprovalController;
+use App\Http\Controllers\AdminTemplateController;
+use App\Http\Controllers\AdminReportController;
+use App\Http\Controllers\AdminConfigController;
+use App\Http\Controllers\AdminMonitorController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Rutas de Encuestas
+    Route::patch('/surveys/{survey}/toggle-status', [SurveyController::class, 'toggleStatus'])->name('surveys.toggle-status');
+    Route::resource('surveys', SurveyController::class);
+    
+    // Ruta de Estadísticas
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+
+    // Rutas exclusivas para Administradores
+    Route::middleware(['role:admin'])->group(function () {
+        // Ruta de Bitácora
+        Route::get('/activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        
+        // Rutas de Usuarios
+        Route::resource('users', UserController::class);
+
+            // Vistas de administración avanzadas
+            Route::get('/admin/aprobaciones', [AdminApprovalController::class, 'index'])->name('admin.aprobaciones');
+            Route::post('/admin/aprobaciones/{survey}', [AdminApprovalController::class, 'updateStatus'])->name('admin.aprobaciones.update');
+            Route::get('/admin/plantillas', [AdminTemplateController::class, 'index'])->name('admin.plantillas');
+            Route::post('/admin/plantillas', [AdminTemplateController::class, 'store'])->name('admin.plantillas.store');
+            Route::get('/admin/plantillas/{template}/edit', [AdminTemplateController::class, 'edit'])->name('admin.plantillas.edit');
+            Route::put('/admin/plantillas/{template}', [AdminTemplateController::class, 'update'])->name('admin.plantillas.update');
+            Route::delete('/admin/plantillas/{template}', [AdminTemplateController::class, 'destroy'])->name('admin.plantillas.destroy');
+            Route::get('/admin/reportes', [AdminReportController::class, 'index'])->name('admin.reportes');
+            Route::get('/admin/configuracion', [AdminConfigController::class, 'index'])->name('admin.configuracion');
+            Route::post('/admin/configuracion', [AdminConfigController::class, 'update'])->name('admin.configuracion.update');
+            Route::get('/admin/monitor', [AdminMonitorController::class, 'index'])->name('admin.monitor');
+    });
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// Rutas Públicas para responder encuestas
+Route::get('/s/{id}', [SurveyController::class, 'showPublic'])->name('surveys.public');
+Route::post('/s/{id}', [SurveyController::class, 'storeAnswer'])->name('surveys.store-answer');
+Route::get('/s/{id}/thank-you', [SurveyController::class, 'thankYou'])->name('surveys.thank-you');
