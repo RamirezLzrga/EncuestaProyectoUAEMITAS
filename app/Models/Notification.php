@@ -31,6 +31,44 @@ class Notification extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function getUrlAttribute()
+    {
+        $data = $this->data ?? [];
+        $surveyId = $data['survey_id'] ?? null;
+
+        try {
+            switch ($this->type) {
+                case 'survey_created':
+                case 'survey_updated':
+                case 'editor_survey_created':
+                case 'editor_survey_updated':
+                case 'editor_survey_config_updated':
+                    return route('admin.aprobaciones');
+
+                case 'survey_approved':
+                case 'survey_rejected':
+                    return $surveyId ? route('surveys.show', $surveyId) : route('surveys.index');
+
+                case 'survey_expiring':
+                case 'survey_expiring_admin':
+                    return $surveyId ? route('surveys.edit', $surveyId) : route('surveys.index');
+
+                case 'response_received':
+                case 'response_received_admin':
+                    return $surveyId ? route('editor.encuestas.respuestas', $surveyId) : route('dashboard');
+
+                case 'survey_approved_admin':
+                case 'survey_rejected_admin':
+                    return route('admin.aprobaciones');
+
+                default:
+                    return route('dashboard');
+            }
+        } catch (\Throwable $e) {
+            return url()->previous() ?: route('dashboard');
+        }
+    }
+
     public static function notifyExpiringSurveys($daysAhead = 3)
     {
         $now = now();

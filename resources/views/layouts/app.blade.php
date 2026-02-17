@@ -279,25 +279,32 @@
                     notificationsList.appendChild(p);
                 } else {
                     data.items.forEach(function(item) {
-                        const div = document.createElement('div');
-                        div.className = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2';
+                        const container = document.createElement('button');
+                        container.type = 'button';
+                        container.className = 'w-full text-left bg-white/5 border border-white/10 rounded-lg px-3 py-2 hover:bg-white/10 transition cursor-pointer';
 
                         const title = document.createElement('p');
                         title.className = 'text-[11px] font-semibold text-white';
                         title.textContent = item.title;
-                        div.appendChild(title);
+                        container.appendChild(title);
 
                         const msg = document.createElement('p');
                         msg.className = 'text-[11px] text-gray-300 mt-1';
                         msg.textContent = item.message;
-                        div.appendChild(msg);
+                        container.appendChild(msg);
 
                         const meta = document.createElement('p');
                         meta.className = 'text-[10px] text-gray-500 mt-1';
                         meta.textContent = item.created_at;
-                        div.appendChild(meta);
+                        container.appendChild(meta);
 
-                        notificationsList.appendChild(div);
+                        if (item.url) {
+                            container.addEventListener('click', function() {
+                                window.location.href = item.url;
+                            });
+                        }
+
+                        notificationsList.appendChild(container);
                     });
                 }
 

@@ -39,6 +39,7 @@ class NotificationController extends Controller
                     'title' => $n->title,
                     'message' => $n->message,
                     'type' => $n->type,
+                    'url' => $n->url,
                     'created_at' => optional($n->created_at)->diffForHumans(),
                 ];
             }),
@@ -64,4 +65,3 @@ class NotificationController extends Controller
         return response()->json(['status' => 'ok']);
     }
 }
-

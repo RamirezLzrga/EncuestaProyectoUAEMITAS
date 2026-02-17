@@ -21,6 +21,7 @@
             background-color: #08402d;
         }
     </style>
+    @stack('styles')
 </head>
 <body class="bg-gray-100 font-sans">
     @yield('content')
