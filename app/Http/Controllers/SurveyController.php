@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Survey;
 use App\Models\SurveyResponse;
 use App\Models\ActivityLog;
+use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -111,6 +113,21 @@ class SurveyController extends Controller
             'details' => ['survey_id' => $survey->id]
         ]);
 
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'role' => 'admin',
+                'title' => 'Nueva encuesta creada',
+                'message' => Auth::user()->name . ' creó la encuesta "' . $survey->title . '"',
+                'type' => 'survey_created',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'creator_id' => (string) Auth::id(),
+                ],
+            ]);
+        }
+
         return redirect()->route('surveys.index')->with('success', 'Encuesta creada exitosamente.');
     }
 
@@ -185,6 +202,21 @@ class SurveyController extends Controller
             'ip_address' => $request->ip(),
             'details' => ['survey_id' => $survey->id]
         ]);
+
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'role' => 'admin',
+                'title' => 'Encuesta actualizada',
+                'message' => Auth::user()->name . ' actualizó la encuesta "' . $survey->title . '"',
+                'type' => 'survey_updated',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'editor_id' => (string) Auth::id(),
+                ],
+            ]);
+        }
 
         return redirect()->route('surveys.index')->with('success', 'Encuesta actualizada exitosamente.');
     }
@@ -279,6 +311,36 @@ class SurveyController extends Controller
         // O si se piden nombres/emails en settings, se podrían guardar aparte
         
         $response->save();
+
+        $owner = $survey->user_id ? User::find($survey->user_id) : null;
+        if ($owner) {
+            Notification::create([
+                'user_id' => $owner->id,
+                'role' => $owner->role,
+                'title' => 'Nueva respuesta recibida',
+                'message' => 'La encuesta "' . $survey->title . '" recibió una nueva respuesta.',
+                'type' => 'response_received',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'response_id' => (string) $response->id,
+                ],
+            ]);
+        }
+
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'role' => 'admin',
+                'title' => 'Nueva respuesta en encuesta',
+                'message' => 'La encuesta "' . $survey->title . '" recibió una nueva respuesta.',
+                'type' => 'response_received_admin',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'response_id' => (string) $response->id,
+                ],
+            ]);
+        }
 
         return redirect()->route('surveys.thank-you', $survey->id);
     }

@@ -28,10 +28,36 @@
             </div>
         </div>
 
-        <!-- Formulario -->
         <form action="{{ route('surveys.store-answer', $survey->id) }}" method="POST">
             @csrf
             
+            @php
+                $settings = $survey->settings ?? [];
+            @endphp
+
+            @if((!empty($settings['collect_names']) || !empty($settings['collect_emails'])) && empty($settings['anonymous']))
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-circle text-uaemex"></i>
+                    Datos del participante
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @if(!empty($settings['collect_names']))
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre</label>
+                        <input type="text" name="answers[Nombre]" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-uaemex focus:bg-white transition" placeholder="Escribe tu nombre">
+                    </div>
+                    @endif
+                    @if(!empty($settings['collect_emails']))
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Correo electrónico</label>
+                        <input type="email" name="answers[Correo electrónico]" class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-uaemex focus:bg-white transition" placeholder="tucorreo@ejemplo.com">
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             <div class="space-y-4">
                 @foreach($survey->questions as $index => $question)
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">

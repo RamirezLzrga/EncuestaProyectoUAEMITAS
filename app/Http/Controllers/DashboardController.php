@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Survey;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,6 +12,8 @@ class DashboardController extends Controller
     public function index()
     {
         $userId = Auth::id();
+
+        Notification::notifyExpiringSurveys(3);
 
         // Métricas Generales
         $surveys = Survey::where('user_id', $userId)->get();

@@ -12,6 +12,8 @@ use App\Http\Controllers\AdminTemplateController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminConfigController;
 use App\Http\Controllers\AdminMonitorController;
+use App\Http\Controllers\EditorSurveyController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +46,25 @@ Route::middleware('auth')->group(function () {
     
     // Ruta de Estadísticas
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+
+    // Rutas de Editor de Encuestas
+    Route::middleware(['role:editor'])->prefix('editor')->name('editor.')->group(function () {
+        Route::get('/encuestas/nueva', [EditorSurveyController::class, 'builderNew'])->name('encuestas.nueva');
+        Route::post('/encuestas', [EditorSurveyController::class, 'builderStore'])->name('encuestas.store');
+        Route::get('/encuestas/{survey}/editar', [EditorSurveyController::class, 'builderEdit'])->name('encuestas.editar');
+        Route::put('/encuestas/{survey}', [EditorSurveyController::class, 'builderUpdate'])->name('encuestas.update');
+
+        Route::get('/encuestas/{survey}/configuracion', [EditorSurveyController::class, 'configuracion'])->name('encuestas.configuracion');
+        Route::post('/encuestas/{survey}/configuracion', [EditorSurveyController::class, 'configuracionUpdate'])->name('encuestas.configuracion.update');
+
+        Route::get('/encuestas/{survey}/respuestas', [EditorSurveyController::class, 'respuestas'])->name('encuestas.respuestas');
+        Route::get('/encuestas/{survey}/compartir', [EditorSurveyController::class, 'compartir'])->name('encuestas.compartir');
+    });
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
+        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    });
 
     // Rutas exclusivas para Administradores
     Route::middleware(['role:admin'])->group(function () {

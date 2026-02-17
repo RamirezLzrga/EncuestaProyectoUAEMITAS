@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Survey;
 use App\Models\ActivityLog;
+use App\Models\User;
+use App\Models\Notification;
 
 class AdminApprovalController extends Controller
 {
@@ -57,6 +59,36 @@ class AdminApprovalController extends Controller
                 'approval_status' => $survey->approval_status,
             ],
         ]);
+
+        $owner = $survey->user_id ? User::find($survey->user_id) : null;
+        if ($owner) {
+            Notification::create([
+                'user_id' => $owner->id,
+                'role' => $owner->role,
+                'title' => $decision === 'approve' ? 'Encuesta aprobada' : 'Encuesta rechazada',
+                'message' => 'Tu encuesta "' . $survey->title . '" fue ' . ($decision === 'approve' ? 'aprobada' : 'rechazada') . ' por ' . Auth::user()->name . '.',
+                'type' => $decision === 'approve' ? 'survey_approved' : 'survey_rejected',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'decision' => $survey->approval_status,
+                ],
+            ]);
+        }
+
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'role' => 'admin',
+                'title' => $decision === 'approve' ? 'Encuesta aprobada' : 'Encuesta rechazada',
+                'message' => 'La encuesta "' . $survey->title . '" fue ' . ($decision === 'approve' ? 'aprobada' : 'rechazada') . ' por ' . Auth::user()->name . '.',
+                'type' => $decision === 'approve' ? 'survey_approved_admin' : 'survey_rejected_admin',
+                'data' => [
+                    'survey_id' => (string) $survey->id,
+                    'decision' => $survey->approval_status,
+                ],
+            ]);
+        }
 
         return redirect()
             ->route('admin.aprobaciones')

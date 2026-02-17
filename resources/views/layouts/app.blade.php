@@ -162,7 +162,27 @@
     </aside>
 
     <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-        <header class="bg-white/80 backdrop-blur border-b border-gray-200/60 px-8 py-4 flex justify-end items-center sticky top-0 z-30 shadow-sm">
+        <header class="bg-white/80 backdrop-blur border-b border-gray-200/60 px-8 py-4 flex justify-end items-center gap-4 sticky top-0 z-30 shadow-sm">
+            <div class="relative">
+                <button id="notificationsBtn" class="flex items-center justify-center w-11 h-11 rounded-full bg-white border border-gray-200 hover:border-[#d4af37] text-gray-600 hover:text-[#d4af37] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50 shadow-sm active:scale-95">
+                    <span class="relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span id="notificationsBadge" class="hidden absolute -top-2 -right-2 w-4 h-4 rounded-full bg-red-500 text-[9px] text-white flex items-center justify-center font-bold"></span>
+                    </span>
+                </button>
+
+                <div id="notificationsDropdown" class="hidden absolute right-0 mt-3 w-80 bg-[#1b393b] rounded-xl shadow-2xl border border-white/10 overflow-hidden transform origin-top-right transition-all duration-200 z-50">
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-xs font-semibold tracking-widest uppercase text-gray-300">Notificaciones</p>
+                            <button id="notificationsMarkAll" class="text-[10px] text-emerald-300 hover:text-emerald-200 font-semibold uppercase tracking-wider">Marcar todas como leídas</button>
+                        </div>
+                        <div id="notificationsList" class="space-y-2 max-h-64 overflow-y-auto text-xs text-gray-100">
+                            <p class="text-gray-400 text-[11px]">No tienes notificaciones nuevas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="relative">
                 <button id="userMenuBtn" class="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-gray-200 hover:border-[#d4af37] text-gray-600 hover:text-[#d4af37] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#d4af37]/50 shadow-sm active:scale-95 group">
                     <i class="fas fa-user text-xl group-hover:scale-110 transition-transform"></i>
@@ -238,6 +258,113 @@
                     });
                 }
             });
+
+            const notificationsBtn = document.getElementById('notificationsBtn');
+            const notificationsDropdown = document.getElementById('notificationsDropdown');
+            const notificationsBadge = document.getElementById('notificationsBadge');
+            const notificationsList = document.getElementById('notificationsList');
+            const notificationsMarkAll = document.getElementById('notificationsMarkAll');
+
+            function renderNotifications(data) {
+                if (!notificationsList || !notificationsBadge) {
+                    return;
+                }
+
+                notificationsList.innerHTML = '';
+
+                if (!data.items || data.items.length === 0) {
+                    const p = document.createElement('p');
+                    p.className = 'text-gray-400 text-[11px]';
+                    p.textContent = 'No tienes notificaciones nuevas.';
+                    notificationsList.appendChild(p);
+                } else {
+                    data.items.forEach(function(item) {
+                        const div = document.createElement('div');
+                        div.className = 'bg-white/5 border border-white/10 rounded-lg px-3 py-2';
+
+                        const title = document.createElement('p');
+                        title.className = 'text-[11px] font-semibold text-white';
+                        title.textContent = item.title;
+                        div.appendChild(title);
+
+                        const msg = document.createElement('p');
+                        msg.className = 'text-[11px] text-gray-300 mt-1';
+                        msg.textContent = item.message;
+                        div.appendChild(msg);
+
+                        const meta = document.createElement('p');
+                        meta.className = 'text-[10px] text-gray-500 mt-1';
+                        meta.textContent = item.created_at;
+                        div.appendChild(meta);
+
+                        notificationsList.appendChild(div);
+                    });
+                }
+
+                if (data.count && data.count > 0) {
+                    notificationsBadge.classList.remove('hidden');
+                    notificationsBadge.textContent = data.count > 9 ? '9+' : data.count;
+                } else {
+                    notificationsBadge.classList.add('hidden');
+                }
+            }
+
+            function fetchNotifications() {
+                if (!notificationsList) {
+                    return;
+                }
+
+                fetch("{{ route('notifications.unread') }}", {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        renderNotifications(data);
+                    })
+                    .catch(function() {});
+            }
+
+            if (notificationsBtn && notificationsDropdown) {
+                notificationsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationsDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!notificationsBtn.contains(e.target) && !notificationsDropdown.contains(e.target)) {
+                        notificationsDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (notificationsMarkAll) {
+                notificationsMarkAll.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fetch("{{ route('notifications.markAllRead') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    })
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function() {
+                            fetchNotifications();
+                        })
+                        .catch(function() {});
+                });
+            }
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 15000);
         });
     </script>
     @stack('scripts')

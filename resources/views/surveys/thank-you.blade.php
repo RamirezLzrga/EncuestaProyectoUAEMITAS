@@ -22,16 +22,27 @@
             <p class="text-gray-600">Tu participación es muy importante para nosotros. Hemos registrado tus respuestas correctamente.</p>
         </div>
 
+        @php
+            $settings = $survey->settings ?? [];
+            $isAnonymous = !empty($settings['anonymous']);
+            $isAuthenticated = auth()->check();
+        @endphp
+
         <div class="space-y-3">
-            @if(isset($survey->settings['anonymous']) && $survey->settings['anonymous'])
+            @if($isAnonymous && !$isAuthenticated)
                 <a href="{{ route('surveys.public', $survey->id) }}" class="block w-full bg-uaemex hover:bg-green-800 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-green-900/20">
-                    <i class="fas fa-redo-alt mr-2"></i> Volver a contestar
+                    <i class="fas fa-redo-alt mr-2"></i> Enviar otra respuesta
+                </a>
+                <a href="{{ url('/') }}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg transition">
+                    Volver al inicio
+                </a>
+            @elseif($isAuthenticated)
+                <p class="text-sm text-gray-500 mt-4">Gracias por su respuesta.</p>
+            @else
+                <a href="{{ url('/') }}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg transition">
+                    Volver al inicio
                 </a>
             @endif
-            
-            <a href="{{ url('/') }}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg transition">
-                Volver al inicio
-            </a>
         </div>
         
         <div class="mt-8 pt-6 border-t border-gray-100">
