@@ -3,12 +3,14 @@
 @section('title', 'Reportes Globales')
 
 @section('content')
-<div class="flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-bold text-uaemex">Reportes Globales</h1>
-        <p class="text-sm text-gray-500">Genera y programa reportes globales del sistema.</p>
+<div class="dashboard-wrap">
+    <div class="dash-header">
+        <div>
+            <div class="dash-eyebrow">SIEI UAEMex</div>
+            <h2 class="dash-title">Reportes Globales</h2>
+            <p class="dash-subtitle">Genera y programa reportes globales del sistema.</p>
+        </div>
     </div>
-</div>
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
     <div class="xl:col-span-2 space-y-6">
@@ -142,5 +144,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

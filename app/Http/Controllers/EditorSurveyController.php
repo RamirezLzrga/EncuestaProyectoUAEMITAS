@@ -94,6 +94,7 @@ class EditorSurveyController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'header_image' => 'nullable|string',
             'year' => 'required|integer',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -103,6 +104,9 @@ class EditorSurveyController extends Controller
             'questions.*.type' => 'required|string',
             'questions.*.options' => 'nullable|array',
             'questions.*.required' => 'nullable',
+            'questions.*.description' => 'nullable|string',
+            'questions.*.image_url' => 'nullable|string',
+            'questions.*.video_url' => 'nullable|string',
         ]);
 
         $questions = array_values($validated['questions']);

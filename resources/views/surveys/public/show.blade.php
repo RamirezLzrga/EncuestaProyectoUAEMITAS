@@ -18,7 +18,13 @@
     <div class="max-w-3xl mx-auto px-4">
         <!-- Header -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-            <div class="h-3 bg-uaemex w-full"></div>
+            @if(!empty($survey->header_image))
+                <div class="w-full h-48 overflow-hidden">
+                    <img src="{{ $survey->header_image }}" alt="Imagen de encabezado" class="w-full h-full object-cover">
+                </div>
+            @else
+                <div class="h-3 bg-uaemex w-full"></div>
+            @endif
             <div class="p-8">
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $survey->title }}</h1>
                 <p class="text-gray-600">{{ $survey->description }}</p>
@@ -58,9 +64,50 @@
             </div>
             @endif
 
+            @php
+                $totalSections = 0;
+                foreach(($survey->questions ?? []) as $q) {
+                    if (($q['type'] ?? null) === 'section') {
+                        $totalSections++;
+                    }
+                }
+                $currentSection = 0;
+            @endphp
+
             <div class="space-y-4">
                 @foreach($survey->questions as $index => $question)
+                    @if(($question['type'] ?? null) === 'section')
+                        @php $currentSection++; @endphp
+                        <div class="bg-[#e8f5fe] p-6 rounded-2xl shadow-sm border border-gray-200">
+                            <div class="mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-[#1967d2] bg-white">
+                                    Sección {{ $currentSection }} de {{ $totalSections }}
+                                </span>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-900 mb-1">{{ $question['text'] }}</h2>
+                            @if(!empty($question['description']))
+                                <p class="text-gray-600 text-sm">{{ $question['description'] }}</p>
+                            @endif
+                        </div>
+                        @continue
+                    @endif
+
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                        @if(!empty($question['image_url']))
+                            <div class="mb-4">
+                                <img src="{{ $question['image_url'] }}" alt="Imagen de la pregunta {{ $index + 1 }}" class="max-h-56 mx-auto rounded-lg object-contain">
+                            </div>
+                        @endif
+
+                        @if(!empty($question['video_url']))
+                            <div class="mb-4">
+                                <a href="{{ $question['video_url'] }}" target="_blank" class="inline-flex items-center gap-2 text-uaemex underline text-sm">
+                                    <i class="fab fa-youtube"></i>
+                                    Ver video asociado
+                                </a>
+                            </div>
+                        @endif
+
                         <div class="mb-4">
                             <label class="font-bold text-gray-800 text-lg block">
                                 {{ $question['text'] }}
@@ -98,6 +145,18 @@
                                     @endif
                                 </div>
 
+                            @elseif($question['type'] === 'dropdown')
+                                <select name="answers[{{ $question['text'] }}]" 
+                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-uaemex focus:bg-white transition"
+                                    {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+                                    <option value="" disabled selected>Selecciona una opción</option>
+                                    @if(isset($question['options']) && is_array($question['options']))
+                                        @foreach($question['options'] as $option)
+                                            <option value="{{ $option }}">{{ $option }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+
                             @elseif($question['type'] === 'checkboxes')
                                 <div class="space-y-3">
                                     @if(isset($question['options']) && is_array($question['options']))
@@ -109,6 +168,39 @@
                                             </label>
                                         @endforeach
                                     @endif
+                                </div>
+                            
+                            @elseif($question['type'] === 'date')
+                                <input type="date" name="answers[{{ $question['text'] }}]"
+                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-uaemex focus:bg-white transition"
+                                    {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+
+                            @elseif($question['type'] === 'time')
+                                <input type="time" name="answers[{{ $question['text'] }}]"
+                                    class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-uaemex focus:bg-white transition"
+                                    {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+
+                            @elseif($question['type'] === 'linear_scale')
+                                <div class="flex items-center justify-between gap-4">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <label class="flex flex-col items-center text-xs text-gray-600">
+                                            <input type="radio" name="answers[{{ $question['text'] }}]" value="{{ $i }}"
+                                                class="mb-1 text-uaemex border-gray-300 focus:ring-uaemex"
+                                                {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+                                            <span>{{ $i }}</span>
+                                        </label>
+                                    @endfor
+                                </div>
+
+                            @elseif($question['type'] === 'rating')
+                                <div class="flex items-center gap-2">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="answers[{{ $question['text'] }}]" value="{{ $i }}" class="hidden"
+                                                {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+                                            <i class="far fa-star text-2xl text-gray-300 hover:text-yellow-400 transform hover:scale-110 transition"></i>
+                                        </label>
+                                    @endfor
                                 </div>
                             @endif
                         </div>

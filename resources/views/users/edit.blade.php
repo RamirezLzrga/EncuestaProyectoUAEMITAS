@@ -3,19 +3,19 @@
 @section('title', 'Editar Usuario')
 
 @section('content')
-    <div class="max-w-2xl mx-auto">
-        <!-- Header -->
-        <div class="mb-6 flex items-center justify-between">
+    <div class="dashboard-wrap">
+        <div class="max-w-2xl mx-auto">
+        <div class="dash-header">
             <div>
-                <h2 class="text-3xl font-bold text-gray-800">Editar Usuario</h2>
-                <p class="text-gray-500 mt-1">Modificar datos de {{ $user->name }}</p>
+                <div class="dash-eyebrow">SIEI UAEMex</div>
+                <h2 class="dash-title">Editar Usuario</h2>
+                <p class="dash-subtitle">Modificar datos de {{ $user->name }}</p>
             </div>
             <a href="{{ route('users.index') }}" class="text-gray-500 hover:text-gray-700 font-bold flex items-center gap-2">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
         </div>
 
-        <!-- Form -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="h-2 bg-yellow-500 w-full"></div>
             <form action="{{ route('users.update', $user->id) }}" method="POST" class="p-8">
@@ -92,5 +92,6 @@
                 </div>
             </form>
         </div>
+    </div>
     </div>
 @endsection

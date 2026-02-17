@@ -3,13 +3,18 @@
 @section('title', $survey->title)
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="mb-6 flex items-center justify-between">
-            <a href="{{ route('surveys.index') }}" class="text-gray-500 hover:text-gray-700 font-bold flex items-center gap-2">
-                <i class="fas fa-arrow-left"></i> Volver
-            </a>
-            <div class="flex gap-2">
+    <div class="dashboard-wrap">
+        <div class="max-w-4xl mx-auto">
+        <div class="dash-header">
+            <div>
+                <div class="dash-eyebrow">SIEI UAEMex</div>
+                <h2 class="dash-title">{{ $survey->title }}</h2>
+                <p class="dash-subtitle">Detalle de la encuesta seleccionada</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('surveys.index') }}" class="text-gray-500 hover:text-gray-700 font-bold flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
                 <a href="{{ route('surveys.public', $survey->id) }}" target="_blank" class="bg-purple-50 text-purple-600 px-4 py-2 rounded-lg font-bold hover:bg-purple-100 transition flex items-center gap-2">
                     <i class="fas fa-external-link-alt"></i> Responder / Enlace Público
                 </a>
@@ -52,8 +57,38 @@
         <div class="space-y-6">
             <h3 class="text-xl font-bold text-gray-800 ml-2">Preguntas ({{ count($survey->questions ?? []) }})</h3>
             
+            @php
+                $totalSections = 0;
+                foreach(($survey->questions ?? []) as $q) {
+                    if (($q['type'] ?? null) === 'section') {
+                        $totalSections++;
+                    }
+                }
+                $currentSection = 0;
+            @endphp
+
             @if(isset($survey->questions) && count($survey->questions) > 0)
                 @foreach($survey->questions as $index => $question)
+                    @if(($question['type'] ?? null) === 'section')
+                        @php $currentSection++; @endphp
+                        <div class="bg-[#e8f5fe] rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-[#1967d2] bg-white">
+                                        Sección {{ $currentSection }} de {{ $totalSections }}
+                                    </span>
+                                </div>
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-800 mb-1">
+                                {{ $question['text'] }}
+                            </h4>
+                            @if(!empty($question['description']))
+                                <p class="text-gray-600 text-sm">{{ $question['description'] }}</p>
+                            @endif
+                        </div>
+                        @continue
+                    @endif
+
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <div class="flex justify-between items-start mb-4">
                             <h4 class="text-lg font-bold text-gray-800">
@@ -67,8 +102,28 @@
                             </span>
                         </div>
 
-                        <!-- Opciones según el tipo -->
-                        <div class="pl-4 border-l-2 border-gray-100">
+                        <div class="pl-4 border-l-2 border-gray-100 space-y-3">
+                            @if(!empty($question['image_url']))
+                                <div>
+                                    <span class="text-xs text-gray-500 uppercase tracking-wide">Imagen</span>
+                                    <div class="mt-1">
+                                        <img src="{{ $question['image_url'] }}" alt="Imagen de la pregunta {{ $index + 1 }}" class="max-h-40 rounded-lg object-contain border border-dashed border-gray-200">
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(!empty($question['video_url']))
+                                <div>
+                                    <span class="text-xs text-gray-500 uppercase tracking-wide">Video</span>
+                                    <div class="mt-1">
+                                        <a href="{{ $question['video_url'] }}" target="_blank" class="inline-flex items-center gap-2 text-indigo-600 text-sm">
+                                            <i class="fab fa-youtube"></i>
+                                            Ver video asociado
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+
                             @if($question['type'] === 'short_text')
                                 <div class="border-b border-gray-300 border-dashed py-2 text-gray-400 text-sm italic w-1/2">Respuesta corta...</div>
                             @elseif($question['type'] === 'paragraph')
@@ -91,6 +146,25 @@
                                         @endforeach
                                     </div>
                                 @endif
+                            @elseif($question['type'] === 'date')
+                                <div class="border-b border-gray-300 border-dashed py-2 text-gray-400 text-sm italic w-1/3">dd/mm/aaaa</div>
+                            @elseif($question['type'] === 'time')
+                                <div class="border-b border-gray-300 border-dashed py-2 text-gray-400 text-sm italic w-1/4">hh:mm</div>
+                            @elseif($question['type'] === 'linear_scale')
+                                <div class="flex items-center gap-4 text-gray-500">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <div class="flex flex-col items-center text-xs">
+                                            <i class="far fa-circle mb-1"></i>
+                                            <span>{{ $i }}</span>
+                                        </div>
+                                    @endfor
+                                </div>
+                            @elseif($question['type'] === 'rating')
+                                <div class="flex items-center gap-1 text-yellow-400">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="far fa-star text-xl"></i>
+                                    @endfor
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -101,5 +175,6 @@
                 </div>
             @endif
         </div>
+    </div>
     </div>
 @endsection

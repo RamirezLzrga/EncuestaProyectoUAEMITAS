@@ -3,19 +3,23 @@
 @section('title', 'Encuestas')
 
 @section('content')
-    <!-- Header Section -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h2 class="text-3xl font-bold text-gray-800">Encuestas</h2>
-            <p class="text-gray-500 mt-1">Gestiona todas tus encuestas</p>
+    <div class="dashboard-wrap">
+        <div class="dash-header">
+            <div>
+                <div class="dash-eyebrow">SIEI UAEMex</div>
+                <h2 class="dash-title">Encuestas</h2>
+                <p class="dash-subtitle">Gestiona todas tus encuestas</p>
+            </div>
+            <a href="{{ route('surveys.create') }}" class="btn-nueva-encuesta">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Nueva Encuesta
+            </a>
         </div>
-        <a href="{{ route('surveys.create') }}" class="bg-uaemex text-white px-6 py-3 rounded-lg shadow-lg shadow-green-900/20 hover:bg-green-800 transition font-bold flex items-center gap-2">
-            <i class="fas fa-plus"></i> Nueva Encuesta
-        </a>
-    </div>
 
-    <!-- Filters & Search -->
-    <form action="{{ route('surveys.index') }}" method="GET" id="filtersForm" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
+        <form action="{{ route('surveys.index') }}" method="GET" id="filtersForm" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
         
         <!-- Filtro Fecha Desde (Flatpickr) -->
         <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
@@ -45,7 +49,6 @@
         </a>
     </form>
 
-    <!-- Surveys List (Table) -->
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
@@ -147,6 +150,7 @@
                 @endif
             </div>
         @endif
+    </div>
     </div>
 @endsection
 

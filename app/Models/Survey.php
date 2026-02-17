@@ -15,6 +15,7 @@ class Survey extends Model
     protected $fillable = [
         'title',
         'description',
+        'header_image',
         'year',
         'start_date',
         'end_date',

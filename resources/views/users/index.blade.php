@@ -3,18 +3,22 @@
 @section('title', 'Usuarios')
 
 @section('content')
-    <!-- Header Section -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h2 class="text-3xl font-bold text-gray-800">Usuarios</h2>
-            <p class="text-gray-500 mt-1">Administración de usuarios del sistema</p>
+    <div class="dashboard-wrap">
+        <div class="dash-header">
+            <div>
+                <div class="dash-eyebrow">SIEI UAEMex</div>
+                <h2 class="dash-title">Usuarios</h2>
+                <p class="dash-subtitle">Administración de usuarios del sistema</p>
+            </div>
+            <a href="{{ route('users.create') }}" class="btn-nueva-encuesta">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Nuevo Usuario
+            </a>
         </div>
-        <a href="{{ route('users.create') }}" class="bg-green-700 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition shadow-md flex items-center gap-2">
-            <i class="fas fa-plus"></i> Nuevo Usuario
-        </a>
-    </div>
 
-    <!-- Filters -->
     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center mt-6">
         <form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap gap-4 items-center w-full">
             <div class="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
@@ -47,7 +51,6 @@
         </form>
     </div>
 
-    <!-- Users Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mt-6 overflow-hidden">
         <table class="w-full text-left border-collapse">
             <thead>
@@ -122,5 +125,6 @@
 
     <div class="mt-4">
         {{ $users->appends(request()->query())->links() }}
+    </div>
     </div>
 @endsection

@@ -3,11 +3,13 @@
 @section('title', 'Plantillas Globales')
 
 @section('content')
-<div class="flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-bold text-uaemex">Plantillas Globales</h1>
-        <p class="text-sm text-gray-500">Gestiona las plantillas base que usarán los editores.</p>
-    </div>
+<div class="dashboard-wrap">
+    <div class="dash-header">
+        <div>
+            <div class="dash-eyebrow">SIEI UAEMex</div>
+            <h2 class="dash-title">Plantillas Globales</h2>
+            <p class="dash-subtitle">Gestiona las plantillas base que usarán los editores.</p>
+        </div>
     <form
         method="POST"
         action="{{ isset($editingTemplate) ? route('admin.plantillas.update', $editingTemplate) : route('admin.plantillas.store') }}"
@@ -55,7 +57,7 @@
             {{ isset($editingTemplate) ? 'Actualizar' : 'Nueva' }}
         </button>
     </form>
-</div>
+    </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
@@ -134,5 +136,6 @@
             </label>
         </div>
     </div>
+</div>
 </div>
 @endsection

@@ -3,12 +3,12 @@
 @section('title', $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta')
 
 @section('content')
-<div class="flex items-center justify-between mb-4">
+<div class="dashboard-wrap">
+<div class="dash-header">
     <div>
-        <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Editor de encuestas</p>
-        <h1 class="text-2xl font-bold text-gray-100 mt-1">
-            {{ $mode === 'create' ? 'Crear nueva encuesta' : 'Editar encuesta' }}
-        </h1>
+        <div class="dash-eyebrow">SIEI UAEMex</div>
+        <h2 class="dash-title">{{ $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta' }}</h2>
+        <p class="dash-subtitle">Editor visual para construir y ajustar tu encuesta</p>
     </div>
     <div class="flex gap-2">
         @if($mode === 'edit')
@@ -135,6 +135,7 @@
         </div>
     </div>
 </form>
+</div>
 
 <template id="question-template">
     <div class="question-item bg-slate-900/80 border border-white/10 rounded-2xl p-4 space-y-3">
@@ -384,4 +385,3 @@
     }
 </script>
 @endpush
-

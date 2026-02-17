@@ -3,13 +3,16 @@
 @section('title', 'Estadísticas')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <h1 class="text-2xl font-bold text-gray-800">Estadísticas</h1>
-        <p class="text-gray-500">Análisis de respuestas por encuesta</p>
+<div class="dashboard-wrap">
+    <div class="dash-header">
+        <div>
+            <div class="dash-eyebrow">SIEI UAEMex</div>
+            <h2 class="dash-title">Estadísticas</h2>
+            <p class="dash-subtitle">Análisis de respuestas por encuesta</p>
+        </div>
     </div>
 
+    <div class="space-y-6 mt-6">
     <!-- Filtros -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
@@ -155,6 +158,7 @@
         <h2 class="text-xl font-bold text-gray-400">Selecciona una encuesta para ver sus estadísticas</h2>
     </div>
     @endif
+    </div>
 </div>
 @endsection
 

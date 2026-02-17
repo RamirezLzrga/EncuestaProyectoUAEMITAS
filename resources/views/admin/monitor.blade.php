@@ -3,16 +3,18 @@
 @section('title', 'Monitoreo en Vivo')
 
 @section('content')
-<div class="flex items-center justify-between">
-    <div>
-        <h1 class="text-2xl font-bold text-uaemex">Monitoreo en Vivo</h1>
-        <p class="text-sm text-gray-500">Usuarios conectados y actividad en tiempo real.</p>
+<div class="dashboard-wrap">
+    <div class="dash-header">
+        <div>
+            <div class="dash-eyebrow">SIEI UAEMex</div>
+            <h2 class="dash-title">Monitoreo en Vivo</h2>
+            <p class="dash-subtitle">Usuarios conectados y actividad en tiempo real.</p>
+        </div>
+        <span class="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Actualización automática cada 5 segundos
+        </span>
     </div>
-    <span class="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        Actualización automática cada 5 segundos
-    </span>
-</div>
 
 <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
     <div class="space-y-6 xl:col-span-1">
@@ -101,5 +103,5 @@
         </div>
     </div>
 </div>
+</div>
 @endsection
-
