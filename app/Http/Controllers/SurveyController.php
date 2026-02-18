@@ -46,7 +46,12 @@ class SurveyController extends Controller
 
         $surveys = $query->orderBy('created_at', 'desc')->get();
 
-        return view('surveys.index', compact('surveys', 'surveyDates'));
+        $user = Auth::user();
+        $view = $user && $user->role === 'admin'
+            ? 'surveys.index'
+            : 'editor.encuestas.index';
+
+        return view($view, compact('surveys', 'surveyDates'));
     }
 
     /**

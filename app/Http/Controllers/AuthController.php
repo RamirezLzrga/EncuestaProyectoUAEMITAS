@@ -35,7 +35,13 @@ class AuthController extends Controller
                 'ip_address' => $request->ip()
             ]);
 
-            return redirect()->intended('dashboard');
+            $user = Auth::user();
+
+            $target = $user && $user->role === 'admin'
+                ? route('dashboard')
+                : route('editor.dashboard');
+
+            return redirect()->intended($target);
         }
 
         return back()->withErrors([
@@ -74,7 +80,11 @@ class AuthController extends Controller
             'ip_address' => $request->ip()
         ]);
 
-        return redirect('/dashboard');
+        $target = $user && $user->role === 'admin'
+            ? route('dashboard')
+            : route('editor.dashboard');
+
+        return redirect($target);
     }
 
     public function logout(Request $request)

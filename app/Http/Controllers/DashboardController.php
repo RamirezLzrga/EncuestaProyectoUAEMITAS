@@ -11,7 +11,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
+
+        if ($user && $user->role !== 'admin') {
+            return redirect()->route('editor.dashboard');
+        }
+
+        $userId = $user->id;
 
         Notification::notifyExpiringSurveys(3);
 
@@ -53,7 +59,7 @@ class DashboardController extends Controller
         // Datos para Gráfica de Dona (Estado)
         $doughnutData = [$activeSurveys, $inactiveSurveys];
 
-        return view('dashboard', compact(
+        return view('admin.dashboard', compact(
             'totalSurveys',
             'activeSurveys',
             'inactiveSurveys',

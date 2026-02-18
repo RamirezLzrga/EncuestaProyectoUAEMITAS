@@ -7,13 +7,21 @@ use App\Models\SurveyResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class StatisticsController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtener todas las encuestas para el selector
-        $surveys = Survey::orderBy('created_at', 'desc')->get();
+        $user = Auth::user();
+
+        if ($user && $user->role !== 'admin') {
+            $surveys = Survey::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $surveys = Survey::orderBy('created_at', 'desc')->get();
+        }
 
         // Obtener la encuesta seleccionada o la última por defecto
         $selectedSurveyId = $request->input('survey_id');
@@ -172,6 +180,10 @@ class StatisticsController extends Controller
             $stats['recent_responses'] = $formattedRecent;
         }
 
-        return view('statistics.index', compact('surveys', 'selectedSurvey', 'stats'));
+        $view = $user && $user->role === 'admin'
+            ? 'statistics.index'
+            : 'editor.statistics.index';
+
+        return view($view, compact('surveys', 'selectedSurvey', 'stats'));
     }
 }

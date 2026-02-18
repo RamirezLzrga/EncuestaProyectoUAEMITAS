@@ -1,19 +1,16 @@
-@extends('layouts.admin')
+@extends('layouts.editor')
 
 @section('title', 'Estadísticas')
 
 @section('content')
-<div class="page-header">
-    <div class="page-title-row">
-        <div>
-            <h1 class="page-title">Estadísticas</h1>
-            <p class="page-subtitle">Análisis de respuestas por encuesta</p>
-        </div>
+<div class="welcome-section" style="margin-bottom: 1.5rem;">
+    <div class="welcome-content">
+        <h2 class="greeting">Estadísticas</h2>
+        <p class="greeting-subtitle">Analiza el rendimiento de tus encuestas</p>
     </div>
 </div>
 
-    <div class="space-y-6">
-    <!-- Filtros -->
+<div class="space-y-6">
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
             <div class="w-full md:w-1/2 md:max-w-md">
@@ -33,9 +30,7 @@
     </div>
 
     @if($selectedSurvey)
-    <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Total Respuestas -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-uaemex transition">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
                 <i class="fas fa-poll text-6xl text-uaemex"></i>
@@ -53,7 +48,6 @@
             </span>
         </div>
 
-        <!-- Tasa de Completado -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-uaemex transition">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
                 <i class="fas fa-check-circle text-6xl text-green-600"></i>
@@ -72,7 +66,6 @@
         </div>
     </div>
 
-    <!-- Tabla de Respuestas -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <h3 class="font-bold text-gray-800 text-lg">Respuestas Individuales</h3>
@@ -127,21 +120,18 @@
         <h2 class="text-xl font-bold text-gray-400">Selecciona una encuesta para ver sus estadísticas</h2>
     </div>
     @endif
-    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Datos desde el controlador
         const stats = @json($stats);
 
-        // Configuración común
         Chart.defaults.font.family = "'Figtree', sans-serif";
         Chart.defaults.color = '#6b7280';
         
-        // Gráfica de Distribución (Barras)
         const ctxDistribution = document.getElementById('distributionChart');
         if (ctxDistribution && stats.responses_distribution) {
             new Chart(ctxDistribution, {
@@ -182,7 +172,6 @@
             });
         }
 
-        // Gráfica de Evolución (Línea)
         const ctxEvolution = document.getElementById('evolutionChart');
         if (ctxEvolution && stats.responses_per_day) {
             new Chart(ctxEvolution, {
@@ -192,7 +181,7 @@
                     datasets: [{
                         label: 'Respuestas por periodo',
                         data: stats.responses_per_day.data,
-                        borderColor: '#bca06d', // Dorado UAEMex
+                        borderColor: '#bca06d',
                         backgroundColor: 'rgba(188, 160, 109, 0.1)',
                         borderWidth: 2,
                         fill: true,

@@ -260,7 +260,7 @@
                             <div class="progress-percentage">88%</div>
                         </div>
                     </td>
-                    <td style="color: var(--gray-500); font-size: 0.875rem;">Hace 5 min</td>
+                    <td style="color: var(--gray-500); font-size: 0.875rem;">Hace 3 horas</td>
                 </tr>
 
                 <tr>
@@ -268,18 +268,18 @@
                         <div class="user-cell">
                             <div class="user-cell-avatar">MG</div>
                             <div class="user-cell-info">
-                                <h4>María García López</h4>
-                                <p>mgarcia@gmail.com</p>
+                                <h4>María González</h4>
+                                <p>maria@example.com</p>
                             </div>
                         </div>
                     </td>
                     <td><span class="badge editor">Editor</span></td>
                     <td>
-                        <div class="metric-value">22</div>
+                        <div class="metric-value">19</div>
                         <div class="metric-label">encuestas</div>
                     </td>
                     <td>
-                        <div class="metric-value">2,156</div>
+                        <div class="metric-value">1,745</div>
                         <div class="metric-label">respuestas</div>
                     </td>
                     <td>
@@ -291,36 +291,6 @@
                         </div>
                     </td>
                     <td style="color: var(--gray-500); font-size: 0.875rem;">Hace 1 día</td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-cell-avatar">LM</div>
-                            <div class="user-cell-info">
-                                <h4>Luis Martínez Cruz</h4>
-                                <p>lmartinez@gmail.com</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="badge editor">Editor</span></td>
-                    <td>
-                        <div class="metric-value">19</div>
-                        <div class="metric-label">encuestas</div>
-                    </td>
-                    <td>
-                        <div class="metric-value">1,893</div>
-                        <div class="metric-label">respuestas</div>
-                    </td>
-                    <td>
-                        <div class="progress-wrapper">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 91%"></div>
-                            </div>
-                            <div class="progress-percentage">91%</div>
-                        </div>
-                    </td>
-                    <td style="color: var(--gray-500); font-size: 0.875rem;">Hace 3 horas</td>
                 </tr>
                 </tbody>
             </table>

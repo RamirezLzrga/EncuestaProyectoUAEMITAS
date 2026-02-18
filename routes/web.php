@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminConfigController;
 use App\Http\Controllers\AdminMonitorController;
 use App\Http\Controllers\EditorSurveyController;
+use App\Http\Controllers\EditorDashboardController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -47,8 +48,9 @@ Route::middleware('auth')->group(function () {
     // Ruta de Estadísticas
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
 
-    // Rutas de Editor de Encuestas
     Route::middleware(['role:editor'])->prefix('editor')->name('editor.')->group(function () {
+        Route::get('/dashboard', [EditorDashboardController::class, 'index'])->name('dashboard');
+
         Route::get('/encuestas/nueva', [EditorSurveyController::class, 'builderNew'])->name('encuestas.nueva');
         Route::post('/encuestas', [EditorSurveyController::class, 'builderStore'])->name('encuestas.store');
         Route::get('/encuestas/{survey}/editar', [EditorSurveyController::class, 'builderEdit'])->name('encuestas.editar');
