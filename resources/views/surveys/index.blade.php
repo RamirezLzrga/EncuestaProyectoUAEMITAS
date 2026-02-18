@@ -1,53 +1,62 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Encuestas')
 
 @section('content')
-    <div class="dashboard-wrap">
-        <div class="dash-header">
+    <div class="page-header">
+        <div class="page-title-row">
             <div>
-                <div class="dash-eyebrow">SIEI UAEMex</div>
-                <h2 class="dash-title">Encuestas</h2>
-                <p class="dash-subtitle">Gestiona todas tus encuestas</p>
+                <h1 class="page-title">Encuestas Globales</h1>
+                <p class="page-subtitle">Gestiona todas tus encuestas</p>
             </div>
-            <a href="{{ route('surveys.create') }}" class="btn-nueva-encuesta">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Nueva Encuesta
+            <div class="page-actions">
+                <a href="{{ route('surveys.create') }}" class="btn btn-gold">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Nueva Encuesta
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                Filtros de búsqueda
+            </div>
+        </div>
+
+        <form action="{{ route('surveys.index') }}" method="GET" id="filtersForm" class="flex flex-col lg:flex-row flex-wrap gap-4 items-end">
+            <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                <label class="text-sm font-bold text-gray-600">Desde:</label>
+                <input type="text" id="datepicker" name="start_date" value="{{ request('start_date') }}" class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 w-28 cursor-pointer" placeholder="Seleccionar...">
+            </div>
+
+            <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                <label class="text-sm font-bold text-gray-600">Estado:</label>
+                <select name="status" onchange="this.form.submit()" class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 cursor-pointer">
+                    <option value="Todas" {{ request('status') == 'Todas' ? 'selected' : '' }}>Todas</option>
+                    <option value="Activas" {{ request('status') == 'Activas' ? 'selected' : '' }}>Activas</option>
+                    <option value="Inactivas" {{ request('status') == 'Inactivas' ? 'selected' : '' }}>Inactivas</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 flex-1 min-w-[220px]">
+                <label class="text-sm font-bold text-gray-600">Buscar:</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar encuesta..." class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 w-full">
+                <button type="submit" class="hidden">Buscar</button>
+            </div>
+
+            <a href="{{ route('surveys.index') }}" class="text-uaemex text-sm font-bold border border-uaemex px-4 py-1.5 rounded-lg hover:bg-uaemex hover:text-white transition flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i> Resetear
             </a>
-        </div>
-
-        <form action="{{ route('surveys.index') }}" method="GET" id="filtersForm" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center">
-        
-        <!-- Filtro Fecha Desde (Flatpickr) -->
-        <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-            <label class="text-sm font-bold text-gray-600">Desde:</label>
-            <input type="text" id="datepicker" name="start_date" value="{{ request('start_date') }}" class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 w-28 cursor-pointer" placeholder="Seleccionar...">
-        </div>
-
-        <!-- Filtro Estado -->
-        <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-            <label class="text-sm font-bold text-gray-600">Estado:</label>
-            <select name="status" onchange="this.form.submit()" class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 cursor-pointer">
-                <option value="Todas" {{ request('status') == 'Todas' ? 'selected' : '' }}>Todas</option>
-                <option value="Activas" {{ request('status') == 'Activas' ? 'selected' : '' }}>Activas</option>
-                <option value="Inactivas" {{ request('status') == 'Inactivas' ? 'selected' : '' }}>Inactivas</option>
-            </select>
-        </div>
-        
-        <!-- Buscador -->
-        <div class="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 flex-1 min-w-[200px]">
-            <label class="text-sm font-bold text-gray-600">Buscar:</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar encuesta..." class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 w-full">
-            <button type="submit" class="hidden">Buscar</button>
-        </div>
-
-        <a href="{{ route('surveys.index') }}" class="text-uaemex text-sm font-bold border border-uaemex px-4 py-1.5 rounded-lg hover:bg-uaemex hover:text-white transition flex items-center gap-2">
-            <i class="fas fa-sync-alt"></i> Resetear
-        </a>
-    </form>
+        </form>
+    </div>
 
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -150,7 +159,6 @@
                 @endif
             </div>
         @endif
-    </div>
     </div>
 @endsection
 

@@ -1,18 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Sistema de Aprobaciones')
 
 @section('content')
-<div class="dashboard-wrap">
-    <div class="dash-header">
+<div class="page-header">
+    <div class="page-title-row">
         <div>
-            <div class="dash-eyebrow">SIEI UAEMex</div>
-            <h2 class="dash-title">Sistema de Aprobaciones</h2>
-            <p class="dash-subtitle">Cola de encuestas pendientes de aprobación y su historial.</p>
+            <h1 class="page-title">Sistema de Aprobaciones</h1>
+            <p class="page-subtitle">Cola de encuestas pendientes de aprobación y su historial.</p>
         </div>
     </div>
+</div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-4">
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-4">
@@ -125,6 +125,5 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 @endsection

@@ -1,21 +1,24 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Crear Nueva Encuesta')
 
 @section('content')
-<div class="dashboard-wrap">
-    <div class="dash-header">
+<div class="page-header">
+    <div class="page-title-row">
         <div>
-            <div class="dash-eyebrow">SIEI UAEMex</div>
-            <h2 class="dash-title">Crear Nueva Encuesta</h2>
-            <p class="dash-subtitle">Diseña tu formulario al estilo Google Forms</p>
+            <h1 class="page-title">Crear Nueva Encuesta</h1>
+            <p class="page-subtitle">Diseña tu formulario al estilo Google Forms</p>
         </div>
-        <a href="{{ route('surveys.index') }}" class="text-gray-500 hover:text-gray-700 text-xl">
-            <i class="fas fa-times"></i>
-        </a>
+        <div class="page-actions">
+            <a href="{{ route('surveys.index') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+                Cancelar
+            </a>
+        </div>
     </div>
+</div>
 
-    <div id="builder-root" class="mt-6 rounded-[32px] bg-white py-10">
+<div id="builder-root" class="mt-2 rounded-[32px] bg-white py-10">
         <form action="{{ route('surveys.store') }}" method="POST" id="surveyForm" class="max-w-3xl mx-auto relative space-y-4">
             @csrf
             <input type="hidden" name="header_image" id="header-image-input">
@@ -24,7 +27,7 @@
             <input type="hidden" name="end_date" value="{{ date('Y-m-d', strtotime('+1 month')) }}">
 
             <div id="question-toolbar" class="absolute -right-16 hidden lg:flex flex-col gap-3">
-                <button type="button" onclick="addQuestion()" class="btn-add-question w-10 h-10 rounded-full bg-[#4285f4] text-white shadow-lg flex items-center justify-center hover:bg-[#3367d6] transition" title="Añadir pregunta">
+                <button type="button" onclick="addQuestion()" class="btn-add-question w-10 h-10 rounded-full bg-[#006838] text-white shadow-lg flex items-center justify-center hover:bg-[#004d28] transition" title="Añadir pregunta">
                     <i class="fas fa-plus"></i>
                 </button>
                 <button type="button" onclick="focusSurveyTitle()" class="w-10 h-10 rounded-full bg-white text-gray-700 border border-gray-200 shadow flex items-center justify-center hover:bg-gray-50 transition text-xs font-bold" title="Editar título">
@@ -45,9 +48,9 @@
                 <img id="header-image-preview" src="" alt="Imagen de encabezado" class="w-full h-48 object-cover rounded-t-2xl">
             </div>
 
-            <div data-header-card class="bg-white rounded-2xl shadow-md border-t-8 border-[#4285f4]">
+            <div data-header-card class="bg-white rounded-2xl shadow-md border border-gray-100 border-t-8" style="border-top-color: #006838;">
                 <div class="border-b border-gray-200 px-8 pt-6 pb-4">
-                    <input type="text" name="title" id="input-title" placeholder="Formulario sin título" class="w-full text-3xl font-normal border-b border-transparent focus:border-[#4285f4] focus:outline-none pb-2 placeholder-gray-500" required>
+                    <input type="text" name="title" id="input-title" placeholder="Formulario sin título" class="w-full text-3xl font-normal border-b border-transparent focus:border-[#006838] focus:outline-none pb-2 placeholder-gray-500" required>
                     <textarea name="description" id="input-description" placeholder="Descripción del formulario" class="w-full mt-2 text-sm text-gray-700 border-b border-transparent focus:border-gray-300 focus:outline-none pb-2 resize-none placeholder-gray-500"></textarea>
                 </div>
             </div>
@@ -55,7 +58,7 @@
             <div id="questions-container" class="space-y-4"></div>
 
             <div class="flex items-center gap-4 pt-4">
-                <button type="submit" class="btn-save-form bg-[#4285f4] text-white px-6 py-2 rounded-md text-sm font-semibold shadow hover:bg-[#3367d6] transition">
+                <button type="submit" class="btn-save-form bg-[#006838] text-white px-6 py-2 rounded-md text-sm font-semibold shadow hover:bg-[#004d28] transition">
                     Guardar encuesta
                 </button>
                 <a href="{{ route('surveys.index') }}" class="text-sm text-gray-700 font-semibold hover:underline">
@@ -85,12 +88,12 @@
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-xs text-gray-500">Encabezado</span>
                             <div class="flex items-center gap-1">
-                                <select id="theme-header-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-header-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="'DM Sans', sans-serif">DM Sans</option>
                                     <option value="'Playfair Display', serif">Playfair</option>
                                     <option value="'DM Mono', monospace">Mono</option>
                                 </select>
-                                <select id="theme-header-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-header-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="24">24</option>
                                     <option value="28">28</option>
                                     <option value="32" selected>32</option>
@@ -101,12 +104,12 @@
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-xs text-gray-500">Pregunta</span>
                             <div class="flex items-center gap-1">
-                                <select id="theme-question-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-question-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="'DM Sans', sans-serif">DM Sans</option>
                                     <option value="'Playfair Display', serif">Playfair</option>
                                     <option value="'DM Mono', monospace">Mono</option>
                                 </select>
-                                <select id="theme-question-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-question-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="12">12</option>
                                     <option value="14" selected>14</option>
                                     <option value="16">16</option>
@@ -116,12 +119,12 @@
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-xs text-gray-500">Texto</span>
                             <div class="flex items-center gap-1">
-                                <select id="theme-text-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-text-font" class="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="'DM Sans', sans-serif">DM Sans</option>
                                     <option value="'Playfair Display', serif">Playfair</option>
                                     <option value="'DM Mono', monospace">Mono</option>
                                 </select>
-                                <select id="theme-text-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#4285f4]">
+                                <select id="theme-text-size" class="border border-gray-200 rounded-lg px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#006838]">
                                     <option value="11">11</option>
                                     <option value="12">12</option>
                                     <option value="14" selected>14</option>
@@ -142,20 +145,19 @@
                 <div class="space-y-3">
                     <p class="text-xs font-semibold text-gray-500">Color</p>
                     <div class="flex flex-wrap gap-2">
-                        <button type="button" class="w-7 h-7 rounded-full border-2 border-black/60 bg-[#4285f4]" data-theme-primary="#4285f4"></button>
-                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#d93025]" data-theme-primary="#d93025"></button>
-                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#5f36ff]" data-theme-primary="#5f36ff"></button>
-                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#34a853]" data-theme-primary="#34a853"></button>
-                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#fbbc04]" data-theme-primary="#fbbc04"></button>
+                        <button type="button" class="w-7 h-7 rounded-full border-2 border-black/60 bg-[#006838]" data-theme-primary="#006838"></button>
+                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#C9A961]" data-theme-primary="#C9A961"></button>
+                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#22c55e]" data-theme-primary="#22c55e"></button>
+                        <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#0f172a]" data-theme-primary="#0f172a"></button>
                         <button type="button" class="w-7 h-7 rounded-full border-2 border-transparent bg-[#9e9e9e]" data-theme-primary="#9e9e9e"></button>
                     </div>
 
                     <p class="text-xs font-semibold text-gray-500 mt-3">Fondo</p>
                     <div class="flex gap-2">
                         <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-white" data-theme-bg="#ffffff"></button>
-                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#fce4ec]" data-theme-bg="#fce4ec"></button>
-                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#fff3e0]" data-theme-bg="#fff3e0"></button>
-                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#e3f2fd]" data-theme-bg="#e3f2fd"></button>
+                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#f0fdf4]" data-theme-bg="#f0fdf4"></button>
+                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#fefce8]" data-theme-bg="#fefce8"></button>
+                        <button type="button" class="w-6 h-6 rounded-full border border-gray-300 bg-[#ecfeff]" data-theme-bg="#ecfeff"></button>
                     </div>
                 </div>
             </div>
@@ -173,7 +175,7 @@
         </div>
         <div class="border-b border-gray-200 px-6 pt-3">
             <div class="flex gap-6 text-xs font-semibold text-gray-500">
-                <span class="text-[#1a73e8] border-b-2 border-[#1a73e8] pb-2">Subir</span>
+                <span class="text-[#006838] border-b-2 border-[#006838] pb-2">Subir</span>
                 <span class="pb-2 text-gray-400">Cámara web</span>
                 <span class="pb-2 text-gray-400">Por URL</span>
                 <span class="pb-2 text-gray-400">Fotos</span>
@@ -185,14 +187,14 @@
             <div class="border-2 border-dashed border-gray-300 rounded-xl py-10 flex flex-col items-center justify-center gap-3 bg-gray-50">
                 <div class="w-20 h-12 bg-gray-200 rounded-md"></div>
                 <p class="text-xs text-gray-500">Esta versión permite insertar imágenes usando una URL pública.</p>
-                <input id="image-dialog-url" type="text" class="mt-2 w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a73e8]" placeholder="Pega aquí la URL de la imagen">
+                <input id="image-dialog-url" type="text" class="mt-2 w-full max-w-md border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#006838]" placeholder="Pega aquí la URL de la imagen">
             </div>
         </div>
         <div class="px-6 py-3 border-t border-gray-200 flex justify-end gap-2">
             <button type="button" onclick="closeImageDialog()" class="px-4 py-2 text-xs font-semibold text-gray-700 rounded-lg hover:bg-gray-100">
                 Cancelar
             </button>
-            <button type="button" onclick="confirmImageDialog()" class="px-4 py-2 text-xs font-semibold text-white bg-[#1a73e8] rounded-lg hover:bg-[#1557b0]">
+            <button type="button" onclick="confirmImageDialog()" class="px-4 py-2 text-xs font-semibold text-white bg-[#006838] rounded-lg hover:bg-[#004d28]">
                 Insertar
             </button>
         </div>
@@ -201,13 +203,13 @@
 
 <template id="question-template">
     <div class="question-item bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition relative overflow-hidden">
-        <div class="accent-bar absolute left-0 top-0 h-full w-1 bg-[#4285f4]"></div>
+        <div class="accent-bar absolute left-0 top-0 h-full w-1 bg-[#006838]"></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3 px-6 pt-6">
             <div class="md:col-span-2">
-                <input type="text" name="questions[INDEX][text]" placeholder="Escribe tu pregunta" class="question-input-text w-full border-b border-gray-300 focus:border-[#4285f4] focus:outline-none pb-2 text-gray-800" required>
+                <input type="text" name="questions[INDEX][text]" placeholder="Escribe tu pregunta" class="question-input-text w-full border-b border-gray-300 focus:border-[#006838] focus:outline-none pb-2 text-gray-800" required>
             </div>
             <div>
-                <select name="questions[INDEX][type]" onchange="toggleOptions(this)" class="question-input-type w-full bg-white border border-gray-300 rounded px-3 py-2 text-gray-700 text-sm focus:outline-none focus:border-[#4285f4] cursor-pointer">
+                <select name="questions[INDEX][type]" onchange="toggleOptions(this)" class="question-input-type w-full bg-white border border-gray-300 rounded px-3 py-2 text-gray-700 text-sm focus:outline-none focus:border-[#006838] cursor-pointer">
                     <option value="multiple_choice">Opción múltiple</option>
                     <option value="checkboxes">Casillas de verificación</option>
                     <option value="short_text">Texto corto</option>
@@ -223,12 +225,12 @@
         <div class="options-container space-y-2 px-6 pb-4">
             <div class="option-item flex items-center gap-3">
                 <i class="far fa-circle text-gray-500"></i>
-                <input type="text" name="questions[INDEX][options][]" value="Opción 1" class="question-input-option flex-1 border-b border-dotted border-gray-400 focus:border-[#4285f4] focus:outline-none text-sm text-gray-700" placeholder="Opción">
+                <input type="text" name="questions[INDEX][options][]" value="Opción 1" class="question-input-option flex-1 border-b border-dotted border-gray-400 focus:border-[#006838] focus:outline-none text-sm text-gray-700" placeholder="Opción">
                 <button type="button" onclick="removeOption(this)" class="text-gray-400 hover:text-red-500 transition">
                     <i class="fas fa-close text-xs"></i>
                 </button>
             </div>
-            <button type="button" onclick="addOption(this, 'INDEX')" class="text-[#4285f4] text-sm font-semibold hover:underline flex items-center gap-2 mt-1">
+            <button type="button" onclick="addOption(this, 'INDEX')" class="text-[#006838] text-sm font-semibold hover:underline flex items-center gap-2 mt-1">
                 <i class="fas fa-plus"></i> Agregar opción
             </button>
         </div>
@@ -236,7 +238,7 @@
         <div class="flex justify-between items-center border-t border-gray-100 px-6 py-3 text-sm text-gray-600">
             <label class="flex items-center gap-2 cursor-pointer">
                 <span>Obligatoria</span>
-                <input type="checkbox" name="questions[INDEX][required]" class="question-input-required w-4 h-4 text-[#4285f4] rounded focus:ring-[#4285f4]">
+                <input type="checkbox" name="questions[INDEX][required]" class="question-input-required w-4 h-4 text-[#006838] rounded focus:ring-[#006838]">
             </label>
             <div class="flex items-center gap-2 text-gray-500">
                 <button type="button" onclick="duplicateQuestion(this)" class="p-1 rounded-full hover:bg-gray-100" title="Duplicar">
@@ -251,16 +253,16 @@
 </template>
 
 <template id="section-template">
-    <div class="question-item bg-[#ffe4e1] rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition relative overflow-hidden" data-section="true">
-        <div class="px-6 pt-4 pb-3 bg-[#ffe4e1] border-b border-gray-200">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-[#c5221f] bg-white section-label">
+    <div class="question-item bg-[#f0fdf4] rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition relative overflow-hidden" data-section="true">
+        <div class="px-6 pt-4 pb-3 bg-[#f0fdf4] border-b border-gray-200">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-[#166534] bg-white section-label">
                 Sección
             </span>
         </div>
         <div class="px-6 pt-4 pb-4 bg-white">
             <input type="hidden" name="questions[INDEX][type]" value="section">
-            <input type="text" name="questions[INDEX][text]" placeholder="Sección sin título" class="question-input-text w-full border-b border-gray-300 focus:border-[#4285f4] focus:outline-none pb-2 text-gray-800 mb-2" required>
-            <textarea name="questions[INDEX][description]" placeholder="Descripción (opcional)" class="question-input-description w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-[#4285f4] resize-none"></textarea>
+            <input type="text" name="questions[INDEX][text]" placeholder="Sección sin título" class="question-input-text w-full border-b border-gray-300 focus:border-[#006838] focus:outline-none pb-2 text-gray-800 mb-2" required>
+            <textarea name="questions[INDEX][description]" placeholder="Descripción (opcional)" class="question-input-description w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-[#006838] resize-none"></textarea>
         </div>
         <div class="flex justify-end items-center border-t border-gray-100 px-6 py-3 text-sm text-gray-500 bg-white">
             <span>Después de esta sección: Ir a la siguiente sección</span>
@@ -272,7 +274,7 @@
 @push('scripts')
 <script>
     let questionCount = 0;
-    let themePrimaryColor = '#4285f4';
+    let themePrimaryColor = '#006838';
     let themeBackgroundColor = '#ffffff';
     let activeQuestion = null;
     let imageDialogContext = null;
@@ -407,7 +409,7 @@
             block.innerHTML = `
                 <i class="fab fa-youtube text-red-500"></i>
                 <div class="flex-1">
-                    <input type="text" name="questions[${realIndex}][video_url]" class="question-input-video w-full border-b border-gray-300 focus:border-[#4285f4] focus:outline-none text-sm text-gray-700" placeholder="URL del video (YouTube)">
+                    <input type="text" name="questions[${realIndex}][video_url]" class="question-input-video w-full border-b border-gray-300 focus:border-[#006838] focus:outline-none text-sm text-gray-700" placeholder="URL del video (YouTube)">
                 </div>
             `;
             const reference = activeQuestion.querySelector('.question-media-image') || activeQuestion.querySelector('.grid');
@@ -478,7 +480,7 @@
 
         newOption.innerHTML = `
             <i class="${iconClass} text-gray-500"></i>
-            <input type="text" name="questions[${realIndex}][options][]" class="question-input-option flex-1 border-b border-dotted border-gray-400 focus:border-[#4285f4] focus:outline-none text-sm text-gray-700" placeholder="Opción">
+            <input type="text" name="questions[${realIndex}][options][]" class="question-input-option flex-1 border-b border-dotted border-gray-400 focus:border-[#006838] focus:outline-none text-sm text-gray-700" placeholder="Opción">
             <button type="button" onclick="removeOption(this)" class="text-gray-400 hover:text-red-500 transition">
                 <i class="fas fa-close text-xs"></i>
             </button>
@@ -555,7 +557,7 @@
                 block.innerHTML = `
                     <i class="far fa-image text-gray-400"></i>
                     <div class="flex-1">
-                        <input type="text" name="questions[${realIndex}][image_url]" class="question-input-image w-full border-b border-gray-300 focus:border-[#4285f4] focus:outline-none text-sm text-gray-700" placeholder="URL de la imagen">
+                        <input type="text" name="questions[${realIndex}][image_url]" class="question-input-image w-full border-b border-gray-300 focus:border-[#006838] focus:outline-none text-sm text-gray-700" placeholder="URL de la imagen">
                     </div>
                 `;
                 const gridRow = activeQuestion.querySelector('.grid');

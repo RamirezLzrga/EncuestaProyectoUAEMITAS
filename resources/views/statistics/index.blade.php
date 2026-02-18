@@ -1,18 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Estadísticas')
 
 @section('content')
-<div class="dashboard-wrap">
-    <div class="dash-header">
+<div class="page-header">
+    <div class="page-title-row">
         <div>
-            <div class="dash-eyebrow">SIEI UAEMex</div>
-            <h2 class="dash-title">Estadísticas</h2>
-            <p class="dash-subtitle">Análisis de respuestas por encuesta</p>
+            <h1 class="page-title">Estadísticas</h1>
+            <p class="page-subtitle">Análisis de respuestas por encuesta</p>
         </div>
     </div>
+</div>
 
-    <div class="space-y-6 mt-6">
+    <div class="space-y-6">
     <!-- Filtros -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
@@ -159,7 +159,6 @@
     </div>
     @endif
     </div>
-</div>
 @endsection
 
 @push('scripts')

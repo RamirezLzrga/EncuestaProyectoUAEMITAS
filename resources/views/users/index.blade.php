@@ -1,25 +1,27 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Usuarios')
 
 @section('content')
-    <div class="dashboard-wrap">
-        <div class="dash-header">
+    <div class="page-header">
+        <div class="page-title-row">
             <div>
-                <div class="dash-eyebrow">SIEI UAEMex</div>
-                <h2 class="dash-title">Usuarios</h2>
-                <p class="dash-subtitle">Administración de usuarios del sistema</p>
+                <h1 class="page-title">Usuarios</h1>
+                <p class="page-subtitle">Administración de usuarios del sistema</p>
             </div>
-            <a href="{{ route('users.create') }}" class="btn-nueva-encuesta">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Nuevo Usuario
-            </a>
+            <div class="page-actions">
+                <a href="{{ route('users.create') }}" class="btn btn-gold">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Nuevo Usuario
+                </a>
+            </div>
         </div>
+    </div>
 
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center mt-6">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap gap-4 items-center mt-2">
         <form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap gap-4 items-center w-full">
             <div class="flex items-center gap-3 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
                 <label class="text-sm font-bold text-gray-600">Rol:</label>
@@ -125,6 +127,5 @@
 
     <div class="mt-4">
         {{ $users->appends(request()->query())->links() }}
-    </div>
     </div>
 @endsection
