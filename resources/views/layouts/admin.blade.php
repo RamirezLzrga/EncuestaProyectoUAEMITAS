@@ -161,48 +161,106 @@
             border-radius: 50%;
         }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-        }
-
-        .user-profile:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            background: var(--uaemex-gold);
-            border-radius: 50%;
+        .user-avatar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 0.875rem;
             color: white;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .user-info {
+        .user-avatar-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 52px;
+            min-width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            padding: 0.75rem 0.75rem 0.75rem;
+            z-index: 1100;
+        }
+
+        .user-dropdown-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+            margin-bottom: 0.5rem;
         }
 
-        .user-name {
+        .user-dropdown-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: var(--uaemex-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: white;
+        }
+
+        .user-dropdown-name {
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            color: var(--gray-900);
         }
 
-        .user-role {
+        .user-dropdown-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
             font-size: 0.75rem;
-            opacity: 0.9;
+            font-weight: 500;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+            margin-top: 0.15rem;
+        }
+
+        .user-dropdown-footer {
+            padding-top: 0.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-logout-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid var(--gray-300);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            background: white;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-logout-admin:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
         }
 
         .navigation-bar {
@@ -821,28 +879,34 @@
             </div>
         </div>
         <div class="header-right">
-            <div class="header-icon-btn">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
-                <span class="notification-dot"></span>
-            </div>
-            <div class="header-icon-btn">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-            </div>
-            <div class="user-profile">
-                <div class="user-avatar">{{ substr(Auth::user()->name, 0, 2) }}</div>
-                <div class="user-info">
-                    <div class="user-name">{{ Auth::user()->name }}</div>
-                    <div class="user-role">
-                        @switch(Auth::user()->role)
-                            @case('admin') Administrador @break
-                            @case('editor') Editor @break
-                            @default Usuario
-                        @endswitch
+            <div style="position: relative;">
+                <button id="adminUserBtn" class="user-avatar-btn">
+                    {{ substr(Auth::user()->name, 0, 2) }}
+                </button>
+                <div id="adminUserDropdown" class="user-dropdown hidden">
+                    <div class="user-dropdown-header">
+                        <div class="user-dropdown-avatar">
+                            {{ substr(Auth::user()->name, 0, 2) }}
+                        </div>
+                        <div>
+                            <div class="user-dropdown-name">{{ Auth::user()->name }}</div>
+                            <div class="user-dropdown-role">
+                                @switch(Auth::user()->role)
+                                    @case('admin') Administrador @break
+                                    @case('editor') Editor @break
+                                    @default Usuario
+                                @endswitch
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-dropdown-footer">
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn-logout-admin">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Cerrar sesión
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -900,6 +964,26 @@
     <main class="main-wrapper">
         @yield('content')
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const adminUserBtn = document.getElementById('adminUserBtn');
+            const adminUserDropdown = document.getElementById('adminUserDropdown');
+
+            if (adminUserBtn && adminUserDropdown) {
+                adminUserBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    adminUserDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!adminUserBtn.contains(e.target) && !adminUserDropdown.contains(e.target)) {
+                        adminUserDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 
     @stack('scripts')
 </body>
