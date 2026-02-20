@@ -11,17 +11,40 @@ use Illuminate\Support\Facades\Auth;
 
 class EditorSurveyController extends Controller
 {
-    public function builderNew()
+    public function templates()
     {
-        $survey = new Survey([
-            'title' => '',
-            'description' => '',
+        $templates = $this->getTemplates();
+
+        $categories = [
+            'encuesta' => 'Encuesta',
+            'cuestionario' => 'Cuestionario',
+            'invitacion' => 'Invitación',
+            'registro' => 'Registro',
+        ];
+
+        return view('editor.encuestas.plantillas', [
+            'templates' => $templates,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function builderNew(Request $request)
+    {
+        $templateKey = $request->query('template');
+        $templates = $this->getTemplates();
+        $template = $templateKey && isset($templates[$templateKey]) ? $templates[$templateKey] : null;
+
+        $surveyData = [
+            'title' => $template['title'] ?? '',
+            'description' => $template['description'] ?? '',
             'year' => date('Y'),
             'start_date' => now(),
             'end_date' => now()->addMonth(),
             'settings' => [],
-            'questions' => [],
-        ]);
+            'questions' => $template['questions'] ?? [],
+        ];
+
+        $survey = new Survey($surveyData);
 
         return view('editor.encuestas.builder', [
             'survey' => $survey,
@@ -135,6 +158,141 @@ class EditorSurveyController extends Controller
         $survey->save();
 
         return $survey;
+    }
+
+    protected function getTemplates(): array
+    {
+        return [
+            'satisfaccion_empleados' => [
+                'category' => 'encuesta',
+                'icon' => '😊',
+                'title' => 'Encuesta de satisfacción de los empleados',
+                'description' => 'Mide el clima laboral y la satisfacción del personal.',
+                'questions' => [
+                    [
+                        'text' => '¿Qué tan satisfecho estás con tu ambiente de trabajo?',
+                        'type' => 'multiple_choice',
+                        'options' => [
+                            'Muy satisfecho',
+                            'Satisfecho',
+                            'Neutral',
+                            'Insatisfecho',
+                            'Muy insatisfecho',
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => '¿Cómo calificarías la comunicación dentro de tu equipo?',
+                        'type' => 'multiple_choice',
+                        'options' => [
+                            'Excelente',
+                            'Buena',
+                            'Regular',
+                            'Mala',
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => 'Menciona una cosa que podríamos mejorar para apoyarte mejor en tu trabajo.',
+                        'type' => 'paragraph',
+                        'options' => [],
+                        'required' => false,
+                    ],
+                ],
+            ],
+            'evaluacion_curso' => [
+                'category' => 'cuestionario',
+                'icon' => '📚',
+                'title' => 'Encuesta de evaluación del curso',
+                'description' => 'Evalúa la calidad de un curso, taller o capacitación.',
+                'questions' => [
+                    [
+                        'text' => '¿El contenido del curso cumplió con tus expectativas?',
+                        'type' => 'multiple_choice',
+                        'options' => [
+                            'Superó mis expectativas',
+                            'Cumplió mis expectativas',
+                            'Cumplió parcialmente',
+                            'No cumplió mis expectativas',
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => '¿Cómo calificarías al instructor?',
+                        'type' => 'multiple_choice',
+                        'options' => [
+                            'Excelente',
+                            'Bueno',
+                            'Regular',
+                            'Malo',
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => 'Comentarios o sugerencias para mejorar el curso.',
+                        'type' => 'paragraph',
+                        'options' => [],
+                        'required' => false,
+                    ],
+                ],
+            ],
+            'invitacion_evento' => [
+                'category' => 'invitacion',
+                'icon' => '✉️',
+                'title' => 'Invitación a evento',
+                'description' => 'Confirma asistencia y recopila información básica de invitados.',
+                'questions' => [
+                    [
+                        'text' => '¿Asistirás al evento?',
+                        'type' => 'multiple_choice',
+                        'options' => [
+                            'Sí',
+                            'No',
+                            'Aún no lo sé',
+                        ],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => '¿Traerás acompañantes? Indica cuántas personas.',
+                        'type' => 'short_text',
+                        'options' => [],
+                        'required' => false,
+                    ],
+                    [
+                        'text' => 'Indica si tienes necesidades especiales (alergias, accesibilidad, etc.).',
+                        'type' => 'paragraph',
+                        'options' => [],
+                        'required' => false,
+                    ],
+                ],
+            ],
+            'registro_participantes' => [
+                'category' => 'registro',
+                'icon' => '📝',
+                'title' => 'Registro de participantes',
+                'description' => 'Registra información básica de asistentes a un evento o actividad.',
+                'questions' => [
+                    [
+                        'text' => 'Nombre completo',
+                        'type' => 'short_text',
+                        'options' => [],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => 'Correo electrónico',
+                        'type' => 'short_text',
+                        'options' => [],
+                        'required' => true,
+                    ],
+                    [
+                        'text' => 'Dependencia o área de procedencia',
+                        'type' => 'short_text',
+                        'options' => [],
+                        'required' => false,
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function configuracion(Survey $survey)

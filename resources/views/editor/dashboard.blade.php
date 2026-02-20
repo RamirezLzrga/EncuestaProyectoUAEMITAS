@@ -30,7 +30,7 @@
 
 <h2 class="section-title">Acciones rápidas</h2>
 <div class="quick-actions">
-    <a href="{{ route('editor.encuestas.nueva') }}" class="action-card">
+    <a href="{{ route('editor.encuestas.plantillas') }}" class="action-card">
         <div class="action-icon primary">➕</div>
         <div class="action-content">
             <h3>Nueva encuesta</h3>
@@ -210,4 +210,3 @@
     </div>
 </div>
 @endsection
-

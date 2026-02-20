@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:editor'])->prefix('editor')->name('editor.')->group(function () {
         Route::get('/dashboard', [EditorDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/encuestas/plantillas', [EditorSurveyController::class, 'templates'])->name('encuestas.plantillas');
         Route::get('/encuestas/nueva', [EditorSurveyController::class, 'builderNew'])->name('encuestas.nueva');
         Route::post('/encuestas', [EditorSurveyController::class, 'builderStore'])->name('encuestas.store');
         Route::get('/encuestas/{survey}/editar', [EditorSurveyController::class, 'builderEdit'])->name('encuestas.editar');

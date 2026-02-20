@@ -133,7 +133,7 @@
                         Limpiar filtros
                     </a>
                 @else
-                    <a href="{{ route('editor.encuestas.nueva') }}" class="mt-6 inline-block bg-uaemex text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition">
+                    <a href="{{ route('editor.encuestas.plantillas') }}" class="mt-6 inline-block bg-uaemex text-white px-6 py-2 rounded-lg font-bold hover:bg-green-800 transition">
                         Crear encuesta
                     </a>
                 @endif
@@ -173,4 +173,3 @@
         });
     </script>
 @endpush
-

@@ -144,9 +144,14 @@
                 <input type="text" class="question-input-text w-full bg-slate-950/60 border border-white/5 rounded-xl px-3 py-2 text-xs text-gray-100 placeholder-gray-500 focus:outline-none focus:border-emerald-500" placeholder="Escribe la pregunta">
                 <select class="question-input-type w-full bg-slate-950/60 border border-white/5 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-500">
                     <option value="multiple_choice">Opción múltiple</option>
-                    <option value="checkboxes">Casillas</option>
+                    <option value="checkboxes">Casillas de verificación</option>
                     <option value="short_text">Texto corto</option>
-                    <option value="paragraph">Texto largo</option>
+                    <option value="paragraph">Párrafo</option>
+                    <option value="dropdown">Desplegable</option>
+                    <option value="linear_scale">Escala lineal</option>
+                    <option value="rating">Calificación</option>
+                    <option value="date">Fecha</option>
+                    <option value="time">Hora</option>
                 </select>
             </div>
             <div class="flex flex-col items-end gap-2">
@@ -252,6 +257,8 @@
         } else {
             typeSelect.value = type;
         }
+
+        setupTypeBehavior(item, typeSelect);
 
         item.querySelector('.btn-remove-question').addEventListener('click', function () {
             if (document.querySelectorAll('.question-item').length > 1) {
@@ -361,7 +368,9 @@
                     const row = document.createElement('div');
                     row.className = 'flex items-center gap-2 text-[11px] text-gray-300';
                     const icon = document.createElement('span');
-                    icon.className = 'w-3 h-3 rounded-full border border-gray-500';
+                    icon.className = type === 'checkboxes'
+                        ? 'w-3 h-3 border border-gray-500 rounded-sm'
+                        : 'w-3 h-3 rounded-full border border-gray-500';
                     row.appendChild(icon);
                     const span = document.createElement('span');
                     span.textContent = opt.value || 'Opción';
@@ -372,16 +381,94 @@
                 const input = document.createElement('div');
                 input.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80';
                 control.appendChild(input);
-            } else {
+            } else if (type === 'paragraph') {
                 const textarea = document.createElement('div');
                 textarea.className = 'h-16 rounded-lg border border-gray-600 bg-slate-900/80';
                 control.appendChild(textarea);
+            } else if (type === 'dropdown') {
+                const selectMock = document.createElement('div');
+                selectMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center justify-between text-[11px] text-gray-400';
+                selectMock.textContent = 'Selecciona una opción';
+                const chevron = document.createElement('span');
+                chevron.className = 'ml-2 text-[9px]';
+                chevron.textContent = '▾';
+                selectMock.appendChild(chevron);
+                control.appendChild(selectMock);
+            } else if (type === 'linear_scale') {
+                const scaleRow = document.createElement('div');
+                scaleRow.className = 'flex items-center gap-3';
+                for (let i = 1; i <= 5; i++) {
+                    const col = document.createElement('div');
+                    col.className = 'flex flex-col items-center gap-1 text-[11px] text-gray-300';
+                    const circle = document.createElement('div');
+                    circle.className = 'w-3 h-3 rounded-full border border-gray-500';
+                    const labelNum = document.createElement('span');
+                    labelNum.textContent = i;
+                    col.appendChild(circle);
+                    col.appendChild(labelNum);
+                    scaleRow.appendChild(col);
+                }
+                control.appendChild(scaleRow);
+            } else if (type === 'rating') {
+                const starsRow = document.createElement('div');
+                starsRow.className = 'flex items-center gap-1';
+                for (let i = 0; i < 5; i++) {
+                    const star = document.createElement('span');
+                    star.className = 'text-yellow-400 text-lg';
+                    star.textContent = '★';
+                    starsRow.appendChild(star);
+                }
+                control.appendChild(starsRow);
+            } else if (type === 'date') {
+                const dateMock = document.createElement('div');
+                dateMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center text-[11px] text-gray-400';
+                dateMock.textContent = 'dd/mm/aaaa';
+                control.appendChild(dateMock);
+            } else if (type === 'time') {
+                const timeMock = document.createElement('div');
+                timeMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center text-[11px] text-gray-400';
+                timeMock.textContent = 'hh:mm';
+                control.appendChild(timeMock);
+            } else {
+                const generic = document.createElement('div');
+                generic.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80';
+                control.appendChild(generic);
             }
 
             block.appendChild(control);
             previewQuestions.appendChild(block);
             number++;
         });
+    }
+
+    function setupTypeBehavior(item, select) {
+        const optionsContainer = item.querySelector('.options-container');
+
+        function apply() {
+            const simpleTypes = ['short_text', 'paragraph', 'linear_scale', 'rating', 'date', 'time'];
+            if (simpleTypes.indexOf(select.value) !== -1) {
+                if (optionsContainer) {
+                    optionsContainer.style.display = 'none';
+                }
+            } else {
+                if (optionsContainer) {
+                    optionsContainer.style.display = 'block';
+                    const icon = optionsContainer.querySelector('.option-item i');
+                    if (icon) {
+                        icon.className = select.value === 'checkboxes'
+                            ? 'far fa-square text-gray-500'
+                            : 'far fa-circle text-gray-500';
+                    }
+                }
+            }
+        }
+
+        select.addEventListener('change', function () {
+            apply();
+            updatePreview();
+        });
+
+        apply();
     }
 </script>
 @endpush

@@ -135,6 +135,11 @@
                     <option value="checkboxes">Casillas de verificación</option>
                     <option value="short_text">Texto corto</option>
                     <option value="paragraph">Párrafo</option>
+                    <option value="dropdown">Desplegable</option>
+                    <option value="linear_scale">Escala lineal</option>
+                    <option value="rating">Calificación</option>
+                    <option value="date">Fecha</option>
+                    <option value="time">Hora</option>
                 </select>
             </div>
         </div>
@@ -315,17 +320,15 @@
 
     function toggleOptions(select) {
         const container = select.closest('.question-item').querySelector('.options-container');
-        if (['multiple_choice', 'checkboxes', 'dropdown'].includes(select.value)) {
-            container.style.display = 'block';
-            // Actualizar iconos
-            const iconClass = select.value === 'checkboxes' ? 'far fa-square' : 'far fa-circle';
-            container.querySelectorAll('i').forEach(icon => {
-                if (!icon.parentElement.classList.contains('text-uaemex')) { // Ignorar icono de botón agregar
-                     icon.className = `${iconClass} text-gray-400`;
-                }
-            });
-        } else {
+        const simpleTypes = ['short_text', 'paragraph', 'linear_scale', 'rating', 'date', 'time'];
+        if (simpleTypes.includes(select.value)) {
             container.style.display = 'none';
+        } else {
+            container.style.display = 'block';
+            const iconClass = select.value === 'checkboxes' ? 'far fa-square' : 'far fa-circle';
+            container.querySelectorAll('.option-item i').forEach(icon => {
+                icon.className = `${iconClass} text-gray-400`;
+            });
         }
     }
 
@@ -398,6 +401,47 @@
                 contentHtml = `<div class="border-b border-gray-300 border-dashed py-2 text-gray-400 text-sm">Texto de respuesta corta</div>`;
             } else if (type === 'paragraph') {
                 contentHtml = `<div class="border-b border-gray-300 border-dashed py-2 text-gray-400 text-sm">Texto de respuesta larga</div><div class="border-b border-gray-300 border-dashed py-2"></div>`;
+            } else if (type === 'dropdown') {
+                contentHtml = `
+                    <div class="inline-flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 bg-white">
+                        Selecciona una opción
+                        <span class="ml-2 text-xs">▾</span>
+                    </div>
+                `;
+            } else if (type === 'linear_scale') {
+                let scaleHtml = '<div class="flex items-center gap-4">';
+                for (let i = 1; i <= 5; i++) {
+                    scaleHtml += `
+                        <div class="flex flex-col items-center gap-1 text-xs text-gray-500">
+                            <span class="w-3 h-3 rounded-full border border-gray-400"></span>
+                            <span>${i}</span>
+                        </div>
+                    `;
+                }
+                scaleHtml += '</div>';
+                contentHtml = scaleHtml;
+            } else if (type === 'rating') {
+                contentHtml = `
+                    <div class="flex items-center gap-1 text-yellow-400">
+                        <span class="text-lg">★</span>
+                        <span class="text-lg">★</span>
+                        <span class="text-lg">★</span>
+                        <span class="text-lg">★</span>
+                        <span class="text-lg">★</span>
+                    </div>
+                `;
+            } else if (type === 'date') {
+                contentHtml = `
+                    <div class="inline-flex items-center border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 bg-white">
+                        dd/mm/aaaa
+                    </div>
+                `;
+            } else if (type === 'time') {
+                contentHtml = `
+                    <div class="inline-flex items-center border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 bg-white">
+                        hh:mm
+                    </div>
+                `;
             } else {
                 const options = item.querySelectorAll('.question-input-option');
                 options.forEach(opt => {

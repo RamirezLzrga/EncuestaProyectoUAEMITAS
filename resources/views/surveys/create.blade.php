@@ -222,6 +222,9 @@
                 </select>
             </div>
         </div>
+
+        <div class="question-control-preview px-6 pb-3 text-sm text-gray-600"></div>
+
         <div class="options-container space-y-2 px-6 pb-4">
             <div class="option-item flex items-center gap-3">
                 <i class="far fa-circle text-gray-500"></i>
@@ -339,6 +342,22 @@
         questionEl.addEventListener('click', () => {
             setActiveQuestion(questionEl);
         });
+
+        const typeSelect = questionEl.querySelector('.question-input-type');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', () => {
+                renderQuestionPreview(questionEl);
+            });
+        }
+
+        const inputs = questionEl.querySelectorAll('.question-input-text, .question-input-option');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                renderQuestionPreview(questionEl);
+            });
+        });
+
+        renderQuestionPreview(questionEl);
     }
 
     function setActiveQuestion(questionEl) {
@@ -466,6 +485,74 @@
                 icon.className = select.value === 'checkboxes' ? 'far fa-square text-gray-400' : 'far fa-circle text-gray-400';
             });
         }
+    }
+
+    function renderQuestionPreview(questionItem) {
+        const preview = questionItem.querySelector('.question-control-preview');
+        if (!preview) {
+            return;
+        }
+
+        const typeSelect = questionItem.querySelector('.question-input-type');
+        const type = typeSelect ? typeSelect.value : 'short_text';
+
+        const simpleTypes = ['short_text', 'paragraph', 'linear_scale', 'rating', 'date', 'time'];
+        if (!simpleTypes.includes(type)) {
+            preview.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        if (type === 'short_text') {
+            html = `
+                <div class="border-b border-gray-300 py-2 text-gray-400 text-sm">
+                    Escribe tu respuesta
+                </div>
+            `;
+        } else if (type === 'paragraph') {
+            html = `
+                <div class="border border-gray-300 rounded-lg px-3 py-2 text-gray-400 text-sm">
+                    Escribe una respuesta larga
+                </div>
+            `;
+        } else if (type === 'linear_scale') {
+            let scaleHtml = '<div class="flex items-center gap-4">';
+            for (let i = 1; i <= 5; i++) {
+                scaleHtml += `
+                    <div class="flex flex-col items-center gap-1 text-xs text-gray-500">
+                        <span class="w-3 h-3 rounded-full border border-gray-400"></span>
+                        <span>${i}</span>
+                    </div>
+                `;
+            }
+            scaleHtml += '</div>';
+            html = scaleHtml;
+        } else if (type === 'rating') {
+            html = `
+                <div class="flex items-center gap-1 text-yellow-400">
+                    <span class="text-lg">★</span>
+                    <span class="text-lg">★</span>
+                    <span class="text-lg">★</span>
+                    <span class="text-lg">★</span>
+                    <span class="text-lg">★</span>
+                </div>
+            `;
+        } else if (type === 'date') {
+            html = `
+                <div class="inline-flex items-center border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 bg-white">
+                    dd/mm/aaaa
+                </div>
+            `;
+        } else if (type === 'time') {
+            html = `
+                <div class="inline-flex items-center border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-500 bg-white">
+                    hh:mm
+                </div>
+            `;
+        }
+
+        preview.innerHTML = html;
     }
 
     function addOption(btn, indexPlaceholder) {

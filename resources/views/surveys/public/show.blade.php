@@ -193,14 +193,20 @@
                                 </div>
 
                             @elseif($question['type'] === 'rating')
-                                <div class="flex items-center gap-2">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="answers[{{ $question['text'] }}]" value="{{ $i }}" class="hidden"
-                                                {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
-                                            <i class="far fa-star text-2xl text-gray-300 hover:text-yellow-400 transform hover:scale-110 transition"></i>
-                                        </label>
-                                    @endfor
+                                <div class="flex items-center gap-3 rating-group">
+                                    <div class="flex items-center gap-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <label class="cursor-pointer rating-option" data-value="{{ $i }}">
+                                                <input type="radio" name="answers[{{ $question['text'] }}]" value="{{ $i }}" class="hidden"
+                                                    {{ isset($question['required']) && $question['required'] ? 'required' : '' }}>
+                                                <i class="far fa-star text-2xl text-gray-300 hover:text-yellow-400 transform hover:scale-110 transition"></i>
+                                            </label>
+                                        @endfor
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        Calificación seleccionada:
+                                        <span class="font-semibold rating-selected-value">Ninguna</span>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -219,10 +225,65 @@
             </div>
         </form>
     </div>
-
+    
     <div class="text-center mt-10 mb-6 text-gray-400 text-sm">
         &copy; {{ date('Y') }} SIEI UAEMex - Sistema Integral de Evaluación Institucional
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var groups = document.querySelectorAll('.rating-group');
+            groups.forEach(function (group) {
+                var options = group.querySelectorAll('.rating-option');
+                var display = group.querySelector('.rating-selected-value');
 
+                function updateStars(selectedValue) {
+                    options.forEach(function (option) {
+                        var value = parseInt(option.getAttribute('data-value'), 10);
+                        var star = option.querySelector('i');
+                        var input = option.querySelector('input[type="radio"]');
+
+                        if (selectedValue !== null && value <= selectedValue) {
+                            star.classList.remove('far', 'text-gray-300');
+                            star.classList.add('fas', 'text-yellow-400');
+                        } else {
+                            star.classList.add('far', 'text-gray-300');
+                            star.classList.remove('fas', 'text-yellow-400');
+                        }
+
+                        if (input) {
+                            if (selectedValue !== null && value === selectedValue) {
+                                input.checked = true;
+                            }
+                        }
+                    });
+
+                    if (display) {
+                        display.textContent = selectedValue !== null ? selectedValue : 'Ninguna';
+                    }
+                }
+
+                options.forEach(function (option) {
+                    option.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        var value = parseInt(option.getAttribute('data-value'), 10);
+                        updateStars(value);
+                    });
+                });
+
+                var initialSelected = null;
+                options.forEach(function (option) {
+                    var input = option.querySelector('input[type="radio"]');
+                    if (input && input.checked) {
+                        var value = parseInt(option.getAttribute('data-value'), 10);
+                        if (!isNaN(value)) {
+                            initialSelected = value;
+                        }
+                    }
+                });
+                updateStars(initialSelected);
+            });
+        });
+    </script>
 </body>
 </html>
