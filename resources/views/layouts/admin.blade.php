@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,11 +16,11 @@
         }
 
         :root {
-            --uaemex-gold: #C9A961;
-            --uaemex-gold-dark: #A68B4E;
-            --uaemex-green: #006838;
-            --uaemex-green-dark: #004D28;
-            --uaemex-green-light: #00814A;
+            --uaemex-green: #1a5c2a;
+            --uaemex-green-dark: #12411d;
+            --uaemex-green-light: #2a7b3d;
+            --uaemex-gold: #c9a227;
+            --uaemex-gold-dark: #a8861e;
             --gray-50: #F9FAFB;
             --gray-100: #F3F4F6;
             --gray-200: #E5E7EB;
@@ -42,8 +42,20 @@
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
+        .bg-uaemex {
+            background-color: var(--uaemex-green);
+        }
+
+        .text-uaemex {
+            color: var(--uaemex-green);
+        }
+
+        .border-uaemex {
+            border-color: var(--uaemex-green);
+        }
+
         body {
-            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--gray-50);
             color: var(--gray-900);
             line-height: 1.6;
@@ -58,6 +70,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-md);
+            border-bottom: 2px solid var(--uaemex-gold);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -90,8 +103,9 @@
         }
 
         .brand-text h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 1.125rem;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: -0.02em;
         }
 
@@ -263,45 +277,61 @@
             border-color: var(--gray-400);
         }
 
+        .admin-layout {
+            display: flex;
+        }
+
         .navigation-bar {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 0 2rem;
+            background: var(--uaemex-green);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: var(--shadow-sm);
-            position: sticky;
+            position: fixed;
             top: 72px;
+            left: 0;
+            bottom: 0;
+            width: 240px;
             z-index: 999;
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem 0.75rem;
         }
 
         .nav-tabs {
             display: flex;
-            gap: 0.5rem;
-            overflow-x: auto;
+            flex-direction: column;
+            gap: 0.25rem;
+            overflow-y: auto;
+            padding-right: 0.25rem;
         }
 
         .nav-tab {
-            padding: 1rem 1.5rem;
-            color: var(--gray-600);
+            padding: 0.7rem 1.1rem;
+            margin: 0 0.25rem;
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.9375rem;
-            border-bottom: 3px solid transparent;
+            font-size: 0.9rem;
+            border-radius: 999px;
             transition: all 0.2s;
-            white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+        }
+
+        .nav-tab svg {
+            flex-shrink: 0;
         }
 
         .nav-tab:hover {
-            color: var(--uaemex-green);
-            background: var(--gray-50);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .nav-tab.active {
-            color: var(--uaemex-green);
-            border-bottom-color: var(--uaemex-green);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
             font-weight: 600;
+            border-left: 3px solid var(--uaemex-gold);
         }
 
         .tab-badge {
@@ -317,25 +347,28 @@
             max-width: 1600px;
             margin: 0 auto;
             padding: 2rem;
+            margin-left: 260px;
+            font-size: 0.875rem;
         }
 
         .page-header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .page-title-row {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
         }
 
         .page-title {
+            font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--gray-900);
             letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .page-subtitle {
@@ -350,11 +383,11 @@
 
         .btn {
             padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            border: none;
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -364,36 +397,35 @@
 
         .btn-primary {
             background: var(--uaemex-green);
-            color: white;
-            box-shadow: var(--shadow);
+            color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
         .btn-primary:hover {
             background: var(--uaemex-green-dark);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: white;
-            color: var(--gray-700);
-            border: 1px solid var(--gray-300);
+            background: transparent;
+            color: var(--uaemex-green);
+            border-color: var(--uaemex-green);
         }
 
         .btn-secondary:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-400);
+            background: rgba(26, 92, 42, 0.06);
         }
 
         .btn-gold {
             background: linear-gradient(135deg, var(--uaemex-gold) 0%, var(--uaemex-gold-dark) 100%);
-            color: white;
-            box-shadow: var(--shadow);
+            color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
         }
 
         .btn-gold:hover {
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
         }
 
         .stats-grid {
@@ -505,9 +537,9 @@
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 0.75rem;
             padding: 1.75rem;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--gray-200);
         }
 
@@ -578,6 +610,20 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
+        }
+
+        .data-table thead tr {
+            background: rgba(26, 92, 42, 0.04);
+        }
+
+        .data-table thead th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(15, 23, 42, 0.02);
         }
 
         .data-table thead th {
@@ -836,7 +882,7 @@
 
         @media (max-width: 768px) {
             .main-wrapper {
-                padding: 1rem;
+                padding: 1.5rem 1rem;
             }
 
             .page-title {
@@ -849,7 +895,9 @@
 
             .page-title-row {
                 flex-direction: column;
-                gap: 1rem;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
             }
 
             .header-left {
@@ -886,7 +934,12 @@
                 <div id="adminUserDropdown" class="user-dropdown hidden">
                     <div class="user-dropdown-header">
                         <div class="user-dropdown-avatar">
-                            {{ substr(Auth::user()->name, 0, 2) }}
+                            @php $avatarUrl = Auth::user()->avatar_url ?? null; @endphp
+                            @if($avatarUrl)
+                                <img src="{{ $avatarUrl }}" alt="Foto de perfil" style="width:100%;height:100%;border-radius:999px;object-fit:cover;">
+                            @else
+                                {{ substr(Auth::user()->name, 0, 2) }}
+                            @endif
                         </div>
                         <div>
                             <div class="user-dropdown-name">{{ Auth::user()->name }}</div>
@@ -899,7 +952,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="user-dropdown-footer">
+                    <div class="user-dropdown-footer" style="display:flex;flex-direction:column;gap:0.5rem;">
+                        <a href="{{ route('profile.show') }}" class="btn-logout-admin" style="justify-content:flex-start;">
+                            <i class="fas fa-user-cog"></i>
+                            Mi perfil
+                        </a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn-logout-admin">
@@ -913,57 +970,58 @@
         </div>
     </header>
 
-    <nav class="navigation-bar">
-        <div class="nav-tabs">
-            <a href="{{ route('dashboard') }}"
-               class="nav-tab {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                </svg>
-                Panel de Control
-            </a>
-            <a href="{{ route('surveys.index') }}"
-               class="nav-tab {{ request()->routeIs('surveys.*') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Encuestas Globales
-            </a>
-            <a href="{{ route('users.index') }}"
-               class="nav-tab {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-                Usuarios
-            </a>
-            <a href="{{ route('admin.aprobaciones') }}"
-               class="nav-tab {{ request()->routeIs('admin.aprobaciones') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                Aprobaciones
-                <span class="tab-badge">3</span>
-            </a>
-            <a href="{{ route('statistics.index') }}"
-               class="nav-tab {{ request()->routeIs('statistics.*') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-                Estadísticas
-            </a>
-            <a href="{{ route('activity-logs.index') }}"
-               class="nav-tab {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-                Bitácora
-            </a>
-        </div>
-    </nav>
+    <div class="admin-layout">
+        <nav class="navigation-bar">
+            <div class="nav-tabs">
+                <a href="{{ route('dashboard') }}"
+                   class="nav-tab {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                    Panel de Control
+                </a>
+                <a href="{{ route('surveys.index') }}"
+                   class="nav-tab {{ request()->routeIs('surveys.*') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Encuestas Globales
+                </a>
+                <a href="{{ route('users.index') }}"
+                   class="nav-tab {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Usuarios
+                </a>
+                <a href="{{ route('admin.aprobaciones') }}"
+                   class="nav-tab {{ request()->routeIs('admin.aprobaciones') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Aprobaciones
+                </a>
+                <a href="{{ route('statistics.index') }}"
+                   class="nav-tab {{ request()->routeIs('statistics.*') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Estadísticas
+                </a>
+                <a href="{{ route('activity-logs.index') }}"
+                   class="nav-tab {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    Bitácora
+                </a>
+            </div>
+        </nav>
 
-    <main class="main-wrapper">
-        @yield('content')
-    </main>
+        <main class="main-wrapper">
+            @yield('content')
+        </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -986,6 +1044,18 @@
     </script>
 
     @stack('scripts')
+    <script>
+        if (window.Chart) {
+            Chart.defaults.font.family = 'Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+            Chart.defaults.color = '#374151';
+            if (Chart.defaults.plugins && Chart.defaults.plugins.tooltip) {
+                Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(26, 92, 42, 0.96)';
+                Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+                Chart.defaults.plugins.tooltip.bodyColor = '#f9fafb';
+                Chart.defaults.plugins.tooltip.borderColor = 'rgba(201, 162, 39, 0.6)';
+                Chart.defaults.plugins.tooltip.borderWidth = 1;
+            }
+        }
+    </script>
 </body>
 </html>
-

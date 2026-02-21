@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\ActivityLog;
+use App\Models\Survey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -145,6 +146,13 @@ class UserController extends Controller
         }
 
         $userName = $user->name;
+
+        $adminFallback = User::where('role', 'admin')->orderBy('created_at')->first();
+
+        if ($adminFallback) {
+            Survey::where('user_id', $user->id)->update(['user_id' => $adminFallback->id]);
+        }
+
         $user->delete();
 
         // Log Activity
@@ -152,7 +160,7 @@ class UserController extends Controller
             'user_id' => Auth::id(),
             'user_email' => Auth::user()->email,
             'action' => 'delete',
-            'description' => 'Eliminó usuario: ' . $userName,
+            'description' => 'Eliminó usuario: ' . $userName . ($adminFallback ? ' (encuestas transferidas a ' . $adminFallback->name . ')' : ''),
             'type' => 'user',
             'ip_address' => $request->ip(),
             'details' => ['user_id' => $id]

@@ -6,19 +6,29 @@
     <title>SIEI UAEMex - @yield('title')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --uaemex-green: #1a5c2a;
+            --uaemex-green-dark: #12411d;
+            --uaemex-gold: #c9a227;
+        }
         .bg-uaemex {
-            background-color: #0d5c41; /* Aproximación del verde UAEMex */
+            background-color: var(--uaemex-green);
         }
         .text-uaemex {
-            color: #0d5c41;
+            color: var(--uaemex-green);
         }
         .btn-uaemex {
-            background-color: #0d5c41;
-            transition: background-color 0.3s;
+            background-color: var(--uaemex-green);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .btn-uaemex:hover {
-            background-color: #08402d;
+            background-color: var(--uaemex-green-dark);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
     </style>
     @stack('styles')

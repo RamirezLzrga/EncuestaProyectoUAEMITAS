@@ -47,7 +47,7 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar usuario..." class="bg-transparent text-sm font-medium focus:outline-none text-gray-800 w-full placeholder-gray-400">
             </div>
 
-            <button type="submit" class="bg-uaemex text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-green-800 transition shadow-md">
+            <button type="submit" class="bg-uaemex text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-uaemex/90 transition shadow-md">
                 Filtrar
             </button>
         </form>

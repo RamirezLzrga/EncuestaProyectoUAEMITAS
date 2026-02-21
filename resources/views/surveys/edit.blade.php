@@ -14,10 +14,8 @@
     @csrf
     @method('PUT')
     
-    {{-- Campos ocultos requeridos por el controlador --}}
+    {{-- Campos requeridos por el controlador --}}
     <input type="hidden" name="year" value="{{ $survey->year }}">
-    <input type="hidden" name="start_date" value="{{ $survey->start_date }}">
-    <input type="hidden" name="end_date" value="{{ $survey->end_date }}">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Columna Izquierda: Formulario -->
@@ -30,6 +28,20 @@
                 </div>
                 <div>
                     <textarea name="description" id="input-description" placeholder="Descripción de la encuesta" class="w-full text-gray-600 border-b-2 border-transparent hover:border-gray-200 focus:border-uaemex focus:outline-none py-2 transition placeholder-gray-400 resize-none" rows="2">{{ $survey->description }}</textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 pt-2 border-t border-gray-100 mt-2">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-gray-500">Fecha de inicio</span>
+                        <input type="date" name="start_date" value="{{ optional($survey->start_date)->format('Y-m-d') }}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-uaemex">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-gray-500">Fecha de cierre automático</span>
+                        <input type="date" name="end_date" value="{{ optional($survey->end_date)->format('Y-m-d') }}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-uaemex">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-gray-500">Límite máximo de respuestas</span>
+                        <input type="number" name="settings[max_responses]" min="1" value="{{ $survey->settings['max_responses'] ?? '' }}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-uaemex" placeholder="Opcional">
+                    </div>
                 </div>
             </div>
 
@@ -66,6 +78,13 @@
                             <span class="text-sm font-bold text-gray-700">Múltiples respuestas</span>
                         </div>
                         <input type="checkbox" name="settings[allow_multiple]" value="1" {{ isset($survey->settings['allow_multiple']) && $survey->settings['allow_multiple'] ? 'checked' : '' }} class="w-5 h-5 text-uaemex rounded focus:ring-uaemex">
+                    </label>
+                    <label class="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between cursor-pointer hover:border-uaemex transition shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-user-check text-green-500"></i>
+                            <span class="text-sm font-bold text-gray-700">Una respuesta por usuario</span>
+                        </div>
+                        <input type="checkbox" name="settings[one_response_per_ip]" value="1" {{ isset($survey->settings['one_response_per_ip']) && $survey->settings['one_response_per_ip'] ? 'checked' : '' }} class="w-5 h-5 text-uaemex rounded focus:ring-uaemex">
                     </label>
                 </div>
             </div>

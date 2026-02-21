@@ -6,7 +6,7 @@
     <title>SIEI UAEMex - @yield('title', 'Mi Espacio')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,11 +15,11 @@
         }
 
         :root {
-            --uaemex-gold: #C9A961;
-            --uaemex-gold-dark: #A68B4E;
-            --uaemex-green: #006838;
-            --uaemex-green-dark: #004D28;
-            --uaemex-green-light: #00814A;
+            --uaemex-green: #1a5c2a;
+            --uaemex-green-dark: #12411d;
+            --uaemex-green-light: #2a7b3d;
+            --uaemex-gold: #c9a227;
+            --uaemex-gold-dark: #a8861e;
             --gray-50: #F9FAFB;
             --gray-100: #F3F4F6;
             --gray-200: #E5E7EB;
@@ -41,8 +41,20 @@
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
+        .bg-uaemex {
+            background-color: var(--uaemex-green);
+        }
+
+        .text-uaemex {
+            color: var(--uaemex-green);
+        }
+
+        .border-uaemex {
+            border-color: var(--uaemex-green);
+        }
+
         body {
-            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--gray-50);
             color: var(--gray-900);
             line-height: 1.6;
@@ -776,4 +788,3 @@
     </div>
 </body>
 </html>
-

@@ -23,8 +23,35 @@
             @csrf
             <input type="hidden" name="header_image" id="header-image-input">
             <input type="hidden" name="year" value="{{ date('Y') }}">
-            <input type="hidden" name="start_date" value="{{ date('Y-m-d') }}">
-            <input type="hidden" name="end_date" value="{{ date('Y-m-d', strtotime('+1 month')) }}">
+            <div class="px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
+                <div class="flex flex-wrap gap-4 items-center text-xs text-gray-600">
+                    <div class="flex items-center gap-2">
+                        <i class="far fa-calendar text-[#006838]"></i>
+                        <div class="flex items-center gap-2">
+                            <span>Inicio:</span>
+                            <input type="date" name="start_date" value="{{ date('Y-m-d') }}" class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-[#006838]">
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span>Cierre automático:</span>
+                        <input type="date" name="end_date" value="{{ date('Y-m-d', strtotime('+1 month')) }}" class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-[#006838]">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span>Límite de respuestas:</span>
+                        <input type="number" name="settings[max_responses]" min="1" class="w-20 border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-[#006838]" placeholder="100">
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-4 items-center text-xs text-gray-600">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="settings[allow_multiple]" value="1" class="w-4 h-4 text-[#006838] rounded focus:ring-[#006838]">
+                        <span>Permitir múltiples respuestas</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="settings[one_response_per_ip]" value="1" class="w-4 h-4 text-[#006838] rounded focus:ring-[#006838]">
+                        <span>Una respuesta por usuario</span>
+                    </label>
+                </div>
+            </div>
 
             <div id="question-toolbar" class="absolute -right-16 hidden lg:flex flex-col gap-3">
                 <button type="button" onclick="addQuestion()" class="btn-add-question w-10 h-10 rounded-full bg-[#006838] text-white shadow-lg flex items-center justify-center hover:bg-[#004d28] transition" title="Añadir pregunta">

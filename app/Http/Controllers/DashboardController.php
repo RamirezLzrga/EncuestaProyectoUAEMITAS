@@ -158,52 +158,6 @@ class DashboardController extends Controller
             ];
         }
 
-        // Editores destacados del mes (últimos 30 días)
-        $editorIds = $surveys->pluck('user_id')->filter()->unique()->values();
-        $editors = User::whereIn('id', $editorIds)->get();
-
-        $topEditors = $editors->map(function (User $editor) use ($surveys, $periodStart, $periodEnd) {
-            $userSurveys = $surveys->where('user_id', $editor->id);
-            $userSurveyIds = $userSurveys->pluck('id');
-
-            // Encuestas creadas en el periodo
-            $surveysInPeriod = $userSurveys->filter(function ($survey) use ($periodStart, $periodEnd) {
-                return $survey->created_at >= $periodStart && $survey->created_at <= $periodEnd;
-            });
-
-            // Respuestas asociadas a sus encuestas en el periodo
-            $responsesQuery = SurveyResponse::whereIn('survey_id', $userSurveyIds)
-                ->whereBetween('created_at', [$periodStart, $periodEnd]);
-
-            $responsesCount = $responsesQuery->count();
-            $completedCount = (clone $responsesQuery)->where('is_complete', true)->count();
-
-            $completionRate = $responsesCount > 0
-                ? round(($completedCount / $responsesCount) * 100)
-                : 0;
-
-            $lastSurveyAt = $userSurveys->max('created_at');
-            $lastResponseAt = SurveyResponse::whereIn('survey_id', $userSurveyIds)->max('created_at');
-
-            $lastActivityAt = collect([$lastSurveyAt, $lastResponseAt])
-                ->filter()
-                ->max();
-
-            return [
-                'user' => $editor,
-                'surveys_count' => $surveysInPeriod->count(),
-                'responses_count' => $responsesCount,
-                'completion_rate' => $completionRate,
-                'last_activity_at' => $lastActivityAt,
-            ];
-        })
-            ->filter(function ($data) {
-                return $data['surveys_count'] > 0 || $data['responses_count'] > 0;
-            })
-            ->sortByDesc('responses_count')
-            ->take(3)
-            ->values();
-
         return view('admin.dashboard', compact(
             'totalSurveys',
             'activeSurveys',
@@ -218,8 +172,7 @@ class DashboardController extends Controller
             'doughnutData',
             'pendingApprovals',
             'systemActivity',
-            'recentActivity',
-            'topEditors'
+            'recentActivity'
         ));
     }
 }

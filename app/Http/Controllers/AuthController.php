@@ -87,6 +87,46 @@ class AuthController extends Controller
         return redirect($target);
     }
 
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('auth.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8|confirmed',
+            'avatar_url' => 'nullable|url',
+        ]);
+
+        $user->name = $validated['name'];
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        if (array_key_exists('avatar_url', $validated)) {
+            $user->avatar_url = $validated['avatar_url'] ?: null;
+        }
+
+        $user->save();
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'action' => 'update_profile',
+            'description' => 'Actualizó su perfil',
+            'type' => 'user',
+            'ip_address' => $request->ip()
+        ]);
+
+        return redirect()->route('profile.show')->with('success', 'Perfil actualizado correctamente.');
+    }
+
     public function logout(Request $request)
     {
         // Log Activity before logout

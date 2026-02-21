@@ -6,6 +6,7 @@ use App\Models\Survey;
 use App\Models\SurveyResponse;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,6 +69,19 @@ class EditorSurveyController extends Controller
     {
         $survey = $this->saveSurveyFromBuilder($request, new Survey());
 
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'action' => 'create',
+            'description' => 'Editor creó encuesta: ' . $survey->title,
+            'type' => 'survey',
+            'ip_address' => $request->ip(),
+            'details' => [
+                'survey_id' => $survey->id,
+                'origin' => 'editor',
+            ],
+        ]);
+
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             Notification::create([
@@ -93,6 +107,19 @@ class EditorSurveyController extends Controller
         }
 
         $this->saveSurveyFromBuilder($request, $survey);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'action' => 'update',
+            'description' => 'Editor actualizó encuesta: ' . $survey->title,
+            'type' => 'survey',
+            'ip_address' => $request->ip(),
+            'details' => [
+                'survey_id' => $survey->id,
+                'origin' => 'editor',
+            ],
+        ]);
 
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {

@@ -43,7 +43,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="bg-uaemex text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-green-800 transition shadow-md">
+            <button type="submit" class="bg-uaemex text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-uaemex/90 transition shadow-md">
                 Aplicar
             </button>
         </form>

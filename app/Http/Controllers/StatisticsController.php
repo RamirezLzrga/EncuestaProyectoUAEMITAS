@@ -23,7 +23,6 @@ class StatisticsController extends Controller
             $surveys = Survey::orderBy('created_at', 'desc')->get();
         }
 
-        // Obtener la encuesta seleccionada o la última por defecto
         $selectedSurveyId = $request->input('survey_id');
         $selectedSurvey = null;
 
@@ -33,7 +32,11 @@ class StatisticsController extends Controller
             $selectedSurvey = $surveys->first();
         }
 
-        // Inicializar stats
+        $fromDateInput = $request->input('from_date');
+        $toDateInput = $request->input('to_date');
+        $fromDate = $fromDateInput ? Carbon::parse($fromDateInput)->startOfDay() : null;
+        $toDate = $toDateInput ? Carbon::parse($toDateInput)->endOfDay() : null;
+
         $stats = [
             'total_responses' => 0,
             'completion_rate' => 0,
@@ -45,61 +48,75 @@ class StatisticsController extends Controller
         ];
 
         if ($selectedSurvey) {
-            // =========================================================
-            // LÓGICA DE DATOS REALES
-            // =========================================================
+            $baseQuery = $selectedSurvey->responses();
 
-            // 1. Total de Respuestas
-            $totalResponses = $selectedSurvey->responses()->count();
-            $stats['total_responses'] = $totalResponses;
-
-            // 2. Tasa de Completado (Para MVP asumimos 100% si se guardó)
-            // En un sistema real se compararía contra "vistas" o "asignaciones"
-            $stats['completion_rate'] = $totalResponses > 0 ? 100 : 0; 
-
-            // Crecimiento vs mes anterior (Simple comparativa)
-            $lastMonthResponses = $selectedSurvey->responses()
-                ->where('created_at', '>=', Carbon::now()->subMonth())
-                ->count();
-            $prevMonthResponses = $selectedSurvey->responses()
-                ->whereBetween('created_at', [Carbon::now()->subMonths(2), Carbon::now()->subMonth()])
-                ->count();
-            
-            if ($prevMonthResponses > 0) {
-                $growth = (($lastMonthResponses - $prevMonthResponses) / $prevMonthResponses) * 100;
-                $stats['responses_growth'] = round($growth, 1);
-            } else {
-                $stats['responses_growth'] = $lastMonthResponses > 0 ? 100 : 0;
+            $totalQuery = clone $baseQuery;
+            if ($fromDate) {
+                $totalQuery->where('created_at', '>=', $fromDate);
+            }
+            if ($toDate) {
+                $totalQuery->where('created_at', '<=', $toDate);
             }
 
-            // 3. Gráfica de Evolución (Por día, últimos 7 días con actividad o rango fijo)
-            // Para MongoDB y evitar problemas con selectRaw/SQL functions, hacemos el procesamiento en memoria
-            // Esto es seguro para volúmenes moderados. Para millones de registros, usar Agregaciones Nativas de Mongo.
-            
-            $evolutionStartDate = Carbon::now()->subDays(30);
-            
-            // Traemos solo fecha de creación de los últimos 30 días
-            $rawResponses = $selectedSurvey->responses()
-                ->where('created_at', '>=', $evolutionStartDate)
-                ->get(['created_at']); // Solo traemos created_at para optimizar
-            
-            // Agrupamos en memoria
+            $totalResponses = $totalQuery->count();
+            $stats['total_responses'] = $totalResponses;
+
+            $stats['completion_rate'] = $totalResponses > 0 ? 100 : 0; 
+
+            if ($fromDate && $toDate) {
+                $periodDays = $fromDate->diffInDays($toDate) + 1;
+
+                $lastPeriodResponses = (clone $baseQuery)
+                    ->whereBetween('created_at', [$fromDate, $toDate])
+                    ->count();
+
+                $prevFrom = $fromDate->copy()->subDays($periodDays);
+                $prevTo = $fromDate->copy()->subSecond();
+
+                $prevPeriodResponses = (clone $baseQuery)
+                    ->whereBetween('created_at', [$prevFrom, $prevTo])
+                    ->count();
+            } else {
+                $lastMonthResponses = (clone $baseQuery)
+                    ->where('created_at', '>=', Carbon::now()->subMonth())
+                    ->count();
+                $prevMonthResponses = (clone $baseQuery)
+                    ->whereBetween('created_at', [Carbon::now()->subMonths(2), Carbon::now()->subMonth()])
+                    ->count();
+
+                $prevPeriodResponses = $prevMonthResponses;
+                $lastPeriodResponses = $lastMonthResponses;
+            }
+
+            if ($prevPeriodResponses > 0) {
+                $growth = (($lastPeriodResponses - $prevPeriodResponses) / $prevPeriodResponses) * 100;
+                $stats['responses_growth'] = round($growth, 1);
+            } else {
+                $stats['responses_growth'] = $lastPeriodResponses > 0 ? 100 : 0;
+            }
+
+            $evolutionStartDate = $fromDate ? $fromDate->copy() : Carbon::now()->subDays(6);
+            $evolutionEndDate = $toDate ? $toDate->copy() : Carbon::now();
+
+            $rawResponses = (clone $baseQuery)
+                ->whereBetween('created_at', [$evolutionStartDate, $evolutionEndDate])
+                ->get(['created_at']);
+
             $groupedByDate = $rawResponses->groupBy(function($item) {
                 return $item->created_at->format('Y-m-d');
             })->map(function($group) {
                 return $group->count();
             });
 
-            // Generar últimos 7 días para la gráfica
             $labelsEvolution = [];
             $dataEvolution = [];
-            
-            for ($i = 6; $i >= 0; $i--) {
-                $dateObj = Carbon::now()->subDays($i);
-                $dateKey = $dateObj->format('Y-m-d');
-                $labelsEvolution[] = $dateObj->format('d M');
-                
+
+            $cursorDate = $evolutionStartDate->copy();
+            while ($cursorDate->lte($evolutionEndDate)) {
+                $dateKey = $cursorDate->format('Y-m-d');
+                $labelsEvolution[] = $cursorDate->format('d M');
                 $dataEvolution[] = $groupedByDate->get($dateKey, 0);
+                $cursorDate->addDay();
             }
 
             $stats['responses_per_day'] = [
@@ -107,8 +124,6 @@ class StatisticsController extends Controller
                 'data' => $dataEvolution
             ];
 
-            // 4. Gráfica de Distribución
-            // Analizar la PRIMERA pregunta de opción múltiple/checkboxes para la gráfica
             $targetQuestion = null;
             $questions = $selectedSurvey->questions ?? [];
             
@@ -124,9 +139,15 @@ class StatisticsController extends Controller
                 $options = $targetQuestion['options'] ?? [];
                 $counts = array_fill_keys($options, 0);
 
-                // Obtener todas las respuestas para contar
-                // Nota: Esto puede ser pesado con miles de respuestas, idealmente usar agregación de Mongo
-                $allResponses = $selectedSurvey->responses()->get();
+                $distributionQuery = clone $baseQuery;
+                if ($fromDate) {
+                    $distributionQuery->where('created_at', '>=', $fromDate);
+                }
+                if ($toDate) {
+                    $distributionQuery->where('created_at', '<=', $toDate);
+                }
+
+                $allResponses = $distributionQuery->get();
                 
                 foreach ($allResponses as $resp) {
                     $answers = $resp->answers ?? [];
@@ -156,8 +177,15 @@ class StatisticsController extends Controller
                 ];
             }
 
-            // 5. Tabla de Respuestas Recientes
-            $recent = $selectedSurvey->responses()->orderBy('created_at', 'desc')->take(10)->get();
+            $recentQuery = clone $baseQuery;
+            if ($fromDate) {
+                $recentQuery->where('created_at', '>=', $fromDate);
+            }
+            if ($toDate) {
+                $recentQuery->where('created_at', '<=', $toDate);
+            }
+
+            $recent = $recentQuery->orderBy('created_at', 'desc')->take(10)->get();
             $formattedRecent = [];
             
             foreach ($recent as $r) {

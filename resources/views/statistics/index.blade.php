@@ -13,10 +13,9 @@
 </div>
 
     <div class="space-y-6">
-    <!-- Filtros -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-end">
-            <div class="w-full md:w-1/2 md:max-w-md">
+        <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col lg:flex-row gap-4 lg:items-end">
+            <div class="w-full lg:w-1/3 lg:max-w-md">
                 <label for="survey_id" class="block text-sm font-bold text-gray-700 mb-2">Encuesta:</label>
                 <select name="survey_id" id="survey_id" onchange="this.form.submit()" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-uaemex transition">
                     @foreach($surveys as $survey)
@@ -29,11 +28,28 @@
                     @endif
                 </select>
             </div>
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="from_date" class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Desde</label>
+                    <input type="date" id="from_date" name="from_date" value="{{ request('from_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-uaemex transition">
+                </div>
+                <div>
+                    <label for="to_date" class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Hasta</label>
+                    <input type="date" id="to_date" name="to_date" value="{{ request('to_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-uaemex transition">
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 bg-uaemex text-white rounded-lg text-sm font-bold hover:bg-green-800 transition flex items-center gap-2">
+                    <i class="fas fa-filter"></i> Aplicar
+                </button>
+                <a href="{{ route('statistics.index', ['survey_id' => optional($selectedSurvey)->id]) }}" class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-50 transition">
+                    Limpiar
+                </a>
+            </div>
         </form>
     </div>
 
     @if($selectedSurvey)
-    <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Total Respuestas -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-uaemex transition">
@@ -72,7 +88,32 @@
         </div>
     </div>
 
-    <!-- Tabla de Respuestas -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between gap-2">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg">Evolución de respuestas</h3>
+                    <p class="text-xs text-gray-500">Respuestas por día en el periodo seleccionado</p>
+                </div>
+            </div>
+            <div class="p-6 h-72">
+                <canvas id="evolutionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between gap-2">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-lg">Distribución de respuestas</h3>
+                    <p class="text-xs text-gray-500">Primera pregunta de opción múltiple o casillas</p>
+                </div>
+            </div>
+            <div class="p-6 h-72">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <h3 class="font-bold text-gray-800 text-lg">Respuestas Individuales</h3>

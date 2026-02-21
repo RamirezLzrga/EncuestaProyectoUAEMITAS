@@ -41,8 +41,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/perfil', [AuthController::class, 'profile'])->name('profile.show');
+        Route::post('/perfil', [AuthController::class, 'updateProfile'])->name('profile.update');
+
     // Rutas de Encuestas
     Route::patch('/surveys/{survey}/toggle-status', [SurveyController::class, 'toggleStatus'])->name('surveys.toggle-status');
+    Route::post('/surveys/{survey}/duplicate', [SurveyController::class, 'duplicate'])->name('surveys.duplicate');
     Route::resource('surveys', SurveyController::class);
     
     // Ruta de Estadísticas

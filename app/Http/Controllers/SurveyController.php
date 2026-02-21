@@ -98,12 +98,27 @@ class SurveyController extends Controller
             'collect_names' => false,
             'collect_emails' => false,
             'allow_multiple' => false,
+            'one_response_per_ip' => false,
+            'max_responses' => null,
         ];
-        $validated['settings'] = array_merge($defaultSettings, $request->input('settings', []));
-        // Convertir valores de settings a boolean
-        foreach ($validated['settings'] as $key => $value) {
-            $validated['settings'][$key] = (bool) $value;
+        $rawSettings = $request->input('settings', []);
+        $mergedSettings = array_merge($defaultSettings, $rawSettings);
+
+        $booleanKeys = ['anonymous', 'collect_names', 'collect_emails', 'allow_multiple', 'one_response_per_ip'];
+        foreach ($booleanKeys as $key) {
+            $mergedSettings[$key] = !empty($mergedSettings[$key]);
         }
+
+        if (isset($mergedSettings['max_responses']) && $mergedSettings['max_responses'] !== null && $mergedSettings['max_responses'] !== '') {
+            $mergedSettings['max_responses'] = (int) $mergedSettings['max_responses'];
+            if ($mergedSettings['max_responses'] <= 0) {
+                $mergedSettings['max_responses'] = null;
+            }
+        } else {
+            $mergedSettings['max_responses'] = null;
+        }
+
+        $validated['settings'] = $mergedSettings;
 
         $survey = new Survey($validated);
         $survey->user_id = Auth::id();
@@ -192,12 +207,27 @@ class SurveyController extends Controller
             'collect_names' => false,
             'collect_emails' => false,
             'allow_multiple' => false,
+            'one_response_per_ip' => false,
+            'max_responses' => null,
         ];
-        $validated['settings'] = array_merge($defaultSettings, $request->input('settings', []));
-        // Convertir valores de settings a boolean
-        foreach ($validated['settings'] as $key => $value) {
-            $validated['settings'][$key] = (bool) $value;
+        $rawSettings = $request->input('settings', []);
+        $mergedSettings = array_merge($defaultSettings, $rawSettings);
+
+        $booleanKeys = ['anonymous', 'collect_names', 'collect_emails', 'allow_multiple', 'one_response_per_ip'];
+        foreach ($booleanKeys as $key) {
+            $mergedSettings[$key] = !empty($mergedSettings[$key]);
         }
+
+        if (isset($mergedSettings['max_responses']) && $mergedSettings['max_responses'] !== null && $mergedSettings['max_responses'] !== '') {
+            $mergedSettings['max_responses'] = (int) $mergedSettings['max_responses'];
+            if ($mergedSettings['max_responses'] <= 0) {
+                $mergedSettings['max_responses'] = null;
+            }
+        } else {
+            $mergedSettings['max_responses'] = null;
+        }
+
+        $validated['settings'] = $mergedSettings;
 
         $survey->update($validated);
         $survey->approval_status = 'pending';
@@ -261,6 +291,36 @@ class SurveyController extends Controller
         return back()->with('success', "Encuesta {$status} correctamente.");    
     }
 
+    public function duplicate(Request $request, Survey $survey)
+    {
+        $copy = $survey->replicate();
+        $copy->title = $survey->title . ' (copia)';
+        $copy->approval_status = 'pending';
+        $copy->approval_comment = null;
+        $copy->approved_by = null;
+        $copy->approved_at = null;
+        $copy->is_active = false;
+        $copy->created_at = now();
+        $copy->updated_at = now();
+        $copy->save();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'user_email' => Auth::user()->email,
+            'action' => 'duplicate',
+            'description' => 'Duplicó encuesta: ' . $survey->title . ' → ' . $copy->title,
+            'type' => 'survey',
+            'ip_address' => $request->ip(),
+            'details' => [
+                'source_survey_id' => $survey->id,
+                'new_survey_id' => $copy->id,
+            ],
+        ]);
+
+        return redirect()->route('surveys.edit', $copy->id)
+            ->with('success', 'Encuesta duplicada. Ahora puedes ajustar la copia.');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -293,9 +353,18 @@ class SurveyController extends Controller
             return view('surveys.inactive');
         }
 
+        $settings = $survey->settings ?? [];
+
         $now = now();
         if ($now < $survey->start_date || $now > $survey->end_date) {
             return view('surveys.inactive', ['message' => 'Esta encuesta está fuera del periodo de vigencia.']);
+        }
+
+        if (!empty($settings['max_responses'])) {
+            $currentCount = $survey->responses()->count();
+            if ($currentCount >= (int) $settings['max_responses']) {
+                return view('surveys.inactive', ['message' => 'Esta encuesta ya alcanzó el límite máximo de respuestas.']);
+            }
         }
 
         return view('surveys.public.show', compact('survey'));
@@ -304,6 +373,30 @@ class SurveyController extends Controller
     public function storeAnswer(Request $request, $id)
     {
         $survey = Survey::findOrFail($id);
+
+        $settings = $survey->settings ?? [];
+
+        $now = now();
+        if (!$survey->is_active || $now < $survey->start_date || $now > $survey->end_date) {
+            return view('surveys.inactive', ['message' => 'Esta encuesta no está disponible en este momento.']);
+        }
+
+        if (!empty($settings['max_responses'])) {
+            $currentCount = $survey->responses()->count();
+            if ($currentCount >= (int) $settings['max_responses']) {
+                return view('surveys.inactive', ['message' => 'Esta encuesta ya alcanzó el límite máximo de respuestas.']);
+            }
+        }
+
+        if (!empty($settings['one_response_per_ip'])) {
+            $alreadyAnswered = $survey->responses()
+                ->where('ip_address', $request->ip())
+                ->exists();
+
+            if ($alreadyAnswered) {
+                return view('surveys.inactive', ['message' => 'Ya has respondido esta encuesta.']);
+            }
+        }
 
         // Validación básica (se podría extender según questions required)
         // Por simplicidad en este MVP, validamos que lleguen 'answers'

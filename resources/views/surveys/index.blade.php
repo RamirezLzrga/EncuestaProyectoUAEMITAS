@@ -52,7 +52,7 @@
                 <button type="submit" class="hidden">Buscar</button>
             </div>
 
-            <a href="{{ route('surveys.index') }}" class="text-uaemex text-sm font-bold border border-uaemex px-4 py-1.5 rounded-lg hover:bg-uaemex hover:text-white transition flex items-center gap-2">
+            <a href="{{ route('surveys.index') }}" class="bg-uaemex text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-uaemex/90 transition shadow-md flex items-center gap-2">
                 <i class="fas fa-sync-alt"></i> Resetear
             </a>
         </form>
@@ -126,6 +126,12 @@
                                         <a href="{{ route('surveys.edit', $survey->id) }}" class="text-gray-400 hover:text-blue-500 transition p-2 rounded-lg hover:bg-blue-50" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <form action="{{ route('surveys.duplicate', $survey->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 transition p-2 rounded-lg" title="Duplicar encuesta">
+                                                <i class="fas fa-clone"></i>
+                                            </button>
+                                        </form>
                                         
                                         <form action="{{ route('surveys.toggle-status', $survey->id) }}" method="POST" class="inline">
                                             @csrf

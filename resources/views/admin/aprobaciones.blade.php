@@ -44,9 +44,55 @@
                                 </span>
                             </div>
 
-                            <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-600">
+                            <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-600 space-y-2">
                                 <p class="font-semibold mb-1">Preview de la encuesta</p>
-                                <p>Se mostraría aquí un resumen de las secciones, preguntas clave y configuración general de la encuesta antes de aprobarla.</p>
+                                <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-500">
+                                    <span class="inline-flex items-center gap-1">
+                                        <i class="far fa-calendar text-uaemex"></i>
+                                        <span>
+                                            {{ optional($survey->start_date)->format('d/m/Y') ?? 'Sin fecha de inicio' }}
+                                            –
+                                            {{ optional($survey->end_date)->format('d/m/Y') ?? 'Sin fecha de cierre' }}
+                                        </span>
+                                    </span>
+                                    @php
+                                        $settings = $survey->settings ?? [];
+                                        $maxResponses = $settings['max_responses'] ?? null;
+                                    @endphp
+                                    @if($maxResponses)
+                                        <span class="inline-flex items-center gap-1">
+                                            <i class="fas fa-users text-gray-400"></i>
+                                            <span>Límite: {{ $maxResponses }} respuestas</span>
+                                        </span>
+                                    @endif
+                                    <span class="inline-flex items-center gap-1">
+                                        <i class="fas fa-list-ul text-gray-400"></i>
+                                        <span>{{ is_array($survey->questions) ? count($survey->questions) : 0 }} preguntas</span>
+                                    </span>
+                                </div>
+                                @if(is_array($survey->questions) && count($survey->questions) > 0)
+                                    <div class="border-t border-gray-200 pt-2 mt-1 space-y-1">
+                                        @foreach(array_slice($survey->questions, 0, 3) as $index => $question)
+                                            <div class="flex items-start justify-between gap-2">
+                                                <span class="text-gray-700">
+                                                    {{ $index + 1 }}. {{ $question['text'] ?? 'Pregunta sin texto' }}
+                                                </span>
+                                                @if(!empty($question['type']))
+                                                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-semibold uppercase">
+                                                        {{ str_replace('_', ' ', $question['type']) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                        @if(count($survey->questions) > 3)
+                                            <p class="text-[11px] text-gray-400 mt-1">
+                                                + {{ count($survey->questions) - 3 }} preguntas más
+                                            </p>
+                                        @endif
+                                    </div>
+                                @else
+                                    <p class="text-[11px] text-gray-400">Esta encuesta aún no tiene preguntas configuradas.</p>
+                                @endif
                             </div>
 
                             <form method="POST" action="{{ route('admin.aprobaciones.update', $survey) }}" class="flex items-center gap-3">

@@ -7,16 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         /* ── Variables del sistema UAEMex ── */
         :root {
-            --verde:        #2D6A2D;
-            --verde-oscuro: #1a4a1a;
-            --verde-claro:  #4a8f4a;
+            --verde:        #1a5c2a;
+            --verde-oscuro: #12411d;
+            --verde-claro:  #2a7b3d;
             --verde-menta:  #d4ead4;
-            --oro:          #C9A84C;
-            --oro-claro:    #e8c96b;
+            --oro:          #c9a227;
+            --oro-claro:    #e4c56a;
             --crema:        #F9F6EF;
             --blanco:       #ffffff;
             --gris-texto:   #2a2a2a;
@@ -26,10 +26,22 @@
             --sidebar-w:    280px;
         }
 
+        .bg-uaemex {
+            background-color: var(--verde);
+        }
+
+        .text-uaemex {
+            color: var(--verde);
+        }
+
+        .border-uaemex {
+            border-color: var(--verde);
+        }
+
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -802,7 +814,14 @@
         <!-- Sidebar footer con usuario -->
         <div class="sidebar-footer">
             <div class="sidebar-footer-inner">
-                <div class="sidebar-avatar">{{ substr(Auth::user()->name, 0, 2) }}</div>
+                <div class="sidebar-avatar">
+                    @php $avatarUrl = Auth::user()->avatar_url ?? null; @endphp
+                    @if($avatarUrl)
+                        <img src="{{ $avatarUrl }}" alt="Foto de perfil" style="width:100%;height:100%;border-radius:999px;object-fit:cover;">
+                    @else
+                        {{ substr(Auth::user()->name, 0, 2) }}
+                    @endif
+                </div>
                 <div style="min-width:0;">
                     <div class="sidebar-user-name">{{ Auth::user()->name }}</div>
                     <div class="sidebar-user-role">
@@ -855,7 +874,14 @@
                 <div id="userMenuDropdown" class="header-dropdown hidden">
                     <div class="user-dropdown-body">
                         <div class="user-info-row">
-                            <div class="user-avatar-lg">{{ substr(Auth::user()->name, 0, 2) }}</div>
+                            <div class="user-avatar-lg">
+                                @php $avatarUrl = Auth::user()->avatar_url ?? null; @endphp
+                                @if($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" alt="Foto de perfil" style="width:100%;height:100%;border-radius:999px;object-fit:cover;">
+                                @else
+                                    {{ substr(Auth::user()->name, 0, 2) }}
+                                @endif
+                            </div>
                             <div style="min-width:0;">
                                 <div class="user-info-name">{{ Auth::user()->name }}</div>
                                 <span class="role-pill
@@ -870,6 +896,11 @@
                                 </span>
                             </div>
                         </div>
+
+                        <a href="{{ route('profile.show') }}" class="btn-logout" style="justify-content:flex-start;margin-bottom:0.5rem;">
+                            <i class="fas fa-user-cog"></i>
+                            Mi perfil
+                        </a>
 
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
