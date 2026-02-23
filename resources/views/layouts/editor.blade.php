@@ -61,6 +61,211 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        .top-header {
+            background: linear-gradient(135deg, var(--uaemex-green) 0%, var(--uaemex-green-dark) 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            border-bottom: 2px solid var(--uaemex-gold);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .university-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .university-shield {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--uaemex-green);
+            font-size: 1.125rem;
+            box-shadow: var(--shadow);
+        }
+
+        .brand-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            color: white;
+        }
+
+        .header-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .user-avatar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-avatar-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 52px;
+            min-width: 220px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            padding: 0.75rem 0.75rem 0.75rem;
+            z-index: 1100;
+        }
+
+        .user-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-100);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-dropdown-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: var(--uaemex-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: white;
+        }
+
+        .user-dropdown-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-900);
+        }
+
+        .user-dropdown-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+            margin-top: 0.15rem;
+        }
+
+        .user-dropdown-footer {
+            padding-top: 0.5rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-logout-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid var(--gray-300);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            background: white;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-logout-admin:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
         .top-bar {
             background: white;
             border-bottom: 1px solid var(--gray-200);
@@ -145,64 +350,130 @@
             gap: 1rem;
         }
 
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.625rem 1rem;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            width: 280px;
-            transition: all 0.2s;
-        }
-
-        .search-box:focus-within {
-            background: white;
-            border-color: var(--uaemex-green);
-            box-shadow: 0 0 0 3px rgba(0, 104, 56, 0.1);
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            flex: 1;
-            font-size: 0.875rem;
-            color: var(--gray-900);
-        }
-
-        .search-box input::placeholder {
-            color: var(--gray-400);
-        }
-
-        .icon-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--gray-200);
-            background: white;
+        .notif-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            background: #ef4444;
+            font-size: 0.625rem;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
+            font-weight: 700;
+            border: 2px solid white;
         }
 
-        .icon-button:hover {
+        .header-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.75rem);
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .dropdown-header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .dropdown-header-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-500);
+        }
+
+        .dropdown-mark-all {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--uaemex-green);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        .dropdown-mark-all:hover {
+            background: var(--gray-100);
+        }
+
+        .dropdown-body {
+            padding: 0.75rem 0.75rem 0.9rem;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .dropdown-empty {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            text-align: center;
+            padding: 1rem 0.5rem;
+        }
+
+        .notif-item {
+            width: 100%;
+            text-align: left;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 0.65rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 0.5rem;
+        }
+
+        .notif-item:hover {
             background: var(--gray-50);
-            border-color: var(--gray-300);
+            border-color: var(--uaemex-green);
+        }
+
+        .notif-item-title {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.15rem;
+        }
+
+        .notif-item-msg {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .notif-item-time {
+            font-size: 0.6875rem;
+            color: var(--gray-400);
+            margin-top: 0.2rem;
         }
 
         .user-menu {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.5rem;
+            padding: 0.45rem 0.75rem;
             border: 1px solid var(--gray-200);
-            border-radius: 10px;
-            cursor: default;
+            border-radius: 999px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .user-menu:hover {
+            border-color: var(--uaemex-green);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
         }
 
         .user-avatar {
@@ -232,6 +503,250 @@
         .user-role {
             font-size: 0.75rem;
             color: var(--gray-500);
+        }
+
+        .user-dropdown-body {
+            padding: 0.75rem;
+        }
+
+        .user-dropdown-link {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .user-dropdown-link i {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        .user-dropdown-link:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+
+        .user-dropdown-link.danger {
+            color: #b91c1c;
+        }
+
+        .user-dropdown-link.danger:hover {
+            background: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        .admin-layout {
+            display: flex;
+        }
+
+        .navigation-bar {
+            background: var(--uaemex-green);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            top: 72px;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem 0.75rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .nav-tab {
+            padding: 0.7rem 1.1rem;
+            margin: 0 0.25rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 999px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .nav-tab svg {
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-tab.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            border-left: 3px solid var(--uaemex-gold);
+        }
+
+        .tab-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .main-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            margin-left: 260px;
+            font-size: 0.875rem;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--uaemex-green) 0%, var(--uaemex-gold) 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--uaemex-green);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, rgba(0, 104, 56, 0.1) 0%, rgba(0, 104, 56, 0.05) 100%);
+        }
+
+        .stat-icon.gold {
+            background: linear-gradient(135deg, rgba(201, 169, 97, 0.1) 0%, rgba(201, 169, 97, 0.05) 100%);
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            background: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
         }
 
         .container {
@@ -292,7 +807,7 @@
         }
 
         .quick-stat-value {
-            font-size: 2.5rem;
+            font-size: 2.1rem;
             font-weight: 700;
             margin-bottom: 0.25rem;
             font-variant-numeric: tabular-nums;
@@ -305,7 +820,7 @@
         }
 
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--gray-900);
             margin-bottom: 1.5rem;
@@ -631,23 +1146,33 @@
         }
 
         .chart-area {
+            position: relative;
             height: 280px;
             background: var(--gray-50);
-            border: 2px dashed var(--gray-300);
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gray-400);
+            padding: 1rem;
+        }
+
+        .chart-area canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
 
         .chart-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
+            color: var(--gray-400);
+            pointer-events: none;
         }
 
         .chart-placeholder-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
         }
 
         .btn {
@@ -686,6 +1211,63 @@
             background: var(--gray-50);
         }
 
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9375rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--uaemex-green);
+            color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary:hover {
+            background: var(--uaemex-green-dark);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--uaemex-green);
+            border-color: var(--uaemex-green);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(26, 92, 42, 0.06);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--uaemex-gold) 0%, var(--uaemex-gold-dark) 100%);
+            color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--uaemex-green);
+            border-color: var(--uaemex-green);
+        }
+
+        .btn-outline:hover {
+            background: rgba(26, 92, 42, 0.06);
+        }
+
         @media (max-width: 1200px) {
             .content-grid {
                 grid-template-columns: 1fr;
@@ -721,70 +1303,239 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        @media (max-width: 768px) {
+            .header-dropdown {
+                width: 100%;
+                max-width: 18rem;
+            }
+        }
     </style>
+
+    @stack('styles')
 </head>
 <body>
-    <div class="top-bar">
-        <div class="bar-left">
+    <header class="top-header">
+        <div class="header-left">
             <div class="university-brand">
-                <div class="shield">🎓</div>
-                <div class="brand-info">
+                <div class="university-shield">🎓</div>
+                <div class="brand-text">
                     <h1>SIEI - UAEMex</h1>
-                    <p>Sistema de Encuestas</p>
+                    <p>Sistema Integral de Encuestas Institucionales</p>
                 </div>
             </div>
-            <nav class="nav-menu">
-                <a href="{{ route('editor.dashboard') }}" class="nav-link {{ request()->routeIs('editor.dashboard') ? 'active' : '' }}">
+            <div class="system-status">
+                <span class="status-indicator"></span>
+                <span>Panel de editor</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div style="display:flex;align-items:center;gap:0.75rem;position:relative;">
+                <div style="position:relative;">
+                    <button id="notificationsBtn" class="header-icon-btn" type="button">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationsBadge" class="notif-badge hidden"></span>
+                    </button>
+                    <div id="notificationsDropdown" class="header-dropdown hidden">
+                        <div class="dropdown-header">
+                            <span class="dropdown-header-title">Notificaciones</span>
+                            <button id="notificationsMarkAll" class="dropdown-mark-all" type="button">Marcar todas</button>
+                        </div>
+                        <div class="dropdown-body">
+                            <div id="notificationsList">
+                                <div class="dropdown-empty">No tienes notificaciones nuevas.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position:relative;">
+                    <button id="userMenuBtn" class="user-avatar-btn" type="button">
+                        {{ substr(Auth::user()->name, 0, 2) }}
+                    </button>
+                    <div id="userMenuDropdown" class="user-dropdown hidden">
+                        <div class="user-dropdown-header">
+                            <div class="user-dropdown-avatar">
+                                {{ substr(Auth::user()->name, 0, 2) }}
+                            </div>
+                            <div>
+                                <div class="user-dropdown-name">{{ Auth::user()->name }}</div>
+                                <div class="user-dropdown-role">
+                                    @switch(Auth::user()->role)
+                                        @case('admin') Administrador @break
+                                        @case('editor') Editor @break
+                                        @default Usuario
+                                    @endswitch
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-dropdown-footer" style="justify-content:space-between;width:100%;">
+                            <a href="{{ route('profile.show') }}" class="btn-logout-admin" style="margin-right:0.5rem;">
+                                <i class="fas fa-user-cog"></i>
+                                Mi perfil
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn-logout-admin">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <nav class="navigation-bar">
+            <div class="nav-tabs">
+                <a href="{{ route('editor.dashboard') }}"
+                   class="nav-tab {{ request()->routeIs('editor.dashboard') ? 'active' : '' }}">
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Mi Espacio
                 </a>
-                <a href="{{ route('surveys.index') }}" class="nav-link {{ request()->routeIs('surveys.*') ? 'active' : '' }}">
+                <a href="{{ route('surveys.index') }}"
+                   class="nav-tab {{ request()->routeIs('surveys.*') ? 'active' : '' }}">
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
                     Mis Encuestas
                 </a>
-                <a href="{{ route('statistics.index') }}" class="nav-link {{ request()->routeIs('statistics.*') ? 'active' : '' }}">
+                <a href="{{ route('statistics.index') }}"
+                   class="nav-tab {{ request()->routeIs('statistics.*') ? 'active' : '' }}">
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     Estadísticas
                 </a>
-            </nav>
-        </div>
-        <div class="bar-right">
-            <div class="search-box">
-                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--gray-400);">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <input type="text" placeholder="Buscar encuestas o respuestas">
+                <a href="{{ route('editor.encuestas.plantillas') }}"
+                   class="nav-tab {{ request()->routeIs('editor.encuestas.plantillas') ? 'active' : '' }}">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                    </svg>
+                    Plantillas
+                </a>
             </div>
-            <div class="user-menu">
-                <div class="user-avatar">{{ substr(Auth::user()->name, 0, 2) }}</div>
-                <div class="user-details">
-                    <span class="user-name">{{ Auth::user()->name }}</span>
-                    <span class="user-role">
-                        @switch(Auth::user()->role)
-                            @case('admin') Administrador @break
-                            @case('editor') Editor @break
-                            @default Usuario
-                        @endswitch
-                    </span>
-                </div>
-            </div>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="icon-button" title="Cerrar sesión">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </form>
-        </div>
+        </nav>
+        <main class="main-wrapper">
+            @yield('content')
+        </main>
     </div>
 
-    <div class="container">
-        @yield('content')
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userMenuBtn = document.getElementById('userMenuBtn');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+
+            const notificationsBtn = document.getElementById('notificationsBtn');
+            const notificationsDropdown = document.getElementById('notificationsDropdown');
+            const notificationsBadge = document.getElementById('notificationsBadge');
+            const notificationsList = document.getElementById('notificationsList');
+            const notificationsMarkAll = document.getElementById('notificationsMarkAll');
+
+            if (userMenuBtn && userMenuDropdown) {
+                userMenuBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    userMenuDropdown.classList.toggle('hidden');
+                    if (notificationsDropdown) {
+                        notificationsDropdown.classList.add('hidden');
+                    }
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!userMenuBtn.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (notificationsBtn && notificationsDropdown) {
+                notificationsBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    notificationsDropdown.classList.toggle('hidden');
+                    if (userMenuDropdown) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+
+                document.addEventListener('click', function (e) {
+                    if (!notificationsBtn.contains(e.target) && !notificationsDropdown.contains(e.target)) {
+                        notificationsDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            function renderNotifications(data) {
+                if (!notificationsList || !notificationsBadge) return;
+
+                notificationsList.innerHTML = '';
+
+                if (!data.items || data.items.length === 0) {
+                    notificationsList.innerHTML = '<div class="dropdown-empty">No tienes notificaciones nuevas.</div>';
+                } else {
+                    data.items.forEach(function (item) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'notif-item';
+                        btn.innerHTML = `
+                            <div class="notif-item-title">${item.title}</div>
+                            <div class="notif-item-msg">${item.message}</div>
+                            <div class="notif-item-time">${item.created_at}</div>
+                        `;
+                        if (item.url) {
+                            btn.addEventListener('click', function () {
+                                window.location.href = item.url;
+                            });
+                        }
+                        notificationsList.appendChild(btn);
+                    });
+                }
+
+                if (data.count && data.count > 0) {
+                    notificationsBadge.classList.remove('hidden');
+                    notificationsBadge.textContent = data.count > 9 ? '9+' : data.count;
+                } else {
+                    notificationsBadge.classList.add('hidden');
+                }
+            }
+
+            function fetchNotifications() {
+                if (!notificationsList) return;
+
+                fetch("{{ route('notifications.unread') }}", {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) { renderNotifications(data); })
+                    .catch(function () { });
+            }
+
+            if (notificationsMarkAll) {
+                notificationsMarkAll.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    fetch("{{ route('notifications.markAllRead') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({})
+                    })
+                        .then(function (response) { return response.json(); })
+                        .then(function () { fetchNotifications(); })
+                        .catch(function () { });
+                });
+            }
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 15000);
+        });
+    </script>
+
+    @stack('scripts')
 </body>
 </html>

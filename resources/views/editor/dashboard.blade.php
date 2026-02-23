@@ -3,55 +3,79 @@
 @section('title', 'Mi Espacio')
 
 @section('content')
-<div class="welcome-section">
-    <div class="welcome-content">
-        <h2 class="greeting">¡Bienvenido de nuevo, {{ Auth::user()->name }}!</h2>
-        <p class="greeting-subtitle">Aquí está el resumen de tu actividad reciente</p>
-        <div class="quick-stats">
-            <div class="quick-stat">
-                <div class="quick-stat-value">{{ $totalSurveys }}</div>
-                <div class="quick-stat-label">Encuestas creadas</div>
-            </div>
-            <div class="quick-stat">
-                <div class="quick-stat-value">{{ $totalResponses }}</div>
-                <div class="quick-stat-label">Respuestas totales</div>
-            </div>
-            <div class="quick-stat">
-                <div class="quick-stat-value">{{ $completionRate }}%</div>
-                <div class="quick-stat-label">Tasa de completado</div>
-            </div>
-            <div class="quick-stat">
-                <div class="quick-stat-value">{{ $activeSurveys }}</div>
-                <div class="quick-stat-label">Activas ahora</div>
-            </div>
+<div class="page-header">
+    <div class="page-title-row">
+        <div>
+            <h1 class="page-title">Panel de Control del Editor</h1>
+            <p class="page-subtitle">
+                Vista general de tus encuestas • Actualizado el
+                <span id="editor-dashboard-updated-at"></span>
+            </p>
         </div>
     </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-label">Total de encuestas</div>
+            <div class="stat-icon green">📋</div>
+        </div>
+        <div class="stat-value">{{ $totalSurveys }}</div>
+        <div class="stat-change positive">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span>+100% vs periodo anterior</span>
+        </div>
     </div>
 
-<h2 class="section-title">Acciones rápidas</h2>
-<div class="quick-actions">
-    <a href="{{ route('editor.encuestas.plantillas') }}" class="action-card">
-        <div class="action-icon primary">➕</div>
-        <div class="action-content">
-            <h3>Nueva encuesta</h3>
-            <p>Crea una encuesta desde cero con todas las herramientas disponibles</p>
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-label">Respuestas totales</div>
+            <div class="stat-icon gold">📊</div>
         </div>
-    </a>
-    <a href="{{ route('surveys.index') }}" class="action-card">
-        <div class="action-icon gold">📋</div>
-        <div class="action-content">
-            <h3>Mis encuestas</h3>
-            <p>Revisa el listado completo de tus encuestas creadas</p>
+        <div class="stat-value">{{ $totalResponses }}</div>
+        <div class="stat-change positive">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span>Promedio {{ $avgResponses ?? '0.0' }} por encuesta</span>
         </div>
-    </a>
-    <a href="{{ route('statistics.index') }}" class="action-card">
-        <div class="action-icon blue">📊</div>
-        <div class="action-content">
-            <h3>Ver estadísticas</h3>
-            <p>Analiza los resultados y genera reportes detallados</p>
-        </div>
-    </a>
     </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-label">Tasa de completado</div>
+            <div class="stat-icon blue">✓</div>
+        </div>
+        <div class="stat-value">{{ $completionRate }}%</div>
+        <div class="stat-change positive">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span>Completadas vs total de respuestas</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-label">Encuestas activas</div>
+            <div class="stat-icon green">👥</div>
+        </div>
+        <div class="stat-value">{{ $activeSurveys }}</div>
+        <div class="stat-change positive">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span>Encuestas con estado activo</span>
+        </div>
+    </div>
+</div>
 
 <div class="content-grid">
     <div class="card">
@@ -104,10 +128,6 @@
                             </div>
                             <div class="survey-stat-label">Completado</div>
                         </div>
-                        <div class="survey-stat">
-                            <div class="survey-stat-value">--</div>
-                            <div class="survey-stat-label">Tiempo prom.</div>
-                        </div>
                     </div>
                 </a>
             @empty
@@ -150,63 +170,145 @@
     </div>
 </div>
 
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var el = document.getElementById('editor-dashboard-updated-at');
+        if (!el) return;
+
+        function pad(n) { return n.toString().padStart(2, '0'); }
+
+        function updateTime() {
+            var now = new Date();
+            var day   = pad(now.getDate());
+            var month = pad(now.getMonth() + 1);
+            var year  = now.getFullYear();
+            var hours = pad(now.getHours());
+            var mins  = pad(now.getMinutes());
+            var secs  = pad(now.getSeconds());
+            el.textContent = day + '/' + month + '/' + year + ', ' + hours + ':' + mins + ':' + secs;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    });
+</script>
+@endpush
+
 <div class="card" style="margin-bottom: 2rem;">
     <div class="card-header">
         <h3 class="card-title">Rendimiento de mis encuestas</h3>
         <div style="display: flex; gap: 0.5rem;">
-            <button class="btn btn-outline">7D</button>
             <button class="btn btn-primary">30D</button>
-            <button class="btn btn-outline">90D</button>
         </div>
     </div>
     <div class="chart-area">
-        <div class="chart-placeholder">
-            <div class="chart-placeholder-icon">📈</div>
-            <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Gráfico de respuestas</div>
-            <div style="font-size: 0.875rem;">Últimos 30 días • Placeholder visual</div>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Plantillas recomendadas</h3>
-        <a href="{{ route('surveys.index') }}" class="view-all-link">
-            Ver todas
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-        </a>
-    </div>
-
-    <div class="templates-grid">
-        <div class="template-card">
-            <div class="template-icon-box">😊</div>
-            <div class="template-title">Satisfacción del cliente</div>
-            <div class="template-description">Mide la experiencia de tus usuarios con tu servicio o producto.</div>
-            <div class="template-uses">Referencia visual • UAEMex</div>
-        </div>
-
-        <div class="template-card">
-            <div class="template-icon-box">💼</div>
-            <div class="template-title">Evaluación de desempeño</div>
-            <div class="template-description">Evalúa el rendimiento y desarrollo de tu equipo de trabajo.</div>
-            <div class="template-uses">Referencia visual • UAEMex</div>
-        </div>
-
-        <div class="template-card">
-            <div class="template-icon-box">🎯</div>
-            <div class="template-title">Feedback de evento</div>
-            <div class="template-description">Recopila opiniones y sugerencias después de eventos académicos.</div>
-            <div class="template-uses">Referencia visual • UAEMex</div>
-        </div>
-
-        <div class="template-card">
-            <div class="template-icon-box">📚</div>
-            <div class="template-title">Evaluación de curso</div>
-            <div class="template-description">Evalúa la calidad de cursos, capacitaciones y programas educativos.</div>
-            <div class="template-uses">Referencia visual • UAEMex</div>
-        </div>
+        <canvas id="performanceChart"></canvas>
+        @if(!$hasPerformanceData)
+            <div class="chart-placeholder">
+                <div class="chart-placeholder-icon">📈</div>
+                <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Aún no hay datos suficientes</div>
+                <div style="font-size: 0.875rem;">Cuando tus encuestas reciban respuestas recientes verás la evolución aquí.</div>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('performanceChart');
+        const chartData = @json($performanceChart);
+
+        if (!ctx || !chartData || !chartData.labels || chartData.labels.length === 0) {
+            return;
+        }
+
+        Chart.defaults.font.family = "'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        Chart.defaults.color = '#6b7280';
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Respuestas por día',
+                    data: chartData.data,
+                    borderColor: '#1a5c2a',
+                    backgroundColor: 'rgba(26, 92, 42, 0.08)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#1a5c2a',
+                    pointBorderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#111827',
+                        titleColor: '#f9fafb',
+                        bodyColor: '#e5e7eb',
+                        borderColor: '#374151',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: {
+                            title: function(items) {
+                                if (!items.length) {
+                                    return '';
+                                }
+                                return 'Día ' + items[0].label;
+                            },
+                            label: function(context) {
+                                var index = context.dataIndex;
+                                var allSurveys = chartData.surveys || [];
+                                var perDay = allSurveys[index] || [];
+
+                                if (!perDay.length) {
+                                    return 'Sin respuestas registradas';
+                                }
+
+                                var lines = [];
+                                perDay.forEach(function(item) {
+                                    var title = item.title || 'Encuesta sin título';
+                                    lines.push(item.count + ' · ' + title);
+                                });
+
+                                return lines;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        grid: {
+                            borderDash: [4, 4],
+                            color: '#e5e7eb'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush

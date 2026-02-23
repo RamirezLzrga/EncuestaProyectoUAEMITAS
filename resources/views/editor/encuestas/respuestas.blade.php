@@ -1,9 +1,29 @@
-@extends('layouts.app')
+@extends('layouts.editor')
 
 @section('title', 'Respuestas de Encuesta')
 
 @section('content')
-<div class="flex items-center justify-between mb-4">
+<div class="welcome-section" style="margin-bottom: 1.5rem;">
+    <div class="welcome-content flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <p class="greeting-eyebrow">Respuestas de encuesta</p>
+            <h2 class="greeting">{{ $survey->title }}</h2>
+            <p class="greeting-subtitle">Resumen por pregunta de las respuestas recibidas</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ route('editor.encuestas.editar', $survey) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition">
+                <i class="fas fa-pen"></i>
+                Volver al editor
+            </a>
+            <a href="{{ route('editor.encuestas.compartir', $survey) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-uaemex text-white text-xs font-semibold hover:bg-green-800 transition">
+                <i class="fas fa-share-alt"></i>
+                Compartir encuesta
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="flex items-center justify-between mb-4" style="display:none;">
     <div>
         <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Respuestas</p>
         <h1 class="text-2xl font-bold text-gray-100 mt-1">{{ $survey->title }}</h1>

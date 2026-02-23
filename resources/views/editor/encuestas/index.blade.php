@@ -3,10 +3,21 @@
 @section('title', 'Mis Encuestas')
 
 @section('content')
-    <div class="welcome-section" style="margin-bottom: 1.5rem;">
-        <div class="welcome-content">
-            <h2 class="greeting">Mis encuestas</h2>
-            <p class="greeting-subtitle">Administra y filtra las encuestas que has creado</p>
+    <div class="page-header">
+        <div class="page-title-row">
+            <div>
+                <h1 class="page-title">Mis encuestas</h1>
+                <p class="page-subtitle">Administra y filtra las encuestas que has creado</p>
+            </div>
+            <div class="page-actions">
+                <a href="{{ route('editor.encuestas.plantillas') }}" class="btn btn-gold">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Crear encuesta
+                </a>
+            </div>
         </div>
     </div>
 
@@ -63,7 +74,8 @@
                             <th class="px-6 py-4">Creación</th>
                             <th class="px-6 py-4 text-center">Respuestas</th>
                             <th class="px-6 py-4 text-center">Preguntas</th>
-                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-center">Estado publicación</th>
+                            <th class="px-6 py-4 text-center">Aprobación</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -96,21 +108,43 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('surveys.public', $survey->id) }}" target="_blank" class="text-gray-400 hover:text-purple-600 transition p-2 rounded-lg hover:bg-purple-50" title="Responder / Enlace Público">
+                                    @php
+                                        $approval = $survey->approval_status ?? 'pending';
+                                    @endphp
+                                    <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-[11px] font-semibold min-w-[90px]
+                                        @if($approval === 'approved') bg-emerald-100 text-emerald-700
+                                        @elseif($approval === 'rejected') bg-red-100 text-red-700
+                                        @else bg-amber-50 text-amber-700 @endif">
+                                        @if($approval === 'approved')
+                                            Aprobada
+                                        @elseif($approval === 'rejected')
+                                            Rechazada
+                                        @else
+                                            Pendiente
+                                        @endif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <a href="{{ route('surveys.public', $survey->id) }}" target="_blank" class="text-gray-400 hover:text-purple-600 transition p-2 rounded-lg hover:bg-purple-50" title="Responder / Enlace público">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
-                                        <a href="{{ route('surveys.show', $survey->id) }}" class="text-gray-400 hover:text-uaemex transition p-2 rounded-lg hover:bg-green-50" title="Ver">
+                                        <a href="{{ route('editor.encuestas.respuestas', $survey) }}" class="text-gray-400 hover:text-uaemex transition p-2 rounded-lg hover:bg-green-50" title="Ver detalle de respuestas">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('surveys.edit', $survey->id) }}" class="text-gray-400 hover:text-blue-500 transition p-2 rounded-lg hover:bg-blue-50" title="Editar">
+                                        <a href="{{ route('surveys.edit', $survey->id) }}" class="text-gray-400 hover:text-blue-500 transition p-2 rounded-lg hover:bg-blue-50" title="Editar estructura y preguntas">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        
+                                        <form action="{{ route('surveys.duplicate', $survey->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="text-gray-400 hover:text-amber-500 hover:bg-amber-50 transition p-2 rounded-lg" title="Duplicar encuesta">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </form>
                                         <form action="{{ route('surveys.toggle-status', $survey->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="text-gray-400 {{ $survey->is_active ? 'hover:text-red-500 hover:bg-red-50' : 'hover:text-green-500 hover:bg-green-50' }} transition p-2 rounded-lg" title="{{ $survey->is_active ? 'Inhabilitar' : 'Habilitar' }}">
+                                            <button type="submit" class="text-gray-400 {{ $survey->is_active ? 'hover:text-red-500 hover:bg-red-50' : 'hover:text-green-500 hover:bg-green-50' }} transition p-2 rounded-lg" title="{{ $survey->is_active ? 'Inhabilitar publicación' : 'Habilitar publicación' }}">
                                                 <i class="fas {{ $survey->is_active ? 'fa-ban' : 'fa-check-circle' }}"></i>
                                             </button>
                                         </form>

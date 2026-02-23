@@ -1,20 +1,74 @@
-@extends('layouts.app')
+@extends('layouts.editor')
 
 @section('title', 'Compartir Encuesta')
 
 @section('content')
-<div class="flex items-center justify-between mb-4">
-    <div>
-        <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Compartir</p>
-        <h1 class="text-2xl font-bold text-gray-100 mt-1">{{ $survey->title }}</h1>
+<div class="welcome-section" style="margin-bottom: 1.5rem;">
+    <div class="welcome-content flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <p class="greeting-eyebrow">Compartir encuesta</p>
+            <h2 class="greeting">{{ $survey->title }}</h2>
+            <p class="greeting-subtitle">Genera enlace y resumen de estado antes de difundirla</p>
+        </div>
+        <a href="{{ route('editor.encuestas.editar', $survey) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition">
+            <i class="fas fa-pen"></i>
+            Volver al editor
+        </a>
     </div>
-    <a href="{{ route('editor.encuestas.editar', $survey) }}" class="px-4 py-2 rounded-full border border-gray-500/40 text-gray-300 text-xs font-semibold hover:bg-white/5 transition flex items-center gap-2">
-        <i class="fas fa-pen"></i>
-        Volver al editor
-    </a>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                Estado de publicación
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-gray-400">Estado de aprobación</span>
+                @php $approval = $survey->approval_status ?? 'pending'; @endphp
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                    @if($approval === 'approved') bg-emerald-100 text-emerald-700
+                    @elseif($approval === 'rejected') bg-red-100 text-red-700
+                    @else bg-amber-50 text-amber-700 @endif">
+                    @if($approval === 'approved')
+                        Aprobada por administración
+                    @elseif($approval === 'rejected')
+                        Rechazada, revisa los comentarios
+                    @else
+                        Pendiente de revisión
+                    @endif
+                </span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-gray-400">Estado de actividad</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $survey->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">
+                    {{ $survey->is_active ? 'Activa y recibiendo respuestas' : 'Inactiva, en preparación' }}
+                </span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <span class="text-xs font-semibold text-gray-400">Notificación</span>
+                @if($approval === 'pending')
+                    <span class="text-xs text-gray-600">
+                        Encuesta enviada al administrador. Te avisaremos en la campana cuando sea aprobada o rechazada.
+                    </span>
+                @elseif($approval === 'approved')
+                    <span class="text-xs text-gray-600">
+                        Ya fue aprobada. Puedes empezar a compartir el enlace y monitorear respuestas.
+                    </span>
+                @else
+                    <span class="text-xs text-gray-600">
+                        Revisa la sección de comentarios en el sistema de aprobaciones y ajusta tu encuesta antes de reenviarla.
+                    </span>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
     <div class="lg:col-span-2 space-y-5">
         <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-5 space-y-4">
             <h2 class="text-sm font-semibold text-gray-100 flex items-center gap-2">
@@ -79,4 +133,3 @@ Gracias por tu participación.
     </div>
 </div>
 @endsection
-

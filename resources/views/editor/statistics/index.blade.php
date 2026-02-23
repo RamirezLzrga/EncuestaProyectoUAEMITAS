@@ -3,10 +3,12 @@
 @section('title', 'Estadísticas')
 
 @section('content')
-<div class="welcome-section" style="margin-bottom: 1.5rem;">
-    <div class="welcome-content">
-        <h2 class="greeting">Estadísticas</h2>
-        <p class="greeting-subtitle">Analiza el rendimiento de tus encuestas</p>
+<div class="page-header">
+    <div class="page-title-row">
+        <div>
+            <h1 class="page-title">Estadísticas</h1>
+            <p class="page-subtitle">Analiza el rendimiento de tus encuestas</p>
+        </div>
     </div>
 </div>
 
