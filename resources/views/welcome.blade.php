@@ -977,8 +977,10 @@
 
 <nav>
     <a href="#" class="nav-logo">
-        <div class="logo-escudo" style="background: transparent; padding: 0;">
-            <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+        <div class="logo-escudo">
+            <div style="background:#fff;border-radius:8px;margin:4px;width:calc(100% - 8px);height:calc(100% - 8px);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.04);">
+                <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius:6px;">
+            </div>
         </div>
         <div class="logo-text">
             <span class="siei">SIEI</span>

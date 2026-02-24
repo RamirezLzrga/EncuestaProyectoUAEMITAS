@@ -1318,8 +1318,8 @@
     <header class="top-header">
         <div class="header-left">
             <div class="university-brand">
-                <div class="university-shield" style="background: transparent; padding: 0;">
-                    <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                <div class="university-shield">
+                    <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 90%; height: 90%; object-fit: contain; border-radius: 6px;">
                 </div>
                 <div class="brand-text">
                     <h1>SIEI - UAEMex</h1>

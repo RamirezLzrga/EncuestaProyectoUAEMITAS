@@ -212,8 +212,11 @@
 
   .input-icon {
     position: absolute;
-    inset-y: 0; left: 0;
-    display: flex; align-items: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
     padding-left: 14px;
     color: var(--verde-claro);
     pointer-events: none;
@@ -455,8 +458,8 @@
       <div class="header-deco-2"></div>
 
       <div class="logo-wrap">
-        <div class="logo-escudo" style="background: transparent; padding: 0;">
-          <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+        <div class="logo-escudo">
+          <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 90%; height: 90%; object-fit: contain; border-radius: 12px;">
         </div>
         <div class="live-badge"></div>
       </div>
@@ -524,10 +527,7 @@
         </div>
 
         <div class="options-row">
-          <label class="remember-label">
-            <input type="checkbox" name="remember">
-            Recordar acceso
-          </label>
+          
           <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
         </div>
 
@@ -544,7 +544,7 @@
 
 
       <div class="register-row">
-        ¿No tienes cuenta? Contacta al administrador</a>
+        ¿No tienes cuenta? Acude al departamento correspondiente</a>
       </div>
     </div>
 
