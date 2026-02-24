@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIEI UAEMex – Plataforma de Encuestas Institucional</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y">
     <style>
         :root {
             --verde: #2D6A2D;
@@ -976,7 +977,9 @@
 
 <nav>
     <a href="#" class="nav-logo">
-        <div class="logo-escudo">UA</div>
+        <div class="logo-escudo" style="background: transparent; padding: 0;">
+            <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
         <div class="logo-text">
             <span class="siei">SIEI</span>
             <span class="uaemex">UAEMex</span>

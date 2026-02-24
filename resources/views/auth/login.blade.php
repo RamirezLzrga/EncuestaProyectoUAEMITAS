@@ -455,8 +455,8 @@
       <div class="header-deco-2"></div>
 
       <div class="logo-wrap">
-        <div class="logo-escudo">
-          <div class="logo-inner">UA</div>
+        <div class="logo-escudo" style="background: transparent; padding: 0;">
+          <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="live-badge"></div>
       </div>

@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y">
     <style>
         * {
             margin: 0;
@@ -1317,7 +1318,9 @@
     <header class="top-header">
         <div class="header-left">
             <div class="university-brand">
-                <div class="university-shield">🎓</div>
+                <div class="university-shield" style="background: transparent; padding: 0;">
+                    <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
                 <div class="brand-text">
                     <h1>SIEI - UAEMex</h1>
                     <p>Sistema Integral de Encuestas Institucionales</p>

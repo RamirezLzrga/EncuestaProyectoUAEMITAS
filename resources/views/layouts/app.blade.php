@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y">
     <style>
         /* ── Variables del sistema UAEMex ── */
         :root {
@@ -697,7 +698,9 @@
 
         <!-- Logo -->
         <div class="sidebar-logo">
-            <div class="logo-mark">UA</div>
+            <div class="logo-mark" style="background: transparent; padding: 0;">
+                <img src="https://ri.uaemex.mx/bitstream/handle/20.500.11799/66757/positivo%20color%20vertical%202%20li%cc%81neas.png?sequence=1&isAllowed=y" alt="UAEMex Logo" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
             <div class="logo-text-wrap">
                 <div class="logo-siei">SIEI</div>
                 <div class="logo-name">UAEMex</div>
