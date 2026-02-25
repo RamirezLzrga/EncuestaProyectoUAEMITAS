@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.admin_softui')
 
 @section('title', 'Bitácora de Actividades')
 

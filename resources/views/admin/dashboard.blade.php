@@ -1,194 +1,194 @@
-@extends('layouts.admin')
+@extends('layouts.admin_softui')
 
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="page-header">
-        <div class="page-title-row">
+    <div class="ph">
+        <div class="ph-left">
+            <div class="ph-label">Vista General</div>
+            <div class="ph-title">Panel de Control</div>
+            <div class="ph-sub">
+                Bienvenido de vuelta, {{ strtok(Auth::user()->name ?? 'Usuario',' ') }} —
+                <span id="dashboard-updated-at"></span>
+            </div>
+        </div>
+        <div class="ph-actions">
+            <a href="{{ route('activity-logs.export') }}" class="btn btn-neu">↓ Exportar</a>
+            <a href="{{ route('admin.reportes') }}" class="btn btn-oro">⬡ Generar Reporte</a>
+        </div>
+    </div>
+
+    <div class="dash-grid">
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kp-top">
+                    <div class="kp-icon"><span>📋</span></div>
+                    <span class="kp-change kp-up">↑ +100%</span>
+                </div>
+                <div class="kp-value">{{ $totalSurveys }}</div>
+                <div class="kp-label">Encuestas</div>
+                <div class="kp-desc">Activas este periodo</div>
+                <div class="kpi-card-bg" style="background:var(--verde)"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kp-top">
+                    <div class="kp-icon"><span>📬</span></div>
+                    <span class="kp-change kp-up">↑ {{ $avgResponses }}/enc</span>
+                </div>
+                <div class="kp-value">{{ $totalResponses }}</div>
+                <div class="kp-label">Respuestas</div>
+                <div class="kp-desc">Totales recibidas</div>
+                <div class="kpi-card-bg" style="background:var(--oro)"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kp-top">
+                    <div class="kp-icon"><span>✅</span></div>
+                    <span class="kp-change kp-flat">—</span>
+                </div>
+                <div class="kp-value">{{ $completionRate }}%</div>
+                <div class="kp-label">Completado</div>
+                <div class="kp-desc">Tasa de finalización</div>
+                <div class="kpi-card-bg" style="background:var(--text-muted)"></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kp-top">
+                    <div class="kp-icon"><span>👤</span></div>
+                    <span class="kp-change kp-up">↑ Activos</span>
+                </div>
+                <div class="kp-value">{{ $activeUsers }}</div>
+                <div class="kp-label">Usuarios</div>
+                <div class="kp-desc">Con acceso activo</div>
+                <div class="kpi-card-bg" style="background:var(--verde)"></div>
+            </div>
+        </div>
+
+        <div class="welcome-band">
+            <div class="wb-circles"></div>
+            <div class="wb-circles2"></div>
             <div>
-                <h1 class="page-title">Panel de Control Administrativo</h1>
-                <p class="page-subtitle">
-                    Vista general del sistema • Actualizado el
-                    <span id="dashboard-updated-at"></span>
-                </p>
+                <div class="wb-tag">UAEMex · SIEI</div>
+                <div class="wb-title">¡Bienvenido, {{ strtok(Auth::user()->name ?? 'Usuario',' ') }}! 👋</div>
+                <div class="wb-sub">
+                    @if($pendingApprovals > 0)
+                        Tienes {{ $pendingApprovals }} encuesta{{ $pendingApprovals===1?'':'s' }} pendiente{{ $pendingApprovals===1?'':'s' }} de aprobación.
+                    @else
+                        No hay encuestas pendientes de aprobación.
+                    @endif
+                </div>
+                <div style="margin-top:16px;display:flex;gap:10px">
+                    <a href="{{ route('admin.aprobaciones') }}" class="btn btn-oro btn-sm">Ver aprobaciones →</a>
+                </div>
             </div>
-            <div class="page-actions">
-                <a href="{{ route('activity-logs.export') }}" class="btn btn-secondary">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            <div class="wb-date">
+                <div class="wb-date-day">{{ now()->format('d') }}</div>
+                <div class="wb-date-rest">{{ strtoupper(now()->format('M')) }} / {{ now()->format('Y') }}<br>{{ now()->format('h:i A') }}</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="qa-title">Acciones Rápidas</div>
+            <div class="qa-grid">
+                <a class="qa-item" href="{{ route('surveys.create') }}"><div class="qa-emoji">📝</div><div class="qa-label">Nueva Encuesta</div></a>
+                <a class="qa-item" href="{{ route('users.create') }}"><div class="qa-emoji">👥</div><div class="qa-label">Añadir Usuario</div></a>
+                <a class="qa-item" href="{{ route('statistics.index') }}"><div class="qa-emoji">📊</div><div class="qa-label">Ver Estadísticas</div></a>
+                <a class="qa-item" href="{{ route('activity-logs.index') }}"><div class="qa-emoji">📜</div><div class="qa-label">Bitácora</div></a>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="cc-header">
+                <div>
+                    <div class="cc-title">Respuestas por Período</div>
+                    <div class="cc-sub">Actividad acumulada del sistema</div>
+                </div>
+                <div class="tab-group">
+                    <div class="tg-tab">7D</div>
+                    <div class="tg-tab active">30D</div>
+                    <div class="tg-tab">90D</div>
+                    <div class="tg-tab">1A</div>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:25%"></div><span class="cb-month">Ene</span></div>
+                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:48%"></div><span class="cb-month">Feb</span></div>
+                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:35%"></div><span class="cb-month">Mar</span></div>
+                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:70%"></div><span class="cb-month">Abr</span></div>
+                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:52%"></div><span class="cb-month">May</span></div>
+                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:88%"></div><span class="cb-month">Jun</span></div>
+            </div>
+        </div>
+
+        <div class="donut-card">
+            <div class="cc-title">Estado de Encuestas</div>
+            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Distribución actual</div>
+            <div class="donut-wrap">
+                <div class="donut-svg-wrap">
+                    <svg class="donut-svg" viewBox="0 0 42 42">
+                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="#dde3d6" stroke-width="5"/>
+                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--verde)" stroke-width="5" stroke-dasharray="55 45" stroke-dashoffset="0"/>
+                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--oro-bright)" stroke-width="5" stroke-dasharray="30 70" stroke-dashoffset="-55"/>
+                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--text-light)" stroke-width="5" stroke-dasharray="15 85" stroke-dashoffset="-85"/>
                     </svg>
-                    Exportar
-                </a>
-                <a href="{{ route('admin.reportes') }}" class="btn btn-gold">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    Generar Reporte
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-label">Total de Encuestas</div>
-                <div class="stat-icon green">📋</div>
-            </div>
-            <div class="stat-value">{{ $totalSurveys }}</div>
-            <div class="stat-change positive">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>{{ $totalSurveys > 0 ? '+'.number_format(($totalSurveys / max($totalSurveys, 1)) * 100, 0).'%' : '+0%' }} vs periodo anterior</span>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-label">Respuestas Totales</div>
-                <div class="stat-icon gold">📊</div>
-            </div>
-            <div class="stat-value">{{ $totalResponses }}</div>
-            <div class="stat-change positive">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>Promedio {{ $avgResponses }} por encuesta</span>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-label">Tasa de Completado</div>
-                <div class="stat-icon blue">✓</div>
-            </div>
-            <div class="stat-value">{{ $completionRate }}%</div>
-            <div class="stat-change positive">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>Completadas vs total de respuestas</span>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-label">Usuarios Activos</div>
-                <div class="stat-icon green">👥</div>
-            </div>
-            <div class="stat-value">{{ $activeUsers }}</div>
-            <div class="stat-change positive">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
-                <span>Usuarios con estado activo</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="alert-card">
-        <div class="alert-header">
-            <div class="alert-icon">⚠️</div>
-            <div class="alert-content">
-                @if($pendingApprovals > 0)
-                    <h4>{{ $pendingApprovals }} encuesta{{ $pendingApprovals === 1 ? '' : 's' }} pendiente{{ $pendingApprovals === 1 ? '' : 's' }} de aprobación</h4>
-                    <p>Hay solicitudes de publicación esperando tu revisión. Revisa y aprueba para que los
-                        editores puedan continuar.</p>
-                @else
-                    <h4>No hay encuestas pendientes de aprobación</h4>
-                    <p>Las solicitudes de publicación están al día.</p>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <div class="content-row">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">
-                    <div class="card-icon">📈</div>
-                    Actividad del Sistema
-                </div>
-                <div class="card-actions">
-                    <button class="filter-chip">7D</button>
-                    <button class="filter-chip active">30D</button>
-                    <button class="filter-chip">90D</button>
-                    <button class="filter-chip">1A</button>
-                </div>
-            </div>
-            <div class="chart-container">
-                @if($systemActivity['new_surveys'] > 0 || $systemActivity['new_responses'] > 0)
-                    <div class="chart-placeholder-content">
-                        <div class="chart-icon">📊</div>
-                        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">
-                            Actividad en los {{ $systemActivity['period_label'] }}
-                        </div>
-                        <div style="font-size: 0.875rem; margin-bottom: 0.25rem;">
-                            {{ $systemActivity['new_surveys'] }}
-                            nueva{{ $systemActivity['new_surveys'] === 1 ? '' : 's' }}
-                            encuesta{{ $systemActivity['new_surveys'] === 1 ? '' : 's' }}
-                            y {{ $systemActivity['new_responses'] }}
-                            respuesta{{ $systemActivity['new_responses'] === 1 ? '' : 's' }}
-                            registrada{{ $systemActivity['new_responses'] === 1 ? '' : 's' }}.
-                        </div>
-                        @if($systemActivity['top_day'])
-                            <div style="font-size: 0.8rem; color: var(--gray-500);">
-                                Día con más respuestas: {{ $systemActivity['top_day']['label'] }}
-                                ({{ $systemActivity['top_day']['responses'] }} respuestas)
-                            </div>
-                        @endif
+                    <div class="donut-center">
+                        <div class="donut-pct">{{ $totalSurveys }}</div>
+                        <div class="donut-pct-label">Total</div>
                     </div>
-                @else
-                    <div class="chart-placeholder-content">
-                        <div class="chart-icon">📊</div>
-                        <div style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">
-                            Sin actividad reciente
-                        </div>
-                        <div style="font-size: 0.875rem;">
-                            No se registran nuevas encuestas ni respuestas en los últimos 30 días.
-                        </div>
-                    </div>
-                @endif
+                </div>
+                <div class="donut-legend">
+                    <div class="dl-row"><div class="dl-dot" style="background:var(--verde)"></div>Activas<div class="dl-val">—</div></div>
+                    <div class="dl-row"><div class="dl-dot" style="background:var(--oro-bright)"></div>Pendientes<div class="dl-val">—</div></div>
+                    <div class="dl-row"><div class="dl-dot" style="background:var(--text-light)"></div>Cerradas<div class="dl-val">—</div></div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">
-                    <div class="card-icon">🔔</div>
-                    Actividad Reciente
+        <div class="progress-card">
+            <div class="cc-title">Participación por Encuesta</div>
+            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Respuestas vs. límite</div>
+            <div class="pw-items">
+                <div class="pw-item">
+                    <div class="pw-item-top"><span class="pw-name">—</span><span class="pw-pct">—</span></div>
+                    <div class="pw-track"><div class="pw-fill verde" style="width:10%"></div></div>
+                </div>
+                <div class="pw-item">
+                    <div class="pw-item-top"><span class="pw-name">—</span><span class="pw-pct">—</span></div>
+                    <div class="pw-track"><div class="pw-fill oro" style="width:30%"></div></div>
                 </div>
             </div>
-            <div class="activity-list">
+        </div>
+
+        <div class="heatmap-card">
+            <div class="cc-title">Mapa de Actividad</div>
+            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Acciones por día</div>
+            <div class="hm-grid">
+                <div class="hm-day-label">L</div><div class="hm-day-label">M</div><div class="hm-day-label">X</div><div class="hm-day-label">J</div><div class="hm-day-label">V</div><div class="hm-day-label">S</div><div class="hm-day-label">D</div>
+                <div class="hm-cell hm-1"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-2"></div><div class="hm-cell hm-1"></div><div class="hm-cell hm-3"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-0"></div>
+                <div class="hm-cell hm-2"></div><div class="hm-cell hm-3"></div><div class="hm-cell hm-1"></div><div class="hm-cell hm-4"></div><div class="hm-cell hm-2"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-0"></div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="cc-title">Encuestas Recientes</div>
+            <div class="rc-list">
+                <div class="rc-item">
+                    <div class="rc-top"><span class="rc-name">—</span><span class="badge-neu bn-green">● Activa</span></div>
+                    <div class="rc-bar-wrap"><div class="rc-mini-bar"><div class="rc-mini-fill" style="width:10%"></div></div><span class="rc-num">1/100 resp.</span></div>
+                </div>
+                <div class="rc-item">
+                    <div class="rc-top"><span class="rc-name">—</span><span class="badge-neu bn-gold">○ Pendiente</span></div>
+                    <div class="rc-bar-wrap"><div class="rc-mini-bar"><div class="rc-mini-fill" style="width:0%"></div></div><span class="rc-num">0/100 resp.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-card">
+            <div class="cc-title">Actividad Reciente</div>
+            <div class="tl-list">
+                <div class="tl-line"></div>
                 @forelse($recentActivity as $activity)
-                    <div class="activity-item">
-                        <div class="activity-icon-wrapper {{ $activity['icon_class'] }}">{{ $activity['icon'] }}</div>
-                        <div class="activity-content">
-                            <div class="activity-title">{{ $activity['title'] }}</div>
-                            <div class="activity-description">
-                                {{ $activity['description'] }}
-                            </div>
-                        </div>
-                        <div class="activity-time">{{ $activity['time'] }}</div>
-                    </div>
+                    <div class="tl-item"><div class="tl-dot">{{ $activity['icon'] }}</div><div class="tl-content"><div class="tl-action">{{ $activity['title'] }}</div><div class="tl-meta">{{ $activity['description'] }} · {{ $activity['time'] }}</div></div></div>
                 @empty
-                    <div class="activity-item">
-                        <div class="activity-icon-wrapper survey">📋</div>
-                        <div class="activity-content">
-                            <div class="activity-title">Sin actividad reciente</div>
-                            <div class="activity-description">
-                                No se han registrado nuevas encuestas, usuarios o respuestas recientemente.
-                            </div>
-                        </div>
-                        <div class="activity-time">—</div>
-                    </div>
+                    <div class="tl-item"><div class="tl-dot">📋</div><div class="tl-content"><div class="tl-action">Sin actividad reciente</div><div class="tl-meta">—</div></div></div>
                 @endforelse
             </div>
         </div>
