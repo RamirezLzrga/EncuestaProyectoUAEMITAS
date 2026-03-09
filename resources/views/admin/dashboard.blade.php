@@ -1,4 +1,4 @@
-@extends('layouts.admin_softui')
+@extends('layouts.admin')
 
 @section('title', 'Dashboard')
 
@@ -9,7 +9,7 @@
             <div class="ph-title">Panel de Control</div>
             <div class="ph-sub">
                 Bienvenido de vuelta, {{ strtok(Auth::user()->name ?? 'Usuario',' ') }} —
-                <span id="dashboard-updated-at"></span>
+                <span id="dashboard-updated-at">{{ now()->format('d M Y') }}</span>
             </div>
         </div>
         <div class="ph-actions">
@@ -23,17 +23,19 @@
             <div class="kpi-card">
                 <div class="kp-top">
                     <div class="kp-icon"><span>📋</span></div>
-                    <span class="kp-change kp-up">↑ +100%</span>
+                    <span class="kp-change kp-up">↑ +{{ $totalSurveys }}</span>
                 </div>
                 <div class="kp-value">{{ $totalSurveys }}</div>
                 <div class="kp-label">Encuestas</div>
-                <div class="kp-desc">Activas este periodo</div>
+                <div class="kp-desc">Totales en sistema</div>
                 <div class="kpi-card-bg" style="background:var(--verde)"></div>
             </div>
             <div class="kpi-card">
                 <div class="kp-top">
                     <div class="kp-icon"><span>📬</span></div>
-                    <span class="kp-change kp-up">↑ {{ $avgResponses }}/enc</span>
+                    <span class="kp-change {{ $avgResponses > 0 ? 'kp-up' : 'kp-flat' }}">
+                        {{ $avgResponses > 0 ? '↑' : '—' }} {{ $avgResponses }}/enc
+                    </span>
                 </div>
                 <div class="kp-value">{{ $totalResponses }}</div>
                 <div class="kp-label">Respuestas</div>
@@ -43,7 +45,9 @@
             <div class="kpi-card">
                 <div class="kp-top">
                     <div class="kp-icon"><span>✅</span></div>
-                    <span class="kp-change kp-flat">—</span>
+                    <span class="kp-change {{ $completionRate > 50 ? 'kp-up' : 'kp-flat' }}">
+                        {{ $completionRate > 0 ? ($completionRate > 50 ? '↑' : '↓') : '—' }} {{ $completionRate }}%
+                    </span>
                 </div>
                 <div class="kp-value">{{ $completionRate }}%</div>
                 <div class="kp-label">Completado</div>
@@ -80,8 +84,11 @@
                 </div>
             </div>
             <div class="wb-date">
-                <div class="wb-date-day">{{ now()->format('d') }}</div>
-                <div class="wb-date-rest">{{ strtoupper(now()->format('M')) }} / {{ now()->format('Y') }}<br>{{ now()->format('h:i A') }}</div>
+                <div class="wb-date-day" id="admin-clock-day">{{ now()->format('d') }}</div>
+                <div class="wb-date-rest">
+                    <span id="admin-clock-month-year">{{ strtoupper(now()->format('M')) }} / {{ now()->format('Y') }}</span><br>
+                    <span id="admin-clock-time">{{ now()->format('h:i A') }}</span>
+                </div>
             </div>
         </div>
 
@@ -98,23 +105,22 @@
         <div class="chart-card">
             <div class="cc-header">
                 <div>
-                    <div class="cc-title">Respuestas por Período</div>
-                    <div class="cc-sub">Actividad acumulada del sistema</div>
-                </div>
-                <div class="tab-group">
-                    <div class="tg-tab">7D</div>
-                    <div class="tg-tab active">30D</div>
-                    <div class="tg-tab">90D</div>
-                    <div class="tg-tab">1A</div>
+                    <div class="cc-title">Respuestas por Mes</div>
+                    <div class="cc-sub">Actividad acumulada del año actual</div>
                 </div>
             </div>
             <div class="chart-body">
-                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:25%"></div><span class="cb-month">Ene</span></div>
-                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:48%"></div><span class="cb-month">Feb</span></div>
-                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:35%"></div><span class="cb-month">Mar</span></div>
-                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:70%"></div><span class="cb-month">Abr</span></div>
-                <div class="cb-bar-wrap"><div class="cb-bar verde" style="height:52%"></div><span class="cb-month">May</span></div>
-                <div class="cb-bar-wrap"><div class="cb-bar oro"   style="height:88%"></div><span class="cb-month">Jun</span></div>
+                @php
+                    $maxMonthly = collect($monthlyActivity)->max('count') ?: 1;
+                @endphp
+                @foreach($monthlyActivity as $ma)
+                    <div class="cb-bar-wrap">
+                        <div class="cb-bar {{ $loop->iteration % 2 == 0 ? 'oro' : 'verde' }}" 
+                             style="height: {{ ($ma['count'] / $maxMonthly) * 100 }}%"
+                             title="{{ $ma['count'] }} respuestas"></div>
+                        <span class="cb-month">{{ $ma['month'] }}</span>
+                    </div>
+                @endforeach
             </div>
         </div>
 
@@ -123,11 +129,14 @@
             <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Distribución actual</div>
             <div class="donut-wrap">
                 <div class="donut-svg-wrap">
+                    @php
+                        $activePct = $totalSurveys > 0 ? ($activeSurveys / $totalSurveys) * 100 : 0;
+                        $inactivePct = $totalSurveys > 0 ? ($inactiveSurveys / $totalSurveys) * 100 : 0;
+                    @endphp
                     <svg class="donut-svg" viewBox="0 0 42 42">
                         <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="#dde3d6" stroke-width="5"/>
-                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--verde)" stroke-width="5" stroke-dasharray="55 45" stroke-dashoffset="0"/>
-                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--oro-bright)" stroke-width="5" stroke-dasharray="30 70" stroke-dashoffset="-55"/>
-                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--text-light)" stroke-width="5" stroke-dasharray="15 85" stroke-dashoffset="-85"/>
+                        <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--verde)" stroke-width="5" 
+                                stroke-dasharray="{{ $activePct }} {{ 100 - $activePct }}" stroke-dashoffset="25"/>
                     </svg>
                     <div class="donut-center">
                         <div class="donut-pct">{{ $totalSurveys }}</div>
@@ -135,49 +144,81 @@
                     </div>
                 </div>
                 <div class="donut-legend">
-                    <div class="dl-row"><div class="dl-dot" style="background:var(--verde)"></div>Activas<div class="dl-val">—</div></div>
-                    <div class="dl-row"><div class="dl-dot" style="background:var(--oro-bright)"></div>Pendientes<div class="dl-val">—</div></div>
-                    <div class="dl-row"><div class="dl-dot" style="background:var(--text-light)"></div>Cerradas<div class="dl-val">—</div></div>
+                    <div class="dl-row"><div class="dl-dot" style="background:var(--verde)"></div>Activas<div class="dl-val">{{ $activeSurveys }}</div></div>
+                    <div class="dl-row"><div class="dl-dot" style="background:var(--bg-dark)"></div>Inactivas<div class="dl-val">{{ $inactiveSurveys }}</div></div>
                 </div>
             </div>
         </div>
 
         <div class="progress-card">
-            <div class="cc-title">Participación por Encuesta</div>
-            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Respuestas vs. límite</div>
+            <div class="cc-title">Top Encuestas</div>
+            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Más respuestas recibidas</div>
             <div class="pw-items">
-                <div class="pw-item">
-                    <div class="pw-item-top"><span class="pw-name">—</span><span class="pw-pct">—</span></div>
-                    <div class="pw-track"><div class="pw-fill verde" style="width:10%"></div></div>
-                </div>
-                <div class="pw-item">
-                    <div class="pw-item-top"><span class="pw-name">—</span><span class="pw-pct">—</span></div>
-                    <div class="pw-track"><div class="pw-fill oro" style="width:30%"></div></div>
-                </div>
+                @php
+                    $maxResponses = $surveysWithResponses->max('responses_count') ?: 1;
+                @endphp
+                @forelse($surveysWithResponses as $survey)
+                    <div class="pw-item">
+                        <div class="pw-item-top">
+                            <span class="pw-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">{{ $survey['title'] }}</span>
+                            <span class="pw-pct">{{ $survey['responses_count'] }}</span>
+                        </div>
+                        <div class="pw-track">
+                            <div class="pw-fill {{ $loop->iteration % 2 == 0 ? 'oro' : 'verde' }}" 
+                                 style="width:{{ ($survey['responses_count'] / $maxResponses) * 100 }}%"></div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="pw-item"><span class="pw-name" style="color:var(--text-muted)">Sin datos disponibles</span></div>
+                @endforelse
             </div>
         </div>
 
         <div class="heatmap-card">
-            <div class="cc-title">Mapa de Actividad</div>
-            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Acciones por día</div>
+            <div class="cc-title">Actividad (30 Días)</div>
+            <div class="cc-sub" style="font-size:12px;color:var(--text-muted);margin-top:2px">Respuestas por día</div>
             <div class="hm-grid">
                 <div class="hm-day-label">L</div><div class="hm-day-label">M</div><div class="hm-day-label">X</div><div class="hm-day-label">J</div><div class="hm-day-label">V</div><div class="hm-day-label">S</div><div class="hm-day-label">D</div>
-                <div class="hm-cell hm-1"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-2"></div><div class="hm-cell hm-1"></div><div class="hm-cell hm-3"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-0"></div>
-                <div class="hm-cell hm-2"></div><div class="hm-cell hm-3"></div><div class="hm-cell hm-1"></div><div class="hm-cell hm-4"></div><div class="hm-cell hm-2"></div><div class="hm-cell hm-0"></div><div class="hm-cell hm-0"></div>
+                @foreach($activityByDay as $day)
+                    @php
+                        $level = 0;
+                        if ($day['responses'] > 0) $level = 1;
+                        if ($day['responses'] > 5) $level = 2;
+                        if ($day['responses'] > 10) $level = 3;
+                        if ($day['responses'] > 20) $level = 4;
+                    @endphp
+                    <div class="hm-cell hm-{{ $level }}" title="{{ $day['label'] }}: {{ $day['responses'] }} respuestas"></div>
+                @endforeach
             </div>
         </div>
 
         <div class="table-card">
             <div class="cc-title">Encuestas Recientes</div>
             <div class="rc-list">
-                <div class="rc-item">
-                    <div class="rc-top"><span class="rc-name">—</span><span class="badge-neu bn-green">● Activa</span></div>
-                    <div class="rc-bar-wrap"><div class="rc-mini-bar"><div class="rc-mini-fill" style="width:10%"></div></div><span class="rc-num">1/100 resp.</span></div>
-                </div>
-                <div class="rc-item">
-                    <div class="rc-top"><span class="rc-name">—</span><span class="badge-neu bn-gold">○ Pendiente</span></div>
-                    <div class="rc-bar-wrap"><div class="rc-mini-bar"><div class="rc-mini-fill" style="width:0%"></div></div><span class="rc-num">0/100 resp.</span></div>
-                </div>
+                @forelse($recentSurveys as $survey)
+                    <div class="rc-item" onclick="window.location='{{ route('surveys.show', $survey->id) }}'">
+                        <div class="rc-top">
+                            <span class="rc-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;">{{ $survey->title }}</span>
+                            @if($survey->is_active)
+                                <span class="badge-neu bn-green">● Activa</span>
+                            @else
+                                <span class="badge-neu bn-muted">○ Inactiva</span>
+                            @endif
+                        </div>
+                        <div class="rc-bar-wrap">
+                            <div class="rc-mini-bar">
+                                @php
+                                    $respCount = $survey->responses()->count();
+                                    $width = $respCount > 0 ? min($respCount, 100) : 0; 
+                                @endphp
+                                <div class="rc-mini-fill" style="width:{{ $width }}%"></div>
+                            </div>
+                            <span class="rc-num">{{ $respCount }} resp.</span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="rc-item"><span class="rc-name" style="color:var(--text-muted)">Sin encuestas recientes</span></div>
+                @endforelse
             </div>
         </div>
 
@@ -186,38 +227,67 @@
             <div class="tl-list">
                 <div class="tl-line"></div>
                 @forelse($recentActivity as $activity)
-                    <div class="tl-item"><div class="tl-dot">{{ $activity['icon'] }}</div><div class="tl-content"><div class="tl-action">{{ $activity['title'] }}</div><div class="tl-meta">{{ $activity['description'] }} · {{ $activity['time'] }}</div></div></div>
+                    <div class="tl-item">
+                        <div class="tl-dot">{{ $activity['icon'] }}</div>
+                        <div class="tl-content">
+                            <div class="tl-action">{{ $activity['title'] }}</div>
+                            <div class="tl-meta">{{ $activity['description'] }} · {{ $activity['time'] }}</div>
+                        </div>
+                    </div>
                 @empty
-                    <div class="tl-item"><div class="tl-dot">📋</div><div class="tl-content"><div class="tl-action">Sin actividad reciente</div><div class="tl-meta">—</div></div></div>
+                    <div class="tl-item">
+                        <div class="tl-dot">📋</div>
+                        <div class="tl-content">
+                            <div class="tl-action">Sin actividad reciente</div>
+                            <div class="tl-meta">—</div>
+                        </div>
+                    </div>
                 @endforelse
             </div>
         </div>
     </div>
-
-    
 @endsection
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var el = document.getElementById('dashboard-updated-at');
-        if (!el) {
-            return;
+        // Admin Dashboard Real-time Clock
+        const dayEl = document.getElementById('admin-clock-day');
+        const monthYearEl = document.getElementById('admin-clock-month-year');
+        const timeEl = document.getElementById('admin-clock-time');
+        const headerDateEl = document.getElementById('dashboard-updated-at');
+        
+        if (dayEl && monthYearEl && timeEl) {
+            function updateAdminClock() {
+                const now = new Date();
+                
+                // Date
+                const day = now.getDate().toString().padStart(2, '0');
+                dayEl.textContent = day;
+                
+                const monthName = now.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+                const month = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                const year = now.getFullYear();
+                monthYearEl.textContent = `${month.toUpperCase()} / ${year}`;
+                
+                // Update header date if exists
+                if (headerDateEl) {
+                    headerDateEl.textContent = `${day} ${month} ${year}`;
+                }
+                
+                // Time
+                let hours = now.getHours();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                // No seconds as requested
+                timeEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+            }
+            setInterval(updateAdminClock, 1000);
+            updateAdminClock();
         }
-
-        function updateDashboardTime() {
-            var now = new Date();
-            var day = String(now.getDate()).padStart(2, '0');
-            var month = String(now.getMonth() + 1).padStart(2, '0');
-            var year = now.getFullYear();
-            var hours = String(now.getHours()).padStart(2, '0');
-            var minutes = String(now.getMinutes()).padStart(2, '0');
-            var seconds = String(now.getSeconds()).padStart(2, '0');
-            el.textContent = day + '/' + month + '/' + year + ', ' + hours + ':' + minutes + ':' + seconds;
-        }
-
-        updateDashboardTime();
-        setInterval(updateDashboardTime, 1000);
     });
 </script>
 @endpush

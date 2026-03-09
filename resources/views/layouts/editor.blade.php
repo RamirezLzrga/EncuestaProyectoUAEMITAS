@@ -816,7 +816,34 @@ select.q-input { appearance:none; cursor:pointer; padding-right:32px; background
             </div>
         </div>
     </div>
-    <div class="avatar-btn">Ju</div>
+    <div style="position: relative;">
+      <div class="avatar-btn" id="user-menu-btn">{{ substr(optional(Auth::user())->name ?? 'U', 0, 2) }}</div>
+      <div id="user-menu-dropdown" style="display:none; position:absolute; top: 100%; right: 0; width: 240px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); z-index: 1000; margin-top: 10px; overflow: hidden;">
+        <div style="padding: 14px 16px; border-bottom: 1px solid #f3f4f6; background: #f9fafb;">
+          <div style="font-weight: 700; font-size: 13px; color: #111827; line-height: 1.2;">{{ optional(Auth::user())->name ?? 'Usuario' }}</div>
+          <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">
+            @switch(optional(Auth::user())->role)
+              @case('admin') Administrador @break
+              @case('editor') Editor @break
+              @default Usuario
+            @endswitch
+          </div>
+        </div>
+        <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
+          <a href="{{ route('profile.show') }}" style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius: 10px; text-decoration:none; color:#111827; background:#ffffff; border:1px solid #f3f4f6;">
+            <span style="font-size: 16px; line-height: 1;">👤</span>
+            <span style="font-weight: 600; font-size: 13px;">Mi perfil</span>
+          </a>
+          <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+            @csrf
+            <button type="submit" style="width:100%; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius: 10px; border:1px solid #f3f4f6; background:#ffffff; color:#111827; cursor:pointer;">
+              <span style="font-size: 16px; line-height: 1;">🚪</span>
+              <span style="font-weight: 700; font-size: 13px;">Cerrar sesión</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -981,6 +1008,26 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(err => console.error('Error marking read:', err));
     });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userBtn = document.getElementById('user-menu-btn');
+  const userDropdown = document.getElementById('user-menu-dropdown');
+
+  if (!userBtn || !userDropdown) return;
+
+  userBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    userDropdown.style.display = (userDropdown.style.display === 'block') ? 'none' : 'block';
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!userBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+      userDropdown.style.display = 'none';
+    }
+  });
 });
 </script>
 

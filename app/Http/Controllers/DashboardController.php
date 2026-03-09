@@ -158,6 +158,19 @@ class DashboardController extends Controller
             ];
         }
 
+        // Actividad por mes (para la gráfica de barras)
+        $monthlyActivity = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $date = Carbon::createFromDate(null, $m, 1);
+            $count = SurveyResponse::whereYear('created_at', Carbon::now()->year)
+                ->whereMonth('created_at', $m)
+                ->count();
+            $monthlyActivity[] = [
+                'month' => $date->format('M'),
+                'count' => $count
+            ];
+        }
+
         return view('admin.dashboard', compact(
             'totalSurveys',
             'activeSurveys',
@@ -172,7 +185,10 @@ class DashboardController extends Controller
             'doughnutData',
             'pendingApprovals',
             'systemActivity',
-            'recentActivity'
+            'recentActivity',
+            'activityByDay',
+            'monthlyActivity',
+            'surveysWithResponses'
         ));
     }
 }

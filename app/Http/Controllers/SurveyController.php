@@ -59,7 +59,16 @@ class SurveyController extends Controller
      */
     public function create()
     {
-        return view('surveys.create');
+        $survey = new Survey([
+            'year' => date('Y'),
+            'start_date' => now(),
+            'end_date' => now()->addMonth(),
+        ]);
+
+        return view('surveys.create', [
+            'survey' => $survey,
+            'mode' => 'create',
+        ]);
     }
 
     /**

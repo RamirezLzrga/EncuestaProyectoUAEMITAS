@@ -1,175 +1,244 @@
-@extends('layouts.admin_softui')
+@extends('layouts.admin')
 
 @section('title', 'Sistema de Aprobaciones')
 
 @section('content')
-<div class="page-header">
-    <div class="page-title-row">
-        <div>
-            <h1 class="page-title">Sistema de Aprobaciones</h1>
-            <p class="page-subtitle">Cola de encuestas pendientes de aprobación y su historial.</p>
-        </div>
+    {{-- HEADER --}}
+    <div style="margin-bottom:30px;">
+        <div style="font-size:11px; font-weight:800; color:var(--oro); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">FLUJO EDITORIAL</div>
+        <h1 style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; color:var(--uaemex); margin-bottom:8px;">Sistema de Aprobaciones</h1>
+        <p style="color:var(--text-muted);">Revisa y gestiona las encuestas pendientes de publicación</p>
     </div>
-</div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-4">
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                    <i class="fas fa-inbox text-uaemex"></i>
-                    Pendientes de aprobación
-                </h2>
-                <span class="text-xs px-3 py-1 rounded-full bg-uaemex text-white font-semibold">
-                    {{ count($pendingSurveys) }} pendientes
-                </span>
-            </div>
+    <div style="display:grid; grid-template-columns: 1fr 340px; gap:30px; align-items:start;">
+        
+        {{-- LEFT COLUMN: ACTIVE SURVEY CARD --}}
+        <div>
+            @php
+                $activeSurvey = null;
+                if(request()->has('id')) {
+                    $activeSurvey = $pendingSurveys->where('id', request('id'))->first();
+                    // If not found in pending, check history just in case (though actions might be disabled)
+                    if(!$activeSurvey) $activeSurvey = $history->where('id', request('id'))->first();
+                } else {
+                    $activeSurvey = $pendingSurveys->first();
+                }
+            @endphp
 
-            @if($pendingSurveys->isEmpty())
-                <p class="text-sm text-gray-500">No hay encuestas pendientes de aprobación.</p>
-            @else
-                <div class="space-y-3">
-                    @foreach($pendingSurveys as $survey)
-                        <div class="border rounded-lg p-4 flex flex-col gap-3 hover:border-uaemex transition">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <h3 class="font-semibold text-gray-900">{{ $survey->title }}</h3>
-                                    <p class="text-xs text-gray-500">
-                                        Propietario: <span class="font-medium">{{ optional($survey->user)->name ?? 'Sin asignar' }}</span>
-                                        · Creada {{ optional($survey->created_at)->diffForHumans() }}
-                                    </p>
+            @if($activeSurvey)
+                <div class="neu-card" style="padding:32px; min-height:500px; display:flex; flex-direction:column; justify-content:space-between;">
+                    
+                    {{-- Card Header --}}
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+                        <div>
+                            <h2 style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; color:var(--text-dark); margin-bottom:6px;">
+                                {{ $activeSurvey->title }}
+                            </h2>
+                            <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--text-muted);">
+                                Propietario: {{ optional($activeSurvey->user)->name ?? 'Desconocido' }} · Creada {{ $activeSurvey->created_at->diffForHumans() }}
+                            </div>
+                        </div>
+                        <div class="status-pill {{ $activeSurvey->approval_status === 'pending' ? 'status-pending' : ($activeSurvey->approval_status === 'approved' ? 'status-active' : 'status-inactive') }}">
+                            @if($activeSurvey->approval_status === 'pending') Pendiente
+                            @elseif($activeSurvey->approval_status === 'approved') Aprobada
+                            @else Rechazada
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Preview Section --}}
+                    <div style="background:var(--bg-light); border-radius:16px; padding:24px; margin-bottom:24px; box-shadow:inset 2px 2px 6px rgba(0,0,0,0.05);">
+                        <div style="font-size:10px; font-weight:800; letter-spacing:1px; color:var(--text-light); text-transform:uppercase; margin-bottom:12px;">
+                            PREVIEW DE LA ENCUESTA
+                        </div>
+                        
+                        <div style="display:flex; gap:20px; font-size:13px; color:var(--text-muted); margin-bottom:16px; padding-bottom:16px; border-bottom:1px dashed rgba(0,0,0,0.1);">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:16px;">🗓️</span>
+                                {{ optional($activeSurvey->start_date)->format('d/m/Y') }} – {{ optional($activeSurvey->end_date)->format('d/m/Y') }}
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:16px;">📄</span>
+                                {{ is_array($activeSurvey->questions) ? count($activeSurvey->questions) : 0 }} preguntas
+                            </div>
+                        </div>
+
+                        {{-- First Question Preview --}}
+                        @if(is_array($activeSurvey->questions) && count($activeSurvey->questions) > 0)
+                            @php $q1 = $activeSurvey->questions[0]; @endphp
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div style="font-weight:600; color:var(--text-dark);">
+                                    1. {{ $q1['text'] ?? 'Sin texto' }}
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium">
-                                    Pendiente
-                                </span>
+                                <div style="font-size:10px; font-weight:700; background:var(--bg); padding:4px 8px; border-radius:6px; color:var(--text-muted); text-transform:uppercase; box-shadow:1px 1px 3px rgba(0,0,0,0.05);">
+                                    {{ str_replace('_', ' ', $q1['type'] ?? 'TEXTO') }}
+                                </div>
+                            </div>
+                        @else
+                            <div style="font-style:italic; color:var(--text-muted);">Sin preguntas configuradas</div>
+                        @endif
+                    </div>
+
+                    {{-- Actions Form --}}
+                    @if($activeSurvey->approval_status === 'pending')
+                        <form method="POST" action="{{ route('admin.aprobaciones.update', $activeSurvey->id) }}">
+                            @csrf
+                            <div style="margin-bottom:24px;">
+                                <input type="text" name="comment" placeholder="Comentario para el editor (opcional)..." 
+                                    style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--bg); box-shadow:inset 3px 3px 8px rgba(0,0,0,0.06), inset -2px -2px 6px rgba(255,255,255,0.5); outline:none; color:var(--text-dark);">
                             </div>
 
-                            <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-600 space-y-2">
-                                <p class="font-semibold mb-1">Preview de la encuesta</p>
-                                <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-500">
-                                    <span class="inline-flex items-center gap-1">
-                                        <i class="far fa-calendar text-uaemex"></i>
-                                        <span>
-                                            {{ optional($survey->start_date)->format('d/m/Y') ?? 'Sin fecha de inicio' }}
-                                            –
-                                            {{ optional($survey->end_date)->format('d/m/Y') ?? 'Sin fecha de cierre' }}
-                                        </span>
-                                    </span>
-                                    @php
-                                        $settings = $survey->settings ?? [];
-                                        $maxResponses = $settings['max_responses'] ?? null;
-                                    @endphp
-                                    @if($maxResponses)
-                                        <span class="inline-flex items-center gap-1">
-                                            <i class="fas fa-users text-gray-400"></i>
-                                            <span>Límite: {{ $maxResponses }} respuestas</span>
-                                        </span>
-                                    @endif
-                                    <span class="inline-flex items-center gap-1">
-                                        <i class="fas fa-list-ul text-gray-400"></i>
-                                        <span>{{ is_array($survey->questions) ? count($survey->questions) : 0 }} preguntas</span>
-                                    </span>
-                                </div>
-                                @if(is_array($survey->questions) && count($survey->questions) > 0)
-                                    <div class="border-t border-gray-200 pt-2 mt-1 space-y-1">
-                                        @foreach(array_slice($survey->questions, 0, 3) as $index => $question)
-                                            <div class="flex items-start justify-between gap-2">
-                                                <span class="text-gray-700">
-                                                    {{ $index + 1 }}. {{ $question['text'] ?? 'Pregunta sin texto' }}
-                                                </span>
-                                                @if(!empty($question['type']))
-                                                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-semibold uppercase">
-                                                        {{ str_replace('_', ' ', $question['type']) }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                        @if(count($survey->questions) > 3)
-                                            <p class="text-[11px] text-gray-400 mt-1">
-                                                + {{ count($survey->questions) - 3 }} preguntas más
-                                            </p>
-                                        @endif
-                                    </div>
-                                @else
-                                    <p class="text-[11px] text-gray-400">Esta encuesta aún no tiene preguntas configuradas.</p>
-                                @endif
-                            </div>
-
-                            <form method="POST" action="{{ route('admin.aprobaciones.update', $survey) }}" class="flex items-center gap-3">
-                                @csrf
-                                <input
-                                    type="text"
-                                    name="comment"
-                                    placeholder="Comentario para el editor (opcional)"
-                                    class="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-uaemex"
-                                    value="{{ old('comment') }}"
-                                >
-                                <button
-                                    type="submit"
-                                    name="decision"
-                                    value="reject"
-                                    class="px-4 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition flex items-center gap-2"
-                                >
-                                    <i class="fas fa-times"></i>
+                            <div style="display:flex; gap:16px;">
+                                <button type="submit" name="decision" value="reject" 
+                                    style="flex:1; padding:14px; border-radius:12px; border:none; background:var(--bg); color:var(--red); font-weight:700; cursor:pointer; box-shadow:6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.8); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                     Rechazar
                                 </button>
-                                <button
-                                    type="submit"
-                                    name="decision"
-                                    value="approve"
-                                    class="px-4 py-2 rounded-lg bg-uaemex text-white text-sm font-semibold hover:bg-emerald-700 transition flex items-center gap-2"
-                                >
-                                    <i class="fas fa-check"></i>
+                                <button type="submit" name="decision" value="approve" 
+                                    style="flex:1; padding:14px; border-radius:12px; border:none; background:var(--uaemex); color:white; font-weight:700; cursor:pointer; box-shadow:4px 4px 10px rgba(45,80,22,0.3); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                     Aprobar
                                 </button>
-                            </form>
+                            </div>
+                        </form>
+                    @else
+                        <div style="padding:20px; text-align:center; background:var(--bg); border-radius:12px; color:var(--text-muted); font-style:italic;">
+                            Esta encuesta ya fue {{ $activeSurvey->approval_status === 'approved' ? 'aprobada' : 'rechazada' }}.
                         </div>
-                    @endforeach
+                    @endif
+
+                </div>
+            @else
+                {{-- Empty State --}}
+                <div class="neu-card" style="padding:60px; text-align:center; min-height:400px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <div style="font-size:48px; margin-bottom:16px;">✨</div>
+                    <h3 style="font-size:20px; font-weight:700; color:var(--text-dark); margin-bottom:8px;">¡Todo al día!</h3>
+                    <p style="color:var(--text-muted);">No hay encuestas pendientes de aprobación en este momento.</p>
                 </div>
             @endif
         </div>
-    </div>
 
-    <div class="space-y-4">
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-history text-uaemex"></i>
-                Historial de aprobaciones
-            </h2>
+        {{-- RIGHT COLUMN: HISTORY & TABS --}}
+        <div>
+            <div class="neu-card" style="padding:20px;">
+                <h3 style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:16px;">Historial de aprobaciones</h3>
+                
+                {{-- Tabs --}}
+                <div style="display:flex; gap:4px; background:var(--bg); padding:4px; border-radius:12px; margin-bottom:20px; box-shadow:inset 2px 2px 5px rgba(0,0,0,0.05);">
+                    <button onclick="switchTab('pending')" id="tab-pending" class="tab-btn active" style="flex:1; padding:8px; border-radius:8px; border:none; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s;">Pendientes</button>
+                    <button onclick="switchTab('approved')" id="tab-approved" class="tab-btn" style="flex:1; padding:8px; border-radius:8px; border:none; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s;">Aprobadas</button>
+                    <button onclick="switchTab('rejected')" id="tab-rejected" class="tab-btn" style="flex:1; padding:8px; border-radius:8px; border:none; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s;">Rechazadas</button>
+                </div>
 
-            <div class="flex items-center gap-2 mb-4">
-                <button class="px-3 py-1 text-xs rounded-full bg-uaemex text-white font-semibold">Pendientes</button>
-                <button class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 font-semibold">Aprobadas</button>
-                <button class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 font-semibold">Rechazadas</button>
-            </div>
-
-            <div class="space-y-3 max-h-80 overflow-y-auto">
-                @forelse($history as $item)
-                    <div class="border rounded-lg p-3 flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-sm font-semibold text-gray-800">{{ $item->title }}</p>
-                            <p class="text-xs text-gray-500">
-                                {{ $item->approval_status === 'approved' ? 'Aprobada' : 'Rechazada' }}
-                                por {{ optional($item->approver)->name ?? 'Administrador' }}
-                                · {{ optional($item->approved_at)->diffForHumans() }}
-                            </p>
-                            @if($item->approval_comment)
-                                <p class="text-xs text-gray-400 mt-1">
-                                    Comentario: "{{ $item->approval_comment }}"
-                                </p>
-                            @endif
-                        </div>
-                        <span class="text-xs px-2 py-1 rounded-full font-semibold
-                            @if($item->approval_status === 'approved') bg-emerald-100 text-emerald-700
-                            @else bg-red-100 text-red-700 @endif">
-                            {{ $item->approval_status === 'approved' ? 'Aprobada' : 'Rechazada' }}
-                        </span>
+                {{-- List Container --}}
+                <div style="display:flex; flex-direction:column; gap:12px; max-height:600px; overflow-y:auto;">
+                    
+                    {{-- PENDING LIST --}}
+                    <div id="list-pending" class="tab-content">
+                        @forelse($pendingSurveys as $survey)
+                            <a href="?id={{ $survey->id }}" style="text-decoration:none; display:block;">
+                                <div class="list-card {{ $activeSurvey && $activeSurvey->id == $survey->id ? 'active' : '' }}">
+                                    <div style="font-weight:700; font-size:13px; color:var(--text-dark); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                        {{ $survey->title }}
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div class="badge badge-pending">Pendiente</div>
+                                        <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">
+                                            {{ optional($survey->user)->name ?? 'User' }} · {{ $survey->created_at->diffForHumans(null, true, true) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="empty-list">No hay más pendientes</div>
+                        @endforelse
                     </div>
-                @empty
-                    <p class="text-sm text-gray-500">Aún no hay historial de aprobaciones.</p>
-                @endforelse
+
+                    {{-- APPROVED LIST --}}
+                    <div id="list-approved" class="tab-content" style="display:none;">
+                        @forelse($history->where('approval_status', 'approved') as $survey)
+                            <a href="?id={{ $survey->id }}" style="text-decoration:none; display:block;">
+                                <div class="list-card {{ $activeSurvey && $activeSurvey->id == $survey->id ? 'active' : '' }}">
+                                    <div style="font-weight:700; font-size:13px; color:var(--text-dark); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                        {{ $survey->title }}
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div class="badge badge-approved">✓ Aprobada</div>
+                                        <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">
+                                            {{ optional($survey->user)->name ?? 'User' }} · {{ optional($survey->approved_at)->diffForHumans(null, true, true) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="empty-list">Sin historial de aprobadas</div>
+                        @endforelse
+                    </div>
+
+                    {{-- REJECTED LIST --}}
+                    <div id="list-rejected" class="tab-content" style="display:none;">
+                        @forelse($history->where('approval_status', 'rejected') as $survey)
+                            <a href="?id={{ $survey->id }}" style="text-decoration:none; display:block;">
+                                <div class="list-card {{ $activeSurvey && $activeSurvey->id == $survey->id ? 'active' : '' }}">
+                                    <div style="font-weight:700; font-size:13px; color:var(--text-dark); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                        {{ $survey->title }}
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <div class="badge badge-rejected">✕ Rechazada</div>
+                                        <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase;">
+                                            {{ optional($survey->user)->name ?? 'User' }} · {{ optional($survey->approved_at)->diffForHumans(null, true, true) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="empty-list">Sin historial de rechazadas</div>
+                        @endforelse
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <style>
+        /* TAB STYLES */
+        .tab-btn { background: transparent; color: var(--text-muted); }
+        .tab-btn:hover { color: var(--text-dark); background: rgba(0,0,0,0.03); }
+        .tab-btn.active { background: var(--uaemex); color: white; box-shadow: 2px 2px 6px rgba(0,0,0,0.2); }
+
+        /* LIST CARD STYLES */
+        .list-card {
+            background: var(--bg-light);
+            padding: 14px;
+            border-radius: 12px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.03);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .list-card:hover { transform: translateY(-2px); box-shadow: 4px 4px 8px rgba(0,0,0,0.06); }
+        .list-card.active { border-color: var(--uaemex); background: white; }
+
+        /* BADGES */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+        .badge-pending { background: var(--oro-pale); color: #8a6a00; }
+        .badge-approved { background: var(--verde-pale); color: var(--uaemex); }
+        .badge-rejected { background: var(--red-pale); color: var(--red); }
+
+        .empty-list { text-align: center; font-size: 12px; color: var(--text-muted); padding: 20px; font-style: italic; }
+    </style>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all lists
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            // Show target list
+            document.getElementById('list-' + tabName).style.display = 'block';
+            
+            // Reset tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // Activate target tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+    </script>
 @endsection

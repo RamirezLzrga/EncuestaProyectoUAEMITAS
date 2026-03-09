@@ -1,275 +1,224 @@
-@extends('layouts.admin_softui')
+@extends('layouts.admin')
 
-@section('title', 'Estadísticas')
+@section('title', 'Estadísticas del Sistema')
 
 @section('content')
-<div class="page-header">
-    <div class="page-title-row">
+    {{-- HEADER --}}
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
         <div>
-            <h1 class="page-title">Estadísticas</h1>
-            <p class="page-subtitle">Análisis de respuestas por encuesta</p>
+            <div style="font-size:11px; font-weight:800; color:var(--oro); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">ANÁLISIS</div>
+            <h1 style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; color:var(--text-dark); margin-bottom:8px;">Estadísticas del Sistema</h1>
+            <p style="color:var(--text-muted);">Métricas de respuestas, participación y tendencias</p>
+        </div>
+        <div>
+            <button class="btn-neu" style="padding:10px 20px; font-weight:700; display:flex; align-items:center; gap:8px; color:var(--text-dark);">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Exportar
+            </button>
         </div>
     </div>
-</div>
 
-    <div class="space-y-6">
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <form action="{{ route('statistics.index') }}" method="GET" class="flex flex-col lg:flex-row gap-4 lg:items-end">
-            <div class="w-full lg:w-1/3 lg:max-w-md">
-                <label for="survey_id" class="block text-sm font-bold text-gray-700 mb-2">Encuesta:</label>
-                <select name="survey_id" id="survey_id" onchange="this.form.submit()" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:border-uaemex transition">
-                    @foreach($surveys as $survey)
-                        <option value="{{ $survey->id }}" {{ $selectedSurvey && $selectedSurvey->id == $survey->id ? 'selected' : '' }}>
-                            {{ $survey->title }} ({{ \Carbon\Carbon::parse($survey->start_date)->year }})
-                        </option>
-                    @endforeach
-                    @if($surveys->isEmpty())
-                        <option value="">No hay encuestas disponibles</option>
-                    @endif
-                </select>
-            </div>
-            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="from_date" class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Desde</label>
-                    <input type="date" id="from_date" name="from_date" value="{{ request('from_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-uaemex transition">
-                </div>
-                <div>
-                    <label for="to_date" class="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">Hasta</label>
-                    <input type="date" id="to_date" name="to_date" value="{{ request('to_date') }}" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-uaemex transition">
+    {{-- FILTERS --}}
+    <div class="neu-card" style="padding:16px 24px; margin-bottom:30px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+        <form action="{{ route('statistics.index') }}" method="GET" style="display:contents;">
+            
+            {{-- Survey Select --}}
+            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:280px;">
+                <label style="font-weight:700; color:var(--text-muted); font-size:13px;">Encuesta:</label>
+                <div style="position:relative; flex:1;">
+                    <select name="survey_id" onchange="this.form.submit()" 
+                        style="width:100%; appearance:none; background:var(--bg); border:none; padding:10px 16px; border-radius:12px; font-size:13px; font-weight:600; color:var(--text-dark); box-shadow:var(--neu-in-sm); cursor:pointer; outline:none;">
+                        @foreach($surveys as $survey)
+                            <option value="{{ $survey->id }}" {{ $selectedSurvey && $selectedSurvey->id == $survey->id ? 'selected' : '' }}>
+                                {{ $survey->title }} ({{ \Carbon\Carbon::parse($survey->start_date)->year }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <div style="position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--text-muted);">▼</div>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button type="submit" class="px-4 py-2 bg-uaemex text-white rounded-lg text-sm font-bold hover:bg-green-800 transition flex items-center gap-2">
-                    <i class="fas fa-filter"></i> Aplicar
-                </button>
-                <a href="{{ route('statistics.index', ['survey_id' => optional($selectedSurvey)->id]) }}" class="px-3 py-2 border border-gray-300 text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-50 transition">
-                    Limpiar
-                </a>
+
+            {{-- Date Range --}}
+            <div style="display:flex; align-items:center; gap:12px;">
+                <label style="font-weight:700; color:var(--text-muted); font-size:13px;">Desde:</label>
+                <input type="date" name="from_date" value="{{ request('from_date') }}" 
+                    style="background:var(--bg); border:none; padding:8px 12px; border-radius:10px; font-size:12px; color:var(--text-dark); box-shadow:var(--neu-in-sm); outline:none;">
+                
+                <label style="font-weight:700; color:var(--text-muted); font-size:13px;">Hasta:</label>
+                <input type="date" name="to_date" value="{{ request('to_date') }}" 
+                    style="background:var(--bg); border:none; padding:8px 12px; border-radius:10px; font-size:12px; color:var(--text-dark); box-shadow:var(--neu-in-sm); outline:none;">
             </div>
+
+            <button type="submit" style="background:var(--uaemex); color:white; border:none; padding:10px 24px; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer; box-shadow:4px 4px 10px rgba(45,80,22,0.3); display:flex; align-items:center; gap:6px;">
+                ▼ Aplicar
+            </button>
         </form>
     </div>
 
-    @if($selectedSurvey)
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Total Respuestas -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-uaemex transition">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
-                <i class="fas fa-poll text-6xl text-uaemex"></i>
-            </div>
-            <div class="flex items-center gap-4 mb-2">
-                <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
-                    <i class="fas fa-chart-bar text-xl"></i>
-                </div>
-                <h3 class="font-bold text-gray-700">Total Respuestas</h3>
-            </div>
-            <p class="text-4xl font-bold text-gray-900 mb-2">{{ $stats['total_responses'] }}</p>
-            <span class="{{ $stats['responses_growth'] >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} text-xs font-bold px-2 py-1 rounded-full flex inline-flex items-center gap-1">
-                <i class="fas fa-arrow-{{ $stats['responses_growth'] >= 0 ? 'up' : 'down' }}"></i>
-                {{ abs($stats['responses_growth']) }}% vs año anterior
-            </span>
-        </div>
-
-        <!-- Tasa de Completado -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-uaemex transition">
-            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
-                <i class="fas fa-check-circle text-6xl text-green-600"></i>
-            </div>
-            <div class="flex items-center gap-4 mb-2">
-                <div class="p-3 bg-green-50 rounded-lg text-green-600">
-                    <i class="fas fa-check text-xl"></i>
-                </div>
-                <h3 class="font-bold text-gray-700">Tasa de Completado</h3>
-            </div>
-            <p class="text-4xl font-bold text-gray-900 mb-2">{{ $stats['completion_rate'] }}%</p>
-            <span class="{{ $stats['completion_growth'] >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} text-xs font-bold px-2 py-1 rounded-full flex inline-flex items-center gap-1">
-                <i class="fas fa-arrow-{{ $stats['completion_growth'] >= 0 ? 'up' : 'down' }}"></i>
-                {{ abs($stats['completion_growth']) }}% vs año anterior
-            </span>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between gap-2">
-                <div>
-                    <h3 class="font-bold text-gray-800 text-lg">Evolución de respuestas</h3>
-                    <p class="text-xs text-gray-500">Respuestas por día en el periodo seleccionado</p>
-                </div>
-            </div>
-            <div class="p-6 h-72">
-                <canvas id="evolutionChart"></canvas>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-100 flex items-center justify-between gap-2">
-                <div>
-                    <h3 class="font-bold text-gray-800 text-lg">Distribución de respuestas</h3>
-                    <p class="text-xs text-gray-500">Primera pregunta de opción múltiple o casillas</p>
-                </div>
-            </div>
-            <div class="p-6 h-72">
-                <canvas id="distributionChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <h3 class="font-bold text-gray-800 text-lg">Respuestas Individuales</h3>
-            <div class="flex gap-2">
-                <button class="px-4 py-2 border border-green-600 text-green-600 rounded-lg text-sm font-bold hover:bg-green-50 transition flex items-center gap-2">
-                    <i class="fas fa-file-excel"></i> Exportar Excel
-                </button>
-                <button class="px-4 py-2 border border-red-600 text-red-600 rounded-lg text-sm font-bold hover:bg-red-50 transition flex items-center gap-2">
-                    <i class="fas fa-file-pdf"></i> Exportar PDF
-                </button>
-            </div>
-        </div>
+    {{-- KPI CARDS --}}
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px; margin-bottom:30px;">
         
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-orange-50 text-gray-700 text-sm uppercase tracking-wider">
-                        <th class="p-4 font-bold border-b border-orange-100">Fecha</th>
-                        <th class="p-4 font-bold border-b border-orange-100">Respuestas (Resumen)</th>
-                        <th class="p-4 font-bold border-b border-orange-100">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm divide-y divide-gray-100">
-                    @forelse($stats['recent_responses'] as $response)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="p-4 text-gray-600 font-medium">{{ $response['date'] }}</td>
-                            <td class="p-4 text-gray-500">{{ Str::limit($response['summary'], 50) }}</td>
-                            <td class="p-4">
-                                <button class="text-uaemex hover:text-green-800 font-bold text-xs uppercase">Ver detalle</button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="p-8 text-center text-gray-400">
-                                <i class="far fa-folder-open text-4xl mb-3 block opacity-50"></i>
-                                No hay respuestas registradas para esta encuesta.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        {{-- Total Responses --}}
+        <div class="neu-card" style="padding:30px; display:flex; align-items:center; gap:24px;">
+            <div style="position:relative; width:80px; height:80px; display:flex; align-items:center; justify-content:center;">
+                <!-- Circular Progress Background -->
+                <svg width="80" height="80" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
+                    <circle cx="50" cy="50" r="40" stroke="var(--bg-dark)" stroke-width="12" fill="none" />
+                    <circle cx="50" cy="50" r="40" stroke="var(--uaemex)" stroke-width="12" fill="none" 
+                        stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 - (251.2 * 100 / 100) }}" stroke-linecap="round" />
+                </svg>
+                <div style="position:absolute; text-align:center;">
+                    <div style="font-weight:800; font-size:18px; color:var(--text-dark); line-height:1;">{{ $stats['total_responses'] }}</div>
+                    <div style="font-size:8px; font-weight:700; color:var(--text-muted);">RESP.</div>
+                </div>
+            </div>
+            <div>
+                <h3 style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:4px;">Total de Respuestas</h3>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Periodo seleccionado</div>
+                <div style="display:inline-flex; align-items:center; gap:4px; background:var(--verde-pale); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800; color:var(--uaemex);">
+                    <span>↑</span> {{ abs($stats['responses_growth']) }}% vs año anterior
+                </div>
+            </div>
         </div>
-        @if(count($stats['recent_responses']) > 0)
-        <div class="p-4 border-t border-gray-100 text-center text-sm text-gray-500">
-            Mostrando {{ count($stats['recent_responses']) }} respuestas recientes
+
+        {{-- Completion Rate --}}
+        <div class="neu-card" style="padding:30px; display:flex; align-items:center; gap:24px;">
+            <div style="position:relative; width:80px; height:80px; display:flex; align-items:center; justify-content:center;">
+                <!-- Circular Progress Background -->
+                <svg width="80" height="80" viewBox="0 0 100 100" style="transform: rotate(-90deg);">
+                    <circle cx="50" cy="50" r="40" stroke="var(--bg-dark)" stroke-width="12" fill="none" />
+                    <circle cx="50" cy="50" r="40" stroke="var(--uaemex)" stroke-width="12" fill="none" 
+                        stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 - (251.2 * $stats['completion_rate'] / 100) }}" stroke-linecap="round" />
+                </svg>
+                <div style="position:absolute; text-align:center;">
+                    <div style="font-weight:800; font-size:18px; color:var(--text-dark); line-height:1;">{{ $stats['completion_rate'] }}%</div>
+                    <div style="font-size:8px; font-weight:700; color:var(--text-muted);">COMP.</div>
+                </div>
+            </div>
+            <div>
+                <h3 style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:4px;">Tasa de Completado</h3>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Encuestas finalizadas</div>
+                <div style="display:inline-flex; align-items:center; gap:4px; background:var(--bg-dark); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--text-muted);">
+                    - Sin variación
+                </div>
+            </div>
         </div>
-        @endif
-    </div>
-    @else
-    <div class="text-center py-20 bg-white rounded-2xl border border-gray-100 border-dashed">
-        <i class="fas fa-chart-pie text-6xl text-gray-200 mb-4"></i>
-        <h2 class="text-xl font-bold text-gray-400">Selecciona una encuesta para ver sus estadísticas</h2>
-    </div>
-    @endif
-    </div>
-@endsection
 
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Datos desde el controlador
-        const stats = @json($stats);
+    </div>
 
-        // Configuración común
-        Chart.defaults.font.family = "'Figtree', sans-serif";
-        Chart.defaults.color = '#6b7280';
+    {{-- BOTTOM GRID --}}
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:30px;">
         
-        // Gráfica de Distribución (Barras)
-        const ctxDistribution = document.getElementById('distributionChart');
-        if (ctxDistribution && stats.responses_distribution) {
-            new Chart(ctxDistribution, {
-                type: 'bar',
-                data: {
-                    labels: stats.responses_distribution.labels,
-                    datasets: [{
-                        label: 'Respuestas',
-                        data: stats.responses_distribution.data,
-                        backgroundColor: '#4ade80',
-                        borderRadius: 4,
-                        hoverBackgroundColor: '#22c55e'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                borderDash: [2, 2],
-                                color: '#f3f4f6'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
+        {{-- Chart Section --}}
+        <div class="neu-card" style="padding:24px; min-height:300px;">
+            <h3 style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:20px;">Distribución de Respuestas por Día</h3>
+            <div style="position:relative; height:220px; width:100%;">
+                <canvas id="responsesChart"></canvas>
+            </div>
+        </div>
 
-        // Gráfica de Evolución (Línea)
-        const ctxEvolution = document.getElementById('evolutionChart');
-        if (ctxEvolution && stats.responses_per_day) {
-            new Chart(ctxEvolution, {
+        {{-- Top Surveys --}}
+        <div>
+            <h3 style="font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:20px;">Top Encuestas</h3>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                @foreach($topSurveys as $index => $survey)
+                    <div class="neu-card" style="padding:16px; display:flex; align-items:center; gap:16px; margin-bottom:0;">
+                        <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; color:var(--oro);">
+                            {{ $loop->iteration }}
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-weight:700; font-size:13px; color:var(--text-dark); margin-bottom:2px;">{{ $survey->title }}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">{{ $survey->responses_count }} respuestas</div>
+                        </div>
+                        <div style="font-weight:700; font-size:14px; color:var(--text-dark);">
+                            {{ $survey->responses_count }}
+                        </div>
+                    </div>
+                @endforeach
+                @if($topSurveys->isEmpty())
+                    <div style="text-align:center; padding:20px; color:var(--text-muted); font-style:italic; font-size:12px;">
+                        No hay datos disponibles
+                    </div>
+                @endif
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('responsesChart').getContext('2d');
+            
+            // Generate some random bubble/scatter data if empty, or use real data
+            const labels = @json($stats['responses_per_day']['labels']);
+            const data = @json($stats['responses_per_day']['data']);
+
+            // If data is empty (no responses), show dummy visualization for UI demo purposes? 
+            // Better to show real empty chart.
+            
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: stats.responses_per_day.labels,
+                    labels: labels,
                     datasets: [{
-                        label: 'Respuestas por periodo',
-                        data: stats.responses_per_day.data,
-                        borderColor: '#bca06d', // Dorado UAEMex
-                        backgroundColor: 'rgba(188, 160, 109, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#bca06d',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        label: 'Respuestas',
+                        data: data,
+                        backgroundColor: '#2D5016',
+                        borderColor: '#2D5016',
+                        borderWidth: 0,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: function(context) {
+                            // Alternating colors for bubbles style in the image
+                            const colors = ['#2D5016', '#C99A0A', '#3a6b1c', '#f5e6a3'];
+                            return colors[context.dataIndex % colors.length];
+                        },
+                        showLine: false // Scatter style as in image
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#2D5016',
+                            padding: 10,
+                            cornerRadius: 8,
+                            displayColors: false
                         }
                     },
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            grid: {
-                                borderDash: [2, 2],
-                                color: '#f3f4f6'
-                            }
+                            display: false, // Hide Y axis as in image
+                            beginAtZero: true
                         },
                         x: {
-                            grid: {
-                                display: false
-                            }
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { display: false } // Hide X axis labels for cleaner look or keep them? Image shows no axis.
                         }
+                    },
+                    layout: {
+                        padding: 20
                     }
                 }
             });
+        });
+    </script>
+
+    <style>
+        .btn-neu {
+            background: var(--bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--neu-out);
+            transition: all 0.2s;
+            cursor: pointer;
         }
-    });
-</script>
-@endpush
+        .btn-neu:active {
+            box-shadow: var(--neu-press);
+            transform: translateY(1px);
+        }
+    </style>
+@endsection

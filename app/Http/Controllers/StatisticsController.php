@@ -20,8 +20,16 @@ class StatisticsController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
         } else {
-            $surveys = Survey::orderBy('created_at', 'desc')->get();
+            $surveys = Survey::orderBy('created_at', 'desc')
+                ->get();
         }
+
+        // Manually count responses to avoid MongoDB withCount() issues
+        foreach ($surveys as $survey) {
+            $survey->responses_count = $survey->responses()->count();
+        }
+
+        $topSurveys = $surveys->sortByDesc('responses_count')->take(5);
 
         $selectedSurveyId = $request->input('survey_id');
         $selectedSurvey = null;
@@ -224,6 +232,6 @@ class StatisticsController extends Controller
             ? 'statistics.index'
             : 'editor.statistics.index';
 
-        return view($view, compact('surveys', 'selectedSurvey', 'stats'));
+        return view($view, compact('surveys', 'selectedSurvey', 'stats', 'topSurveys'));
     }
 }

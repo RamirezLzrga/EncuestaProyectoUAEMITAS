@@ -1,149 +1,135 @@
-@extends('layouts.admin_softui')
+@extends('layouts.admin')
 
 @section('title', 'Reportes Globales')
 
 @section('content')
-<div class="dashboard-wrap">
-    <div class="dash-header">
-        <div>
-            <div class="dash-eyebrow">SIEI UAEMex</div>
-            <h2 class="dash-title">Reportes Globales</h2>
-            <p class="dash-subtitle">Genera y programa reportes globales del sistema.</p>
+    <div class="ph">
+        <div class="ph-left">
+            <div class="ph-label">Administración</div>
+            <div class="ph-title">Reportes Globales</div>
+            <div class="ph-sub">Genera y programa reportes del sistema</div>
         </div>
     </div>
 
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-    <div class="xl:col-span-2 space-y-6">
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-filter text-uaemex"></i>
-                Configuración del reporte
-            </h2>
-
-            <form method="GET" action="{{ route('admin.reportes') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="dash-grid">
+        <!-- Config (Span 8) -->
+        <div style="grid-column: span 8;">
+            <div class="neu-card">
+                <div class="cc-header">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Período</label>
-                        <select name="period" class="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-uaemex">
-                            <option value="hoy" {{ $period === 'hoy' ? 'selected' : '' }}>Hoy</option>
-                            <option value="semana" {{ $period === 'semana' ? 'selected' : '' }}>Esta semana</option>
-                            <option value="mes" {{ $period === 'mes' ? 'selected' : '' }}>Este mes</option>
-                            <option value="año" {{ $period === 'año' ? 'selected' : '' }}>Este año</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Formato</label>
-                        <div class="flex gap-2">
-                            <button type="button" class="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2">
-                                <i class="fas fa-file-pdf text-red-500"></i>
-                                PDF
-                            </button>
-                            <button type="button" class="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-xs text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-2">
-                                <i class="fas fa-file-excel text-green-600"></i>
-                                Excel
-                            </button>
-                        </div>
+                        <div class="cc-title">Configuración del Reporte</div>
+                        <div class="cc-sub">Selecciona los parámetros para generar el reporte</div>
                     </div>
                 </div>
 
-                <div>
-                    <p class="block text-xs font-semibold text-gray-500 mb-2">Métricas a incluir</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        @foreach($availableMetrics as $key => $label)
-                            <label class="flex items-center gap-2 text-xs text-gray-600">
-                                <input type="checkbox" class="rounded border-gray-300 text-uaemex focus:ring-uaemex" checked disabled>
-                                {{ $label }}
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                <div class="flex justify-end">
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-uaemex text-white text-xs font-semibold hover:bg-emerald-700 transition flex items-center gap-2">
-                        <i class="fas fa-sync-alt"></i>
-                        Actualizar
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-eye text-uaemex"></i>
-                Vista previa del reporte
-            </h2>
-
-            <div class="grid grid-cols-2 gap-4 text-sm">
-                <div class="space-y-2">
-                    <p class="text-xs text-gray-500">Resumen</p>
-                    <p class="text-gray-700">Encuestas enviadas: <span class="font-semibold">{{ $preview['summary']['encuestas_enviadas'] }}</span></p>
-                    <p class="text-gray-700">Encuestas completadas: <span class="font-semibold">{{ $preview['summary']['encuestas_completadas'] }}</span></p>
-                    <p class="text-gray-700">Tasa de respuesta: <span class="font-semibold">{{ $preview['summary']['tasa_respuesta'] }}%</span></p>
-                </div>
-                <div class="space-y-2">
-                    <p class="text-xs text-gray-500">Satisfacción promedio</p>
-                    <p class="text-3xl font-bold text-uaemex">{{ number_format($preview['summary']['satisfaccion_promedio'], 1) }}</p>
-                    <p class="text-xs text-gray-500">Escala de 1 a 5</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="space-y-6">
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-clock text-uaemex"></i>
-                Programar reportes
-            </h2>
-
-            <div class="space-y-3 text-sm">
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" class="rounded border-gray-300 text-uaemex focus:ring-uaemex">
-                    Enviar reporte diario al correo institucional
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" class="rounded border-gray-300 text-uaemex focus:ring-uaemex">
-                    Enviar reporte semanal a coordinadores
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="checkbox" class="rounded border-gray-300 text-uaemex focus:ring-uaemex">
-                    Enviar reporte mensual a dirección
-                </label>
-            </div>
-
-            <div class="mt-4">
-                <button class="w-full px-4 py-2 rounded-lg bg-uaemex text-white text-sm font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-2">
-                    <i class="fas fa-save"></i>
-                    Guardar programación
-                </button>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-history text-uaemex"></i>
-                Historial de reportes
-            </h2>
-
-            <div class="space-y-3 max-h-64 overflow-y-auto text-sm">
-                @foreach($history as $item)
-                    <div class="border rounded-lg p-3 flex items-center justify-between gap-3">
+                <form method="GET" action="{{ route('admin.reportes') }}">
+                    <div class="grid-2" style="margin-bottom:22px;">
                         <div>
-                            <p class="font-semibold text-gray-800">{{ $item['name'] }}</p>
-                            <p class="text-xs text-gray-500">
-                                Generado {{ $item['generated_at']->diffForHumans() }}
-                            </p>
+                            <label class="form-label">Período</label>
+                            <div style="position:relative;">
+                                <select name="period" class="form-input">
+                                    <option value="hoy" {{ $period === 'hoy' ? 'selected' : '' }}>Hoy</option>
+                                    <option value="semana" {{ $period === 'semana' ? 'selected' : '' }}>Esta semana</option>
+                                    <option value="mes" {{ $period === 'mes' ? 'selected' : '' }}>Este mes</option>
+                                    <option value="año" {{ $period === 'año' ? 'selected' : '' }}>Este año</option>
+                                </select>
+                            </div>
                         </div>
-                        <button class="px-3 py-1 rounded-lg border border-gray-300 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-1">
-                            <i class="fas fa-download"></i>
-                            {{ $item['format'] }}
+
+                        <div>
+                            <label class="form-label">Formato</label>
+                            <div style="display:flex; gap:12px;">
+                                <button type="button" class="btn btn-neu btn-sm" style="flex:1; justify-content:center; color:var(--red);">
+                                    <span>📄</span> PDF
+                                </button>
+                                <button type="button" class="btn btn-neu btn-sm" style="flex:1; justify-content:center; color:var(--green);">
+                                    <span>📊</span> Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:22px;">
+                        <label class="form-label">Métricas a incluir</label>
+                        <div class="grid-2" style="gap:12px;">
+                            @foreach($availableMetrics as $key => $label)
+                                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;">
+                                    <input type="checkbox" checked disabled style="accent-color:var(--verde); width:16px; height:16px;">
+                                    <span style="font-size:13px; color:var(--text);">{{ $label }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button type="submit" class="btn btn-solid">
+                            <span>↻</span> Actualizar Vista Previa
                         </button>
                     </div>
-                @endforeach
+                </form>
+            </div>
+
+            <!-- Scheduled Reports (Below config) -->
+            <div class="neu-card">
+                <div class="cc-header">
+                    <div>
+                        <div class="cc-title">Reportes Programados</div>
+                        <div class="cc-sub">Envíos automáticos configurados</div>
+                    </div>
+                    <button class="btn btn-neu btn-sm">+ Programar</button>
+                </div>
+                
+                <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">
+                    No hay reportes programados actualmente.
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview (Span 4) -->
+        <div style="grid-column: span 4;">
+            <div class="neu-card">
+                <div class="cc-header">
+                    <div>
+                        <div class="cc-title">Vista Previa</div>
+                        <div class="cc-sub">Resumen de datos</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div style="background:var(--bg-light); padding:16px; border-radius:var(--radius-sm); border:1px solid rgba(0,0,0,0.03);">
+                        <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Resumen General</div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px;">
+                            <span style="color:var(--text);">Encuestas enviadas:</span>
+                            <span style="font-weight:700; color:var(--text-dark);">{{ $preview['summary']['encuestas_enviadas'] }}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px;">
+                            <span style="color:var(--text);">Completadas:</span>
+                            <span style="font-weight:700; color:var(--text-dark);">{{ $preview['summary']['encuestas_completadas'] }}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:var(--text);">Tasa respuesta:</span>
+                            <span style="font-weight:700; color:var(--verde);">{{ $preview['summary']['tasa_respuesta'] }}%</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align:center; padding:20px; background:var(--bg); border-radius:var(--radius); box-shadow:var(--neu-in-sm);">
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Satisfacción Promedio</div>
+                        <div style="font-family:'Sora',sans-serif; font-size:42px; font-weight:700; color:var(--verde); line-height:1;">
+                            {{ number_format($preview['summary']['satisfaccion_promedio'], 1) }}
+                        </div>
+                        <div style="font-size:10px; color:var(--text-light); margin-top:4px;">Escala 1 - 5</div>
+                        <div style="display:flex; justify-content:center; gap:4px; margin-top:8px;">
+                            @for($i=1; $i<=5; $i++)
+                                <span style="color:{{ $i <= round($preview['summary']['satisfaccion_promedio']) ? 'var(--oro)' : 'var(--neu-dark)' }}">★</span>
+                            @endfor
+                        </div>
+                    </div>
+
+                    <button class="btn btn-oro" style="width:100%; justify-content:center;">
+                        <span>⬇</span> Descargar Reporte
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
 @endsection

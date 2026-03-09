@@ -251,6 +251,7 @@
         const clockEl = document.getElementById('realtime-clock');
         const dayEl = document.getElementById('banner-day');
         const monthYearEl = document.getElementById('banner-month-year');
+        const headerDateEl = document.getElementById('editor-dashboard-updated-at');
         
         if (clockEl && dayEl && monthYearEl) {
             function updateClock() {
@@ -269,9 +270,14 @@
                 const day = now.getDate().toString().padStart(2, '0');
                 dayEl.textContent = day;
                 
-                const month = now.toLocaleString('es-ES', { month: 'short' }).replace('.', '').toUpperCase();
+                const monthName = now.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+                const month = monthName.charAt(0).toUpperCase() + monthName.slice(1);
                 const year = now.getFullYear();
-                monthYearEl.textContent = `${month} / ${year}`;
+                monthYearEl.textContent = `${month.toUpperCase()} / ${year}`;
+
+                if (headerDateEl) {
+                    headerDateEl.textContent = `${day} ${month} ${year}`;
+                }
             }
             setInterval(updateClock, 1000);
             updateClock();
