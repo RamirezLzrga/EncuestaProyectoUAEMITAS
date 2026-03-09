@@ -77,10 +77,15 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .brand-sub  { font-size: 10.5px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
 
 .nav-pills {
-  display: flex; align-items: center; gap: 4px; flex: 1;
+  display: flex; align-items: center; gap: 4px;
   background: var(--bg); border-radius: 999px; padding: 5px;
-  box-shadow: var(--neu-in-sm); max-width: 720px;
+  box-shadow: var(--neu-in-sm);
   overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.nav-pills::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 .nav-pill {
   display: flex; align-items: center; gap: 7px; padding: 8px 16px;
