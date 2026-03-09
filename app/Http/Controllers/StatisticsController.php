@@ -44,6 +44,7 @@ class StatisticsController extends Controller
             'completion_growth' => 0,
             'responses_per_day' => ['labels' => [], 'data' => []],
             'responses_distribution' => ['labels' => [], 'data' => []],
+            'response_status' => ['labels' => [], 'data' => []],
             'recent_responses' => []
         ];
 
@@ -166,16 +167,27 @@ class StatisticsController extends Controller
                 }
 
                 $stats['responses_distribution'] = [
-                    'labels' => array_keys($counts),
-                    'data' => array_values($counts)
-                ];
-            } else {
-                // Si no hay preguntas cerradas, mostrar mensaje vacío o contar total
-                 $stats['responses_distribution'] = [
-                    'labels' => ['Sin preguntas cerradas'],
-                    'data' => [0]
-                ];
-            }
+                'labels' => array_keys($counts),
+                'data' => array_values($counts)
+            ];
+
+            // Add Response Status Distribution (Simulated for now as we don't track progress yet)
+            $stats['response_status'] = [
+                'labels' => ['Completadas', 'En progreso', 'Abandonadas'],
+                'data' => [$stats['total_responses'], 0, 0],
+            ];
+        } else {
+            // Si no hay preguntas cerradas, mostrar mensaje vacío o contar total
+             $stats['responses_distribution'] = [
+                'labels' => ['Sin preguntas cerradas'],
+                'data' => [0]
+            ];
+            
+            $stats['response_status'] = [
+                'labels' => ['Completadas', 'En progreso', 'Abandonadas'],
+                'data' => [$stats['total_responses'], 0, 0],
+            ];
+        }
 
             $recentQuery = clone $baseQuery;
             if ($fromDate) {

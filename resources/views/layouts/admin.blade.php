@@ -930,6 +930,27 @@
             </div>
         </div>
         <div class="header-right">
+            <!-- Notification Bell -->
+            <div class="header-icon-btn" id="admin-notif-btn" style="margin-right: 1rem; position: relative;">
+                <i class="fas fa-bell" style="color: white;"></i>
+                <div class="notification-dot" id="admin-notif-dot" style="display: none;"></div>
+                
+                <!-- Dropdown Notificaciones (Admin) -->
+                <div id="admin-notif-dropdown" style="display: none; position: absolute; top: 100%; right: 0; width: 300px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); z-index: 1000; margin-top: 10px; overflow: hidden; text-align: left;">
+                    <div style="padding: 12px 16px; border-bottom: 1px solid #f3f4f6; font-weight: 600; font-size: 14px; color: #111827; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Notificaciones</span>
+                        <span id="admin-mark-all-read" style="font-size: 11px; color: #2563EB; cursor: pointer; font-weight: 500;">Marcar leídas</span>
+                    </div>
+                    <div id="admin-notif-list" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Items will be injected here -->
+                    </div>
+                    <div id="admin-notif-empty" style="padding: 24px; text-align: center; color: #6b7280; display: none;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🔕</div>
+                        <div style="font-size: 13px;">No hay notificaciones nuevas</div>
+                    </div>
+                </div>
+            </div>
+
             <div style="position: relative;">
                 <button id="adminUserBtn" class="user-avatar-btn">
                     {{ substr(Auth::user()->name, 0, 2) }}
@@ -1041,6 +1062,165 @@
                     if (!adminUserBtn.contains(e.target) && !adminUserDropdown.contains(e.target)) {
                         adminUserDropdown.classList.add('hidden');
                     }
+                });
+            }
+
+            // Admin Notification System
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const notifDot = document.getElementById('admin-notif-dot');
+            const notifBtn = document.getElementById('admin-notif-btn');
+            const notifDropdown = document.getElementById('admin-notif-dropdown');
+            const notifList = document.getElementById('admin-notif-list');
+            const notifEmpty = document.getElementById('admin-notif-empty');
+            const markAllReadBtn = document.getElementById('admin-mark-all-read');
+            
+            let lastCount = 0;
+            let initialLoad = true;
+            let notifications = [];
+
+            // Unlock audio context on first user interaction
+            document.addEventListener('click', function() {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }, { once: true });
+
+            function playSound() {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume().then(() => playTone());
+                } else {
+                    playTone();
+                }
+            }
+
+            function playTone() {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.5); // Drop to A4
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            }
+
+            function checkNotifications() {
+                fetch('{{ route("notifications.unread") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const count = data.count;
+                        notifications = data.items || [];
+                        
+                        if (count > 0) {
+                            if (notifDot) notifDot.style.display = 'block';
+                            if (notifBtn) notifBtn.title = count + ' notificaciones nuevas';
+                            
+                            if (!initialLoad && count > lastCount) {
+                                playSound();
+                            }
+                        } else {
+                            if (notifDot) notifDot.style.display = 'none';
+                            if (notifBtn) notifBtn.title = 'Sin notificaciones';
+                        }
+                        
+                        lastCount = count;
+                        initialLoad = false;
+                        
+                        // If dropdown is open, re-render to show new items
+                        if (notifDropdown && notifDropdown.style.display === 'block') {
+                            renderNotifications();
+                        }
+                    })
+                    .catch(err => console.error('Notification poll error:', err));
+            }
+
+            function renderNotifications() {
+                if (!notifList) return;
+                
+                notifList.innerHTML = '';
+                
+                if (notifications.length === 0) {
+                    if (notifEmpty) notifEmpty.style.display = 'block';
+                    if (notifList) notifList.style.display = 'none';
+                } else {
+                    if (notifEmpty) notifEmpty.style.display = 'none';
+                    if (notifList) notifList.style.display = 'block';
+                    
+                    notifications.forEach(n => {
+                        const item = document.createElement('div');
+                        item.style.padding = '12px 16px';
+                        item.style.borderBottom = '1px solid #f3f4f6';
+                        item.style.cursor = 'pointer';
+                        item.style.transition = 'background-color 0.2s';
+                        
+                        item.innerHTML = `
+                            <div style="font-weight: 600; color: #1f2937; font-size: 13px; margin-bottom: 2px;">${n.title}</div>
+                            <div style="color: #4b5563; font-size: 12px; line-height: 1.4;">${n.message}</div>
+                            <div style="color: #9ca3af; font-size: 11px; margin-top: 4px;">${n.created_at}</div>
+                        `;
+                        
+                        item.addEventListener('click', () => {
+                            window.location.href = n.url;
+                        });
+                        
+                        item.onmouseover = () => item.style.backgroundColor = '#f9fafb';
+                        item.onmouseout = () => item.style.backgroundColor = 'white';
+                        
+                        notifList.appendChild(item);
+                    });
+                }
+            }
+
+            // Initial check
+            checkNotifications();
+
+            // Poll every 5 seconds
+            setInterval(checkNotifications, 5000);
+
+            // Toggle dropdown
+            if (notifBtn && notifDropdown) {
+                notifBtn.addEventListener('click', function(e) {
+                    if (e.target.closest('#admin-notif-dropdown')) return;
+                    
+                    if (notifDropdown.style.display === 'none') {
+                        notifDropdown.style.display = 'block';
+                        renderNotifications();
+                    } else {
+                        notifDropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            // Close when clicking outside
+            document.addEventListener('click', function(e) {
+                if (notifBtn && notifDropdown && !notifBtn.contains(e.target)) {
+                    notifDropdown.style.display = 'none';
+                }
+            });
+
+            // Mark all as read
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    fetch('{{ route("notifications.markAllRead") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(() => {
+                        checkNotifications();
+                    })
+                    .catch(err => console.error('Error marking read:', err));
                 });
             }
         });

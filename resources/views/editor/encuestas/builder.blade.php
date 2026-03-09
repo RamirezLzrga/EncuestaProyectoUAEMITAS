@@ -1,26 +1,23 @@
-@extends('layouts.app')
-
-@section('title', $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta')
+@extends('layouts.editor')
 
 @section('content')
-<div class="dashboard-wrap">
-<div class="dash-header">
+
+{{-- Page Header --}}
+<div class="ph">
     <div>
-        <div class="dash-eyebrow">SIEI UAEMex</div>
-        <h2 class="dash-title">{{ $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta' }}</h2>
-        <p class="dash-subtitle">Editor visual para construir y ajustar tu encuesta</p>
+        <div class="ph-label">Editor · {{ $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta' }}</div>
+        <h1 class="ph-title">{{ $mode === 'create' ? 'Nueva Encuesta' : 'Editar Encuesta' }}</h1>
+        <p class="ph-sub">Editor visual para construir y ajustar tu encuesta</p>
     </div>
-    <div class="flex gap-2">
-        @if($mode === 'edit')
-            <a href="{{ route('surveys.public', $survey->id) }}" target="_blank" class="px-4 py-2 rounded-full border border-emerald-500/40 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/10 transition flex items-center gap-2">
-                <i class="fas fa-eye"></i>
-                Vista previa pública
-            </a>
-        @endif
-        <a href="{{ route('surveys.index') }}" class="px-4 py-2 rounded-full border border-gray-500/40 text-gray-300 text-xs font-semibold hover:bg-white/5 transition flex items-center gap-2">
-            <i class="fas fa-list"></i>
+    <div class="ph-actions">
+        <a href="{{ route('surveys.index') }}" class="btn btn-neu btn-sm">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Mis encuestas
         </a>
+        <button type="submit" form="builderForm" class="btn btn-solid">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Guardar cambios
+        </button>
     </div>
 </div>
 
@@ -40,150 +37,171 @@
     <input type="hidden" name="start_date" value="{{ optional($survey->start_date)->format('Y-m-d') ?? date('Y-m-d') }}">
     <input type="hidden" name="end_date" value="{{ optional($survey->end_date)->format('Y-m-d') ?? date('Y-m-d', strtotime('+1 month')) }}">
 
-    <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
-        <div class="space-y-4 xl:col-span-1">
-            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 space-y-3">
-                <p class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">Tipos de pregunta</p>
-                <button type="button" data-type="multiple_choice" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-emerald-500/15 border border-white/10 text-xs text-gray-100 transition add-question-type">
-                    <span class="flex items-center gap-2">
-                        <i class="fas fa-list-ul text-emerald-400"></i>
-                        Opción múltiple
-                    </span>
-                    <i class="fas fa-plus text-[10px]"></i>
+    <div class="editor-layout">
+        
+        {{-- LEFT PANEL --}}
+        <div class="editor-left">
+            <div class="ed-panel">
+                <div class="ed-panel-title">Tipos de pregunta</div>
+                
+                <button type="button" data-type="multiple_choice" class="q-type-btn add-question-type">
+                    <div class="q-type-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></div>
+                    Opción múltiple
+                    <div class="q-type-plus">+</div>
                 </button>
-                <button type="button" data-type="checkboxes" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-emerald-500/15 border border-white/10 text-xs text-gray-100 transition add-question-type">
-                    <span class="flex items-center gap-2">
-                        <i class="fas fa-check-square text-emerald-400"></i>
-                        Casillas
-                    </span>
-                    <i class="fas fa-plus text-[10px]"></i>
+                
+                <button type="button" data-type="checkboxes" class="q-type-btn add-question-type">
+                    <div class="q-type-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg></div>
+                    Casillas
+                    <div class="q-type-plus">+</div>
                 </button>
-                <button type="button" data-type="short_text" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-emerald-500/15 border border-white/10 text-xs text-gray-100 transition add-question-type">
-                    <span class="flex items-center gap-2">
-                        <i class="fas fa-i-cursor text-emerald-400"></i>
-                        Texto corto
-                    </span>
-                    <i class="fas fa-plus text-[10px]"></i>
+                
+                <button type="button" data-type="short_text" class="q-type-btn add-question-type">
+                    <div class="q-type-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div>
+                    Texto corto
+                    <div class="q-type-plus">+</div>
                 </button>
-                <button type="button" data-type="paragraph" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-emerald-500/15 border border-white/10 text-xs text-gray-100 transition add-question-type">
-                    <span class="flex items-center gap-2">
-                        <i class="fas fa-align-left text-emerald-400"></i>
-                        Texto largo
-                    </span>
-                    <i class="fas fa-plus text-[10px]"></i>
+                
+                <button type="button" data-type="paragraph" class="q-type-btn add-question-type">
+                    <div class="q-type-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg></div>
+                    Texto largo
+                    <div class="q-type-plus">+</div>
                 </button>
-                <p class="text-[11px] text-gray-500 pt-1">
-                    Otros tipos como escala Likert, matriz, fecha o archivo se pueden añadir en una iteración posterior.
-                </p>
+
+                <button type="button" data-type="linear_scale" class="q-type-btn add-question-type">
+                    <div class="q-type-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                    Escala
+                    <div class="q-type-plus">+</div>
+                </button>
             </div>
 
-            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4 space-y-3">
-                <p class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">Acciones</p>
-                <a href="{{ $mode === 'edit' ? route('editor.encuestas.configuracion', $survey) : '#' }}" class="w-full inline-flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-100 transition {{ $mode === 'create' ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <span class="flex items-center gap-2">
-                        <i class="fas fa-sliders-h text-sky-400"></i>
-                        Configuración general
-                    </span>
-                    <i class="fas fa-arrow-right text-[10px]"></i>
+            <div class="ed-panel">
+                <div class="ed-panel-title">Acciones</div>
+                <a href="{{ $mode === 'edit' ? route('editor.encuestas.configuracion', $survey) : '#' }}" class="btn btn-neu w-full {{ $mode === 'create' ? 'opacity-50 cursor-not-allowed' : '' }}" style="width:100%; justify-content:center;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+                    Configuración general
                 </a>
-                <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-600 transition">
-                    <i class="fas fa-save"></i>
+                <button type="submit" class="btn btn-solid w-full mt-3" style="width:100%; justify-content:center;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
                     Guardar cambios
                 </button>
             </div>
         </div>
 
-        <div class="space-y-4 xl:col-span-2">
-            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-5 space-y-3">
-                <input type="text" name="title" id="input-title" value="{{ old('title', $survey->title) }}" placeholder="Encuesta sin título" class="w-full bg-transparent border-none text-2xl font-bold text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-0" required>
-                <textarea name="description" id="input-description" rows="2" placeholder="Descripción de la encuesta" class="w-full bg-transparent border-none text-sm text-gray-400 placeholder-gray-600 focus:outline-none focus:ring-0">{{ old('description', $survey->description) }}</textarea>
+        {{-- CENTER PANEL --}}
+        <div class="editor-center">
+            
+            <div class="ed-form-header">
+                <input type="text" name="title" id="input-title" value="{{ old('title', $survey->title) }}" placeholder="Encuesta sin título" class="ed-form-title-input" required>
+                <input type="text" name="description" id="input-description" value="{{ old('description', $survey->description) }}" placeholder="Descripción de la encuesta" class="ed-form-desc-input">
             </div>
 
-            <div class="flex items-center justify-between">
-                <h2 class="text-sm font-semibold text-gray-200 flex items-center gap-2">
-                    <i class="fas fa-clipboard-list text-gray-400"></i>
-                    Preguntas
-                </h2>
-                <button type="button" id="btn-add-question" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500 text-xs font-semibold text-white hover:bg-emerald-600 transition">
-                    <i class="fas fa-plus"></i>
-                    Agregar pregunta
-                </button>
+            <div id="questions-container" style="display:flex; flex-direction:column; gap:14px;">
+                {{-- Questions will be injected here --}}
             </div>
 
-            <div id="questions-container" class="space-y-4">
-            </div>
+            <button type="button" id="btn-add-question" class="add-q-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Agregar pregunta
+            </button>
         </div>
 
-        <div class="space-y-4 xl:col-span-1">
-            <div class="bg-slate-900/60 border border-white/10 rounded-2xl p-4">
-                <p class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold mb-3">Vista previa</p>
-                <div id="preview-container" class="bg-slate-950/70 border border-white/5 rounded-2xl p-4 max-h-[70vh] overflow-y-auto">
-                    <div class="h-1.5 w-full rounded-full bg-emerald-500 mb-4"></div>
-                    <div class="space-y-4">
-                        <div class="border-b border-white/10 pb-3">
-                            <h2 id="preview-title" class="text-lg font-bold text-gray-100">Sin título</h2>
-                            <p id="preview-description" class="text-xs text-gray-400 mt-1">Sin descripción</p>
-                        </div>
-                        <div id="preview-questions" class="space-y-4 text-xs text-gray-200">
-                            <p class="text-center text-gray-500 py-8">
-                                Comienza a agregar preguntas para ver la vista previa.
-                            </p>
-                        </div>
+        {{-- RIGHT PANEL (Preview) --}}
+        <div class="editor-right">
+            <div class="preview-panel">
+                <div class="pv-header">
+                    <div class="pv-label">VISTA PREVIA</div>
+                    <div id="preview-title" class="pv-title">Sin título</div>
+                    <div id="preview-description" class="pv-sub">Sin descripción</div>
+                </div>
+                <div class="pv-bar"><div class="pv-bar-fill"></div></div>
+                <div id="preview-questions" class="pv-body">
+                    <div class="text-center text-muted" style="padding:20px; font-size:12px; color:var(--text-muted);">
+                        Agrega preguntas para visualizar
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </form>
-</div>
 
+{{-- TEMPLATE FOR NEW QUESTION --}}
 <template id="question-template">
-    <div class="question-item bg-slate-900/80 border border-white/10 rounded-2xl p-4 space-y-3">
-        <div class="flex items-start gap-3">
-            <div class="flex-1 space-y-2">
-                <input type="text" class="question-input-text w-full bg-slate-950/60 border border-white/5 rounded-xl px-3 py-2 text-xs text-gray-100 placeholder-gray-500 focus:outline-none focus:border-emerald-500" placeholder="Escribe la pregunta">
-                <select class="question-input-type w-full bg-slate-950/60 border border-white/5 rounded-xl px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-500">
+    <div class="q-card question-item">
+        <div class="q-top">
+            <input type="text" class="q-input question-input-text" placeholder="Escribe la pregunta">
+            
+            <div style="position:relative; width:140px;">
+                <select class="q-input question-input-type" style="width:100%;">
                     <option value="multiple_choice">Opción múltiple</option>
-                    <option value="checkboxes">Casillas de verificación</option>
+                    <option value="checkboxes">Casillas</option>
                     <option value="short_text">Texto corto</option>
-                    <option value="paragraph">Párrafo</option>
-                    <option value="dropdown">Desplegable</option>
-                    <option value="linear_scale">Escala lineal</option>
-                    <option value="rating">Calificación</option>
+                    <option value="paragraph">Texto largo</option>
+                    <option value="linear_scale">Escala</option>
                     <option value="date">Fecha</option>
-                    <option value="time">Hora</option>
                 </select>
             </div>
-            <div class="flex flex-col items-end gap-2">
-                <button type="button" class="text-gray-400 hover:text-emerald-400 text-xs px-2 py-1 rounded-lg border border-white/5">
-                    <i class="fas fa-arrows-alt"></i>
-                </button>
-                <button type="button" class="btn-remove-question text-gray-400 hover:text-red-400 text-xs px-2 py-1 rounded-lg border border-white/5">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
         </div>
-        <div class="options-container space-y-2 pl-3 border-l border-white/10 mt-2">
-            <div class="option-item flex items-center gap-2">
-                <i class="far fa-circle text-gray-500"></i>
-                <input type="text" class="question-input-option flex-1 bg-transparent border-b border-white/5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-emerald-500" value="Opción 1">
-                <button type="button" class="btn-remove-option text-gray-500 hover:text-red-400 text-[10px]">
-                    <i class="fas fa-times"></i>
-                </button>
+
+        {{-- Options container (for multiple choice/checkboxes) --}}
+        <div class="options-container" style="padding-left:10px;">
+            <div class="option-item opt-row">
+                <div class="opt-circle"></div>
+                <input type="text" class="opt-input question-input-option" value="Opción 1">
+                <div class="opt-del btn-remove-option">✕</div>
             </div>
-            <button type="button" class="btn-add-option text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
-                <i class="fas fa-plus"></i>
+            <div class="add-opt btn-add-option">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Agregar opción
-            </button>
+            </div>
         </div>
-        <div class="flex items-center justify-between pt-2 border-t border-white/5 mt-2">
-            <label class="flex items-center gap-2 text-[11px] text-gray-400">
-                <input type="checkbox" class="question-input-required w-3 h-3 rounded border-gray-500 text-emerald-500 focus:ring-emerald-500">
+
+        {{-- Scale Configuration --}}
+        <div class="scale-config" style="display:none; margin-top:10px; padding-left:10px;">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+                <label style="font-size:12px; color:#666;">Rango:</label>
+                <select class="q-input question-input-scale-min" style="width:60px;">
+                    <option value="0">0</option>
+                    <option value="1" selected>1</option>
+                </select>
+                <span style="font-size:12px; color:#666;">a</span>
+                <select class="q-input question-input-scale-max" style="width:60px;">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <div style="display:grid; grid-template-columns: auto 1fr; gap:8px; align-items:center;">
+                <span class="scale-label-preview-min" style="font-size:12px; color:#666; width:20px; text-align:center;">1</span>
+                <input type="text" class="q-input question-input-scale-min-label" placeholder="Etiqueta para el mínimo (opcional)" style="font-size:12px;">
+                
+                <span class="scale-label-preview-max" style="font-size:12px; color:#666; width:20px; text-align:center;">5</span>
+                <input type="text" class="q-input question-input-scale-max-label" placeholder="Etiqueta para el máximo (opcional)" style="font-size:12px;">
+            </div>
+        </div>
+
+        <div class="q-footer">
+            <label class="chk-group">
+                <div class="chk question-input-required-chk"></div>
+                <input type="checkbox" class="question-input-required" style="display:none;">
                 Obligatoria
             </label>
+            <div style="display:flex; gap:10px;">
+                <button type="button" class="btn-remove-question" style="background:none; border:none; color:var(--text-muted); cursor:pointer;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>
+                </button>
+            </div>
         </div>
     </div>
 </template>
+
 @endsection
 
 @push('scripts')
@@ -191,16 +209,18 @@
     let questionIndex = 0;
 
     document.addEventListener('DOMContentLoaded', function () {
+        // Quick add buttons (left panel)
         document.querySelectorAll('.add-question-type').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 addQuestion(btn.getAttribute('data-type'));
             });
         });
 
+        // Main add button (bottom)
         const addButton = document.getElementById('btn-add-question');
         if (addButton) {
             addButton.addEventListener('click', function () {
-                addQuestion('short_text');
+                addQuestion('multiple_choice');
             });
         }
 
@@ -209,16 +229,18 @@
             syncQuestionsToInputs();
         });
 
+        // Live preview updates
         form.addEventListener('input', function () {
             updatePreview();
         });
 
+        // Initial Load
         @if($survey->questions && count($survey->questions) > 0)
             @foreach($survey->questions as $q)
                 addQuestion(@json($q['type']), @json($q));
             @endforeach
         @else
-            addQuestion('short_text');
+            addQuestion('multiple_choice');
         @endif
 
         updatePreview();
@@ -233,33 +255,66 @@
         const textInput = item.querySelector('.question-input-text');
         const typeSelect = item.querySelector('.question-input-type');
         const requiredInput = item.querySelector('.question-input-required');
+        const requiredChk = item.querySelector('.question-input-required-chk');
+
+        // Required checkbox custom UI
+        requiredChk.addEventListener('click', () => {
+            requiredChk.classList.toggle('on');
+            requiredChk.textContent = requiredChk.classList.contains('on') ? '✓' : '';
+            requiredInput.checked = requiredChk.classList.contains('on');
+            updatePreview();
+        });
 
         if (existing) {
             textInput.value = existing.text || '';
             typeSelect.value = existing.type || type;
-            requiredInput.checked = !!existing.required;
+            if (existing.required) {
+                requiredInput.checked = true;
+                requiredChk.classList.add('on');
+                requiredChk.textContent = '✓';
+            }
 
+            // Populate scale data if available
+            if (existing.scale_min !== undefined) item.querySelector('.question-input-scale-min').value = existing.scale_min;
+            if (existing.scale_max !== undefined) item.querySelector('.question-input-scale-max').value = existing.scale_max;
+            if (existing.scale_min_label) item.querySelector('.question-input-scale-min-label').value = existing.scale_min_label;
+            if (existing.scale_max_label) item.querySelector('.question-input-scale-max-label').value = existing.scale_max_label;
+
+            // Restore options if applicable
             const optionsContainer = item.querySelector('.options-container');
             const baseOption = optionsContainer.querySelector('.option-item');
-            optionsContainer.querySelectorAll('.option-item').forEach(function (opt, index) {
-                if (index > 0) opt.remove();
+            
+            // Remove initial dummy option
+            optionsContainer.querySelectorAll('.option-item').forEach((opt, idx) => {
+                 opt.remove(); 
             });
+
             if (existing.options && existing.options.length) {
-                existing.options.forEach(function (opt, idx) {
-                    let optionNode = baseOption;
-                    if (idx > 0) {
-                        optionNode = baseOption.cloneNode(true);
-                        optionsContainer.insertBefore(optionNode, optionsContainer.querySelector('.btn-add-option'));
-                    }
-                    optionNode.querySelector('.question-input-option').value = opt;
+                existing.options.forEach(function (optText) {
+                    const clone = baseOption.cloneNode(true);
+                    clone.querySelector('.question-input-option').value = optText;
+                    setupOptionRemove(clone);
+                    optionsContainer.insertBefore(clone, optionsContainer.querySelector('.btn-add-option'));
                 });
+            } else {
+                 // If no options but type needs them, add one blank
+                 if(['multiple_choice','checkboxes','dropdown'].includes(existing.type)){
+                    const clone = baseOption.cloneNode(true);
+                    clone.querySelector('.question-input-option').value = 'Opción 1';
+                    setupOptionRemove(clone);
+                    optionsContainer.insertBefore(clone, optionsContainer.querySelector('.btn-add-option'));
+                 }
             }
         } else {
             typeSelect.value = type;
+            // Setup initial option remove for new question
+            const optionsContainer = item.querySelector('.options-container');
+            setupOptionRemove(optionsContainer.querySelector('.option-item'));
         }
 
         setupTypeBehavior(item, typeSelect);
 
+        // Remove question
         item.querySelector('.btn-remove-question').addEventListener('click', function () {
             if (document.querySelectorAll('.question-item').length > 1) {
                 item.remove();
@@ -267,27 +322,22 @@
             }
         });
 
+        // Add option
         const addOptionBtn = item.querySelector('.btn-add-option');
         addOptionBtn.addEventListener('click', function () {
             const optionsContainer = item.querySelector('.options-container');
-            const base = optionsContainer.querySelector('.option-item');
-            const clone = base.cloneNode(true);
-            clone.querySelector('.question-input-option').value = '';
-            clone.querySelector('.btn-remove-option').addEventListener('click', function () {
-                clone.remove();
-                updatePreview();
-            });
-            optionsContainer.insertBefore(clone, addOptionBtn);
-        });
-
-        item.querySelectorAll('.btn-remove-option').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                const options = item.querySelectorAll('.option-item');
-                if (options.length > 1) {
-                    btn.closest('.option-item').remove();
-                    updatePreview();
-                }
-            });
+            // We need a template for options. We can clone the first one found or create new
+            // Easier: clone the structure from template or JS construction
+            const row = document.createElement('div');
+            row.className = 'option-item opt-row';
+            row.innerHTML = `
+                <div class="opt-circle"></div>
+                <input type="text" class="opt-input question-input-option" value="Nueva opción">
+                <div class="opt-del btn-remove-option">✕</div>
+            `;
+            setupOptionRemove(row);
+            optionsContainer.insertBefore(row, addOptionBtn);
+            updatePreview();
         });
 
         container.appendChild(item);
@@ -295,14 +345,84 @@
         updatePreview();
     }
 
+    function setupOptionRemove(row) {
+        row.querySelector('.btn-remove-option').addEventListener('click', function () {
+            const container = row.parentElement;
+            if (container.querySelectorAll('.option-item').length > 1) {
+                row.remove();
+                updatePreview();
+            }
+        });
+        // Also trigger preview update on input change
+        row.querySelector('input').addEventListener('input', updatePreview);
+    }
+
+    function setupTypeBehavior(item, select) {
+        const optionsContainer = item.querySelector('.options-container');
+        const scaleConfig = item.querySelector('.scale-config');
+
+        function apply() {
+            const val = select.value;
+            // Hide options for text/date/scale types
+            const simpleTypes = ['short_text', 'paragraph', 'linear_scale', 'date', 'time'];
+            
+            if (simpleTypes.includes(val)) {
+                if (optionsContainer) optionsContainer.style.display = 'none';
+            } else {
+                if (optionsContainer) {
+                    optionsContainer.style.display = 'block';
+                    // Update icons based on type (circle vs square)
+                    const isCheck = (val === 'checkboxes');
+                    optionsContainer.querySelectorAll('.opt-circle').forEach(circle => {
+                        circle.style.borderRadius = isCheck ? '4px' : '50%';
+                    });
+                }
+            }
+
+            // Scale config visibility
+            if (val === 'linear_scale') {
+                if (scaleConfig) scaleConfig.style.display = 'block';
+            } else {
+                if (scaleConfig) scaleConfig.style.display = 'none';
+            }
+        }
+
+        select.addEventListener('change', function () {
+            apply();
+            updatePreview();
+        });
+
+        // Listen for changes in scale config to update preview
+        if (scaleConfig) {
+            const minSelect = scaleConfig.querySelector('.question-input-scale-min');
+            const maxSelect = scaleConfig.querySelector('.question-input-scale-max');
+            const minLabelInput = scaleConfig.querySelector('.question-input-scale-min-label');
+            const maxLabelInput = scaleConfig.querySelector('.question-input-scale-max-label');
+            const minPreview = scaleConfig.querySelector('.scale-label-preview-min');
+            const maxPreview = scaleConfig.querySelector('.scale-label-preview-max');
+
+            function updateScaleLabels() {
+                if (minPreview) minPreview.textContent = minSelect.value;
+                if (maxPreview) maxPreview.textContent = maxSelect.value;
+                updatePreview();
+            }
+
+            minSelect.addEventListener('change', updateScaleLabels);
+            maxSelect.addEventListener('change', updateScaleLabels);
+            minLabelInput.addEventListener('input', updatePreview);
+            maxLabelInput.addEventListener('input', updatePreview);
+        }
+
+        apply();
+    }
+
     function syncQuestionsToInputs() {
         const container = document.getElementById('questions-container');
         const items = container.querySelectorAll('.question-item');
 
-        container.querySelectorAll('input[name^="questions["], select[name^="questions["]').forEach(function (el) {
-            el.removeAttribute('name');
-        });
-
+        // Clear old hidden inputs if any (usually form submission handles this, but we rename attributes)
+        // We actually just need to ensure the name attributes are correct before submit
+        
         let index = 0;
         items.forEach(function (item) {
             const textInput = item.querySelector('.question-input-text');
@@ -313,6 +433,17 @@
             textInput.setAttribute('name', 'questions[' + index + '][text]');
             typeSelect.setAttribute('name', 'questions[' + index + '][type]');
             requiredInput.setAttribute('name', 'questions[' + index + '][required]');
+
+            // Scale inputs
+            const scaleMin = item.querySelector('.question-input-scale-min');
+            const scaleMax = item.querySelector('.question-input-scale-max');
+            const scaleMinLabel = item.querySelector('.question-input-scale-min-label');
+            const scaleMaxLabel = item.querySelector('.question-input-scale-max-label');
+
+            if (scaleMin) scaleMin.setAttribute('name', 'questions[' + index + '][scale_min]');
+            if (scaleMax) scaleMax.setAttribute('name', 'questions[' + index + '][scale_max]');
+            if (scaleMinLabel) scaleMinLabel.setAttribute('name', 'questions[' + index + '][scale_min_label]');
+            if (scaleMaxLabel) scaleMaxLabel.setAttribute('name', 'questions[' + index + '][scale_max_label]');
 
             let optIndex = 0;
             options.forEach(function (opt) {
@@ -338,137 +469,146 @@
 
         const items = document.querySelectorAll('.question-item');
         if (items.length === 0) {
-            const p = document.createElement('p');
-            p.className = 'text-center text-gray-500 py-8';
-            p.textContent = 'Comienza a agregar preguntas para ver la vista previa.';
-            previewQuestions.appendChild(p);
+            previewQuestions.innerHTML = '<div class="text-center text-muted" style="padding:20px; font-size:12px;">Agrega preguntas...</div>';
             return;
         }
 
         let number = 1;
         items.forEach(function (item) {
-            const text = item.querySelector('.question-input-text').value || 'Pregunta sin texto';
+            const text = item.querySelector('.question-input-text').value || 'Pregunta...';
             const type = item.querySelector('.question-input-type').value;
             const required = item.querySelector('.question-input-required').checked;
 
             const block = document.createElement('div');
-            block.className = 'space-y-1';
+            block.style.marginBottom = '16px';
 
-            const label = document.createElement('p');
-            label.className = 'font-semibold text-gray-100';
+            const label = document.createElement('div');
+            label.className = 'pv-q';
             label.textContent = number + '. ' + text + (required ? ' *' : '');
             block.appendChild(label);
 
-            const control = document.createElement('div');
-            control.className = 'mt-1';
-
-            if (type === 'multiple_choice' || type === 'checkboxes') {
+            if (['multiple_choice', 'checkboxes', 'dropdown'].includes(type)) {
                 const options = item.querySelectorAll('.question-input-option');
                 options.forEach(function (opt) {
                     const row = document.createElement('div');
-                    row.className = 'flex items-center gap-2 text-[11px] text-gray-300';
-                    const icon = document.createElement('span');
-                    icon.className = type === 'checkboxes'
-                        ? 'w-3 h-3 border border-gray-500 rounded-sm'
-                        : 'w-3 h-3 rounded-full border border-gray-500';
-                    row.appendChild(icon);
+                    row.className = 'pv-opt';
+                    
+                    const circle = document.createElement('div');
+                    circle.className = 'pv-opt-circle';
+                    if (type === 'checkboxes') circle.style.borderRadius = '3px';
+                    
                     const span = document.createElement('span');
                     span.textContent = opt.value || 'Opción';
+                    
+                    row.appendChild(circle);
                     row.appendChild(span);
-                    control.appendChild(row);
+                    block.appendChild(row);
                 });
             } else if (type === 'short_text') {
-                const input = document.createElement('div');
-                input.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80';
-                control.appendChild(input);
+                const line = document.createElement('div');
+                line.style.height = '24px';
+                line.style.background = 'rgba(0,0,0,0.03)';
+                line.style.borderRadius = '6px';
+                line.style.marginTop = '6px';
+                line.style.border = '1px solid rgba(0,0,0,0.05)';
+                block.appendChild(line);
             } else if (type === 'paragraph') {
-                const textarea = document.createElement('div');
-                textarea.className = 'h-16 rounded-lg border border-gray-600 bg-slate-900/80';
-                control.appendChild(textarea);
-            } else if (type === 'dropdown') {
-                const selectMock = document.createElement('div');
-                selectMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center justify-between text-[11px] text-gray-400';
-                selectMock.textContent = 'Selecciona una opción';
-                const chevron = document.createElement('span');
-                chevron.className = 'ml-2 text-[9px]';
-                chevron.textContent = '▾';
-                selectMock.appendChild(chevron);
-                control.appendChild(selectMock);
+                const box = document.createElement('div');
+                box.style.height = '60px';
+                box.style.background = 'rgba(0,0,0,0.03)';
+                box.style.borderRadius = '6px';
+                box.style.marginTop = '6px';
+                box.style.border = '1px solid rgba(0,0,0,0.05)';
+                block.appendChild(box);
             } else if (type === 'linear_scale') {
-                const scaleRow = document.createElement('div');
-                scaleRow.className = 'flex items-center gap-3';
-                for (let i = 1; i <= 5; i++) {
+                const min = parseInt(item.querySelector('.question-input-scale-min').value);
+                const max = parseInt(item.querySelector('.question-input-scale-max').value);
+                const minLabel = item.querySelector('.question-input-scale-min-label').value;
+                const maxLabel = item.querySelector('.question-input-scale-max-label').value;
+
+                const wrapper = document.createElement('div');
+                wrapper.style.marginTop = '16px';
+                wrapper.style.padding = '0 10px';
+                
+                // Circles row
+                const circles = document.createElement('div');
+                circles.style.display = 'flex';
+                circles.style.justifyContent = 'space-between';
+                circles.style.alignItems = 'flex-end';
+                
+                // Start label
+                if (minLabel) {
+                     const l = document.createElement('div');
+                     l.textContent = minLabel;
+                     l.style.fontSize = '12px';
+                     l.style.color = '#64748b';
+                     l.style.marginBottom = '6px';
+                     l.style.marginRight = '12px';
+                     l.style.maxWidth = '80px';
+                     circles.appendChild(l);
+                }
+
+                const numbersContainer = document.createElement('div');
+                numbersContainer.style.display = 'flex';
+                numbersContainer.style.gap = '12px';
+                numbersContainer.style.flex = '1';
+                numbersContainer.style.justifyContent = 'space-around';
+
+                for (let i = min; i <= max; i++) {
                     const col = document.createElement('div');
-                    col.className = 'flex flex-col items-center gap-1 text-[11px] text-gray-300';
+                    col.style.display = 'flex';
+                    col.style.flexDirection = 'column';
+                    col.style.alignItems = 'center';
+                    col.style.gap = '8px';
+                    
+                    const num = document.createElement('span');
+                    num.textContent = i;
+                    num.style.fontSize = '12px';
+                    num.style.color = '#64748b';
+                    
                     const circle = document.createElement('div');
-                    circle.className = 'w-3 h-3 rounded-full border border-gray-500';
-                    const labelNum = document.createElement('span');
-                    labelNum.textContent = i;
+                    circle.style.width = '24px';
+                    circle.style.height = '24px';
+                    circle.style.borderRadius = '50%';
+                    circle.style.border = '2px solid #cbd5e1';
+                    circle.style.backgroundColor = '#fff';
+                    
+                    col.appendChild(num);
                     col.appendChild(circle);
-                    col.appendChild(labelNum);
-                    scaleRow.appendChild(col);
+                    numbersContainer.appendChild(col);
                 }
-                control.appendChild(scaleRow);
-            } else if (type === 'rating') {
-                const starsRow = document.createElement('div');
-                starsRow.className = 'flex items-center gap-1';
-                for (let i = 0; i < 5; i++) {
-                    const star = document.createElement('span');
-                    star.className = 'text-yellow-400 text-lg';
-                    star.textContent = '★';
-                    starsRow.appendChild(star);
+                circles.appendChild(numbersContainer);
+
+                // End label
+                if (maxLabel) {
+                     const l = document.createElement('div');
+                     l.textContent = maxLabel;
+                     l.style.fontSize = '12px';
+                     l.style.color = '#64748b';
+                     l.style.marginBottom = '6px';
+                     l.style.marginLeft = '12px';
+                     l.style.maxWidth = '80px';
+                     l.style.textAlign = 'right';
+                     circles.appendChild(l);
                 }
-                control.appendChild(starsRow);
+
+                wrapper.appendChild(circles);
+                block.appendChild(wrapper);
             } else if (type === 'date') {
-                const dateMock = document.createElement('div');
-                dateMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center text-[11px] text-gray-400';
-                dateMock.textContent = 'dd/mm/aaaa';
-                control.appendChild(dateMock);
-            } else if (type === 'time') {
-                const timeMock = document.createElement('div');
-                timeMock.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80 px-3 flex items-center text-[11px] text-gray-400';
-                timeMock.textContent = 'hh:mm';
-                control.appendChild(timeMock);
-            } else {
-                const generic = document.createElement('div');
-                generic.className = 'h-7 rounded-lg border border-gray-600 bg-slate-900/80';
-                control.appendChild(generic);
+                const dateInput = document.createElement('div');
+                dateInput.style.borderBottom = '1px solid #e2e8f0';
+                dateInput.style.color = '#94a3b8';
+                dateInput.style.width = '160px';
+                dateInput.style.padding = '8px 0';
+                dateInput.style.marginTop = '16px';
+                dateInput.style.fontSize = '14px';
+                dateInput.innerHTML = '<span style="margin-right:8px">📅</span> dd/mm/aaaa';
+                block.appendChild(dateInput);
             }
 
-            block.appendChild(control);
             previewQuestions.appendChild(block);
             number++;
         });
-    }
-
-    function setupTypeBehavior(item, select) {
-        const optionsContainer = item.querySelector('.options-container');
-
-        function apply() {
-            const simpleTypes = ['short_text', 'paragraph', 'linear_scale', 'rating', 'date', 'time'];
-            if (simpleTypes.indexOf(select.value) !== -1) {
-                if (optionsContainer) {
-                    optionsContainer.style.display = 'none';
-                }
-            } else {
-                if (optionsContainer) {
-                    optionsContainer.style.display = 'block';
-                    const icon = optionsContainer.querySelector('.option-item i');
-                    if (icon) {
-                        icon.className = select.value === 'checkboxes'
-                            ? 'far fa-square text-gray-500'
-                            : 'far fa-circle text-gray-500';
-                    }
-                }
-            }
-        }
-
-        select.addEventListener('change', function () {
-            apply();
-            updatePreview();
-        });
-
-        apply();
     }
 </script>
 @endpush

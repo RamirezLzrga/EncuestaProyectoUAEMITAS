@@ -12,23 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EditorSurveyController extends Controller
 {
-    public function templates()
-    {
-        $templates = $this->getTemplates();
-
-        $categories = [
-            'encuesta' => 'Encuesta',
-            'cuestionario' => 'Cuestionario',
-            'invitacion' => 'Invitación',
-            'registro' => 'Registro',
-        ];
-
-        return view('editor.encuestas.plantillas', [
-            'templates' => $templates,
-            'categories' => $categories,
-        ]);
-    }
-
     public function builderNew(Request $request)
     {
         $templateKey = $request->query('template');
@@ -97,7 +80,7 @@ class EditorSurveyController extends Controller
             ]);
         }
 
-        return redirect()->route('editor.encuestas.configuracion', $survey)->with('success', 'Encuesta creada. Configura los detalles generales.');
+        return redirect()->route('surveys.index')->with('success', 'Encuesta creada correctamente.');
     }
 
     public function builderUpdate(Request $request, Survey $survey)
@@ -136,7 +119,7 @@ class EditorSurveyController extends Controller
             ]);
         }
 
-        return redirect()->route('editor.encuestas.configuracion', $survey)->with('success', 'Encuesta actualizada.');
+        return redirect()->route('surveys.index')->with('success', 'Encuesta actualizada correctamente.');
     }
 
     protected function saveSurveyFromBuilder(Request $request, Survey $survey)
@@ -157,6 +140,10 @@ class EditorSurveyController extends Controller
             'questions.*.description' => 'nullable|string',
             'questions.*.image_url' => 'nullable|string',
             'questions.*.video_url' => 'nullable|string',
+            'questions.*.scale_min' => 'nullable|integer|min:0|max:1',
+            'questions.*.scale_max' => 'nullable|integer|min:2|max:10',
+            'questions.*.scale_min_label' => 'nullable|string|max:50',
+            'questions.*.scale_max_label' => 'nullable|string|max:50',
         ]);
 
         $questions = array_values($validated['questions']);
